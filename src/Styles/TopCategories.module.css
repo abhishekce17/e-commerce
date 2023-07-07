@@ -1,0 +1,31 @@
+.top_category{
+    width: 100%;
+    height: max-content;
+    margin-bottom: 25px;
+}
+.container{
+ display: flex;
+ gap: 10px;
+}
+
+.each_category{
+    max-width: 200px;
+    height: max-content;
+}
+
+.each_category img{
+    border-radius: 7px;
+    box-shadow: 1px 1px 5px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 7px;
+    width: 90%;
+    height: 90%;
+}
+
+.each_category a:hover img{
+    transform: scale( var(--scalling) );
+    transition: 0.2s ease-in-out;
+}
+
+.each_category h3{
+    font-size: 1.2vw;
+}

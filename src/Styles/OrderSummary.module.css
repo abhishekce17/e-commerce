@@ -1,0 +1,121 @@
+.order_summary {
+    margin-top: 30px;
+    padding: 40px 200px;
+}
+
+.form {
+    position: relative;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    gap: 30px;
+}
+
+.form > div {
+    border-radius:10px ;
+    background-color: #fff;
+    padding:10px 20px;
+}
+
+.form > div > div > label{
+    font-weight: 600;
+}
+
+.form>div,
+.form>div div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.form {
+    margin-bottom: 15px;
+}
+
+.form input:disabled {
+    outline: none;
+    border: 1px solid #fff;
+    border-bottom: 1px solid var(--light-bg-color);
+}
+
+.form input {
+    /* border: 1px solid yellow; */
+    border: 1px solid var(--light-bg-color);
+    border-radius: 3px;
+    background: #fff;
+    font-size: 1rem;
+    padding: 5px;
+    outline: none;
+}
+
+.form input:focus{
+    border: 1px solid var(--dark-bg-color);
+}
+
+.editing{
+    width: 70px;
+}
+
+.product_summary > .product > div > .quantity{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.action_proceed, .editing, .decrease_quantity, .increase_quantity {
+    cursor: pointer;
+    font-size: 0.9rem;
+    min-width: max-content;
+    color: var(--dark-bg-color);
+    border-radius: 8px;
+    border:1px solid var(--dark-bg-color);
+    margin: 5px 10px 0 0;
+    padding: 6px 10px;
+    transition: all 0.1s ease-in-out;
+    background-color: #fff;
+}
+
+.decrease_quantity, .increase_quantity{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.action_proceed{
+    background-color: var(--dark-bg-color);
+    color: #fff;
+}
+
+.editing:hover, .decrease_quantity:hover, .increase_quantity:hover{
+    background-color: var(--dark-bg-color);
+    color: #fff;
+}
+
+.form img{
+    width: 200px;
+    height: 100%;
+}
+
+.product_summary{
+margin-top: 10px;
+padding-top: 10px;
+border-top: 2px solid var(--light-bg-color);
+}
+
+.form > div > .product_summary > .product {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    /* border: 1px solid black; */
+}
+
+.product + .product{
+    border-top: 1px solid var(--light-bg-color);
+}
+
+.amount_date{
+    position: sticky;
+    height: max-content;
+    top: 110px;
+    width: 300px;
+}

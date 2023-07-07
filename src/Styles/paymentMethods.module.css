@@ -1,0 +1,51 @@
+.payment_methods {
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .payment_methods h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .payment_methods ol {
+    list-style-type: decimal;
+    padding-left: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .payment_methods li {
+    margin-bottom: 20px;
+  }
+  
+  .payment_methods li .payment_method_icon {
+    font-size: 1rem;
+    margin:0 10px;
+  }
+  
+  .payment_methods li span {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .payment_methods p {
+    margin: 5px 0;
+  }
+  
+  .security_note {
+    margin-top: 40px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  .security_note h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .security_note p {
+    margin: 5px 0;
+  }
+  

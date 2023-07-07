@@ -1,0 +1,147 @@
+.Inventory_managemnet {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--admin-bg);
+  padding: 30px;
+}
+
+.view_Inventory {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 25px;
+}
+
+.top_bar {
+  display: flex;
+  padding-bottom: 25px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top_bar > div:first-child {
+  font-size: 1.2rem;
+  color: var(--light-grey);
+  padding: 7px;
+  border: 1px solid var(--light-bg-color);
+  border-radius: 10px;
+}
+
+.top_bar > div > input {
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  width: 400px;
+  padding: 5px;
+}
+
+.top_bar > div:first-child:focus-within {
+  outline: 1px solid var(--light-bg-color);
+}
+
+.top_bar button {
+  padding: 9px 20px;
+  color: #fff;
+  margin-right: 10px;
+  background-color: var(--light-bg-color);
+  border: none;
+  border-radius: 7px;
+}
+
+.headings {
+  color: var(--light-grey);
+  margin-bottom: 20px;
+}
+
+.headings,
+.pincode_info {
+  display: grid;
+  grid-template-columns: 40px minmax(350px, 1fr) repeat(5, 1fr);
+  gap: 10px;
+}
+
+.pincode_info * {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.pincode_info input,
+.headings input {
+  justify-self: center;
+  align-self: center;
+  width: 19px;
+  height: 19px;
+}
+
+.top_bar select {
+  font-weight: 300;
+  background-color: #fff;
+  border: 1px solid var(--light-bg-color);
+  margin-top: 10px;
+  font-size: 1rem;
+  padding: 7px 10px;
+  border-radius: 5px;
+}
+
+.upper_top_bar {
+  padding: 0 25px;
+  border-bottom: 1px solid var(--light-bg-color);
+  color: gray;
+  display: flex;
+  gap: 35px;
+  margin-bottom: 15px;
+}
+
+.option {
+  cursor: pointer;
+  padding: 20px 0;
+  height: 100%;
+}
+
+.option.selected {
+  color: var(--light-bg-color);
+  border-bottom: 3px solid var(--light-bg-color);
+}
+
+.all_products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.product_info {
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 7px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--light-bg-color);
+}
+
+.product_info img {
+  width: 100%;
+  height: 100%;
+}
+
+.product_info > div:last-child {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+}
+.product_info input {
+  width: 100px;
+  text-align: center;
+  font-size: 1.1rem;
+  border: none;
+  outline: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.product_info > div:last-child > *:first-child,
+.product_info > div:last-child > *:last-child {
+  font-size: 2rem;
+  color: var(--light-bg-color);
+}
+
+.product_id {
+  position: absolute;
+  opacity: 0.3;
+}

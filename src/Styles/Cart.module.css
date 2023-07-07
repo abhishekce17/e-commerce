@@ -1,0 +1,77 @@
+.cart{
+    margin-top: 30px;
+    padding: 50px 180px;
+}
+
+.cart_container{
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 20px;
+}
+
+.cart_container > div{
+    margin-top: 10px;
+    border: 1px solid var(--light-bg-color);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.cart_items, .save_for_later{
+    padding: 10px;
+
+}
+
+.cart_items > div , .save_for_later > div {
+    line-height: 1.3;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    /* border: 1px solid black; */
+}
+
+.cart_items > div + div , .save_for_later > div + div{
+    border-top:1px solid var(--light-bg-color) ;
+}
+
+.cart_items > div button, .save_for_later > div button, .action_proceed, .action {
+    cursor: pointer;
+    font-size: 0.9rem;
+    min-width: max-content;
+    color: var(--dark-bg-color);
+    border-radius: 8px;
+    border:1px solid var(--dark-bg-color);
+    margin: 5px 10px 0 0;
+    padding: 6px 10px;
+    transition: all 0.1s ease-in-out;
+    background-color: #fff;
+}
+
+.action_proceed{
+    background-color: var(--dark-bg-color);
+    color: #fff;
+}
+
+.cart_items > div button:hover, .save_for_later > div button:hover, .action:hover{
+    background-color: var(--dark-bg-color);
+    color: #fff;
+}
+
+.cart_items > div img, .save_for_later > div img{
+    width: 200px;
+    height: 100%;
+}
+
+.save_for_later {
+    padding-top: 20px;
+    border-top: 2px solid var(--light-bg-color);
+}
+
+.subtotal_total{
+    font-weight: 600;
+    padding:20px;
+    height: max-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

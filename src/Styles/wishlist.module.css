@@ -1,0 +1,51 @@
+.order_history {
+    padding:0 10px;
+  }
+
+  .each_order{
+    position: relative;
+    font-weight: 600;
+    width: 100%;
+    font-size: 1.1vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items:center;
+  }
+
+  .remove{
+    position: absolute;
+    right: 0;
+    top: 20px;
+  }
+
+  .each_order img{
+    width: 20%;
+    height: 20%;
+  }
+
+  .each_order + .each_order{
+    border-top: 1px solid var(--light-bg-color);
+  }
+
+.each_order > div >p{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.each_order > div > p s{
+    font-weight: normal;
+    font-size: 1rem;
+    color: var(--light-grey);
+}
+
+.each_order > div > p > span:nth-child(2){
+    color: var(--light-grey);
+    font-size: 1vw;
+    font-weight: normal;
+}
+
+.each_order >div > p > span:last-child{
+    font-size: 1.2rem;
+}
