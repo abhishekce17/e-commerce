@@ -24,7 +24,7 @@ const AdminSidebar = () => {
   }, [pathname])
 
   return (
-    <Sidebar style={{minHeight:"100vh"}} backgroundColor="#fff" collapsed={false}
+    <Sidebar style={{ minHeight: "100vh" }} backgroundColor="#fff" collapsed={false}
     >
       <Menu
         menuItemStyles={{
@@ -61,13 +61,13 @@ const AdminSidebar = () => {
         >
           Products
         </MenuItem>
-          <MenuItem
-            active={activeMenuItem === 'order-managment'} icon={<FaBoxOpen />}
-            component={<Link href={"/administrator/admin/order-managment"} />}
-            onClick={() => handleMenuItemClick('order-managment')}
-          >
+        <MenuItem
+          active={activeMenuItem === 'order-managment'} icon={<FaBoxOpen />}
+          component={<Link href={"/administrator/admin/order-managment"} />}
+          onClick={() => handleMenuItemClick('order-managment')}
+        >
           Orders
-          </MenuItem>
+        </MenuItem>
         <MenuItem
           icon={<MdOutlineCategory />}
           component={<Link href={"/administrator/admin/category-managment"} />}
@@ -111,8 +111,8 @@ const AdminSidebar = () => {
         <MenuItem
           icon={<TbTruckReturn />}
           component={<Link href={"/administrator/admin/return-request"} />}
-          active={activeMenuItem === 'return-requests'}
-          onClick={() => handleMenuItemClick('return-requests')}
+          active={activeMenuItem === 'return-request'}
+          onClick={() => handleMenuItemClick('return-request')}
         >
           Return requests
         </MenuItem>
