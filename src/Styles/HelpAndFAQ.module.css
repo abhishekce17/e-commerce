@@ -1,0 +1,55 @@
+.help_and_faq_page,
+.about_us {
+  margin: 20px;
+  padding: 25px;
+  height: 100%;
+  width: 100%;
+}
+
+.add_question_and_answers input,
+.add_question_and_answers textarea,
+.about_us textarea {
+  font-family: inherit;
+  margin: 10px 0;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid var(--light-bg-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: black;
+  outline: none;
+}
+
+.add_question_and_answers p {
+  margin-top: 10px;
+  color: var(--light-grey);
+}
+
+.add_question_and_answers button,
+.added_faq button,
+.about_us button {
+  font-size: 1.1rem;
+  padding: 8px 20px;
+  color: #fff;
+  background-color: var(--light-bg-color);
+  border: none;
+  border-radius: 8px;
+}
+.added_faq {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+.added_faq > div {
+  width: 100%;
+  padding: 15% 50%;
+  font-size: 3rem;
+  color: var(--light-grey);
+}
+
+.added_faq button {
+  border-radius: 8px;
+  margin: 10px 0;
+  font-size: 1rem;
+  padding: 5px 9px;
+  margin-right: 10px;
+}

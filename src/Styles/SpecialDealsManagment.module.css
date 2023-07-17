@@ -158,7 +158,7 @@
 
 .activate_deals_option > button {
   position: relative;
-  background-color: #fff;
+  background-color: var(--light-grey);
   width: 70px;
   height: 30px;
   border-radius: 25px;
@@ -173,11 +173,12 @@
   content: "";
   height: 91%;
   width: 38%;
-  background-color: var(--light-grey);
+  background-color: #fff;
   transition: all 0.1s;
 }
 
 .activate_deals_option > button.activated {
+  background-color: #fff;
   border-color: var(--light-bg-color);
 }
 .activate_deals_option > button.activated::before {

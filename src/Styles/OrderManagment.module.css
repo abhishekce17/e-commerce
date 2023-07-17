@@ -57,11 +57,13 @@
 .product_info {
   padding: 0 25px;
   color: var(--light-grey);
-  /* margin-bottom: 20px; */
   display: grid;
-  grid-template-columns: 100px 200px minmax(250px, 1fr) repeat(4, 1fr);
-  /* grid-template-columns: repeat(7, 1fr); */
+  grid-template-columns: 150px 200px minmax(250px, 1fr) repeat(4, 1fr);
   gap: 15px;
+}
+.return_request .headings,
+.return_request .product_info {
+  grid-template-columns: 150px 200px minmax(230px, 1fr) 1fr 1fr 200px 1fr;
 }
 
 .headings {

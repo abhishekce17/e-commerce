@@ -117,12 +117,12 @@ const AdminSidebar = () => {
           Return requests
         </MenuItem>
         {/* <MenuItem
-        icon={<MdAnalytics />}
-          component={<Link href={"/administrator/admin/analytics-and-reporting"} />}
-          active={activeMenuItem === 'analytics-and-reporting'}
-          onClick={() => handleMenuItemClick('analytics-and-reporting')}
+          icon={<MdAnalytics />}
+          component={<Link href={"/administrator/admin/workers"} />}
+          active={activeMenuItem === 'workers'}
+          onClick={() => handleMenuItemClick('workers')}
         >
-          Analytics and reporting
+          Workers
         </MenuItem> */}
         <MenuItem
           icon={<CgNotes />}
