@@ -4,22 +4,28 @@ import Chart from 'chart.js/auto';
 
 const PieChart = () => {
   const chartRef = useRef(null);
-  const [categories, setCategories] = useState(['Electronics %', 'Clothing %', 'Books %', 'Home Goods %', 'Mobiles %',"Sports %", "kitchen %"]); 
+  const chartInstanceRef = useRef(null);
+  const [categories, setCategories] = useState(['Electronics %', 'Clothing %', 'Books %', 'Home Goods %', 'Mobiles %', "Sports %", "kitchen %"]);
   const [sales, setSales] = useState([40, 30, 20, 10, 70, 50, 80]);
 
   useEffect(() => {
     // Calculate total sales
     const totalSales = sales.reduce((acc, value) => acc + value, 0);
-  
+
     // Calculate sales percentages
     const salesPercentages = sales.map(value => (value / totalSales) * 100);
-  
+
     // Generate colors for categories
     const colors = generateColors(categories.length);
-  
+
+    // Create the chart
+    if (chartInstanceRef.current) {
+      chartInstanceRef.current.destroy();
+    }
+
     // Create the chart
     const ctx = chartRef.current.getContext('2d');
-    new Chart(ctx, {
+    chartInstanceRef.current = new Chart(ctx, {
       type: 'pie',
       data: {
         labels: categories,
@@ -37,7 +43,7 @@ const PieChart = () => {
             position: 'bottom',
             align: 'start',
             labels: {
-              padding : 7,
+              padding: 7,
               usePointStyle: true,
             },
           },
@@ -49,7 +55,7 @@ const PieChart = () => {
       },
     });
   }, [categories, sales]);
-  
+
 
   // Generate colors for categories
   const generateColors = (count) => {

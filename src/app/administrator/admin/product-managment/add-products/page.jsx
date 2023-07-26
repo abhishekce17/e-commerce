@@ -4,8 +4,10 @@ import styles from "@/Styles/ProductsManagment.module.css"
 import { RxCross1 } from 'react-icons/rx';
 import { CiImageOn } from 'react-icons/ci';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 const AddProductPage = () => {
+  const router = useRouter()
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [discount, setDiscount] = useState("");
@@ -18,12 +20,13 @@ const AddProductPage = () => {
   const [variants, setVariants] = useState([]);
   const fileInputRef = useRef(null);
   const [variantPrice, setVariantPrice] = useState({})
+  const [formData, setFormData] = useState([])
 
   const handleProductNameChange = (event) => {
     setProductName(event.target.value);
   };
 
-  const removeDiscountNetValue = (type) => {
+  const removeDiscountNetValue = (type, variantRemoved) => {
     let updatedNetValue = { ...netValue };
     let updatedDiscount = { ...discount };
 
@@ -32,8 +35,8 @@ const AddProductPage = () => {
 
     setNetValue(updatedNetValue);
     setDiscount(updatedDiscount);
-    console.log(Object.values(variantPrice[Object.keys(variantPrice)[0]]).length)
-    if (!Object.values(variantPrice[Object.keys(variantPrice)[0]]).length) {
+    console.log(variantPrice)
+    if (variantRemoved) {
       setDiscount("");
       setNetValue("");
     }
@@ -67,7 +70,7 @@ const AddProductPage = () => {
           : "";
       });
       setNetValue((prev) => {
-        return { ...prev, [name]: calculatedNetValue.filter(x => typeof x === "number") };
+        return { ...prev, [name]: calculatedNetValue.filter(x => typeof x === "number")[0] };
       });
     } else {
       setDiscount({});
@@ -76,16 +79,21 @@ const AddProductPage = () => {
   };
 
 
-  const handleImageChange = (event) => {
+  const handleImageChange = async (event) => {
     const fileList = event.target.files;
     const imageArray = Array.from(fileList).map((file) => URL.createObjectURL(file));
+    setFormData((prevFormData) => [...prevFormData, ...fileList])
     setImages((prevImages) => [...prevImages, ...imageArray]);
   };
 
   const handleRemoveImage = (index) => {
     const updatedImages = [...images];
+    const updatedFormData = [...formData]
+    updatedFormData.splice(index, 1);
     updatedImages.splice(index, 1);
+    setFormData(updatedFormData);
     setImages(updatedImages);
+    fileInputRef.current.value = ""
   };
 
   const handleBrandNameChange = (event) => {
@@ -130,11 +138,12 @@ const AddProductPage = () => {
 
 
   const handleVariantPrice = (e, variantTitle) => {
+    setPrice("")
     const { name, value } = e.target;
     let updatedVariantPrice = { ...variantPrice };
     if (value === "") {
       delete updatedVariantPrice[variantTitle][name];
-      removeDiscountNetValue(name)
+      removeDiscountNetValue(name, false)
     } else {
       updatedVariantPrice = {
         ...updatedVariantPrice,
@@ -166,10 +175,9 @@ const AddProductPage = () => {
     updatedVariants.splice(variantIndex, 1);
     let updateVariantPrice = { ...variantPrice }
     if (updateVariantPrice[variantTitle] !== undefined) {
-      console.log("calling from outside of the objct function")
+      // console.log("calling from outside of the objct function")
       Object.keys(updateVariantPrice[variantTitle]).map((key) => {
-        console.log(key)
-        removeDiscountNetValue(key)
+        removeDiscountNetValue(key, true)
       })
       delete updateVariantPrice[variantTitle]
       setVariantPrice(updateVariantPrice)
@@ -180,7 +188,8 @@ const AddProductPage = () => {
 
   const handleTypeChange = (event, variantIndex, typeIndex) => {
     const updatedVariants = [...variants];
-    updatedVariants[variantIndex].type[typeIndex] = event.target.value;
+    console.log(updatedVariants)
+    updatedVariants[variantIndex].type[typeIndex] = { variant: event.target.value };
     setVariants(updatedVariants);
   };
 
@@ -196,7 +205,7 @@ const AddProductPage = () => {
     let updateVariantPrice = { ...variantPrice };
     console.log(updateVariantPrice[variantTitle])
     if (updateVariantPrice[variantTitle] !== undefined) {
-      removeDiscountNetValue(type)
+      removeDiscountNetValue(type, false)
       delete updateVariantPrice[variantTitle][type]
       setVariantPrice(updateVariantPrice)
       // setPrice(updateVariantPrice)
@@ -204,19 +213,50 @@ const AddProductPage = () => {
     setVariants(updatedVariants);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(variantPrice);
-    // Submit logic goes here
-    // You can access all the form values in the component's state variables
-    // e.g., productName, price, discount, images, brandName, category, specifications, moreDetails, variants
+    const formDataAPI = new FormData()
+    formData.map((each) => {
+      formDataAPI.append("file", each)
+    })
+    let updatedVariants = variants.map((variant, index) => {
+      if (variantPrice[variant.title] != undefined) {
+        let newVariant = Object.values(variant.type).map((eachValues, valueIndex) => {
+          return { ...eachValues, discount: Number(discount[eachValues.variant]), netPrice: Number(netValue[eachValues.variant]), price: Number(variantPrice[variant.title]?.[eachValues.variant]) }
+        })
+        return { ...variant, type: newVariant }
+      }
+      return variant
+    })
+
+    formDataAPI.append("body", JSON.stringify({
+      productName: productName,
+      brandName: brandName,
+      description: moreDetails,
+      category: category,
+      price: Number(price),
+      specifications: specifications,
+      variant: updatedVariants,
+      discount: Number(discount),
+      netPrice: Number(netValue)
+    }))
+    const res = await fetch("http://localhost:3000/api/add-products", {
+      method: "POST",
+      body: formDataAPI,
+    });
+    const result = await res.json()
+    if (result.status === 200) {
+      router.replace("/administrator/admin/product-managment")
+    }
   };
 
   const handleDrop = (event) => {
     event.preventDefault();
     const fileList = event.dataTransfer.files;
     const imageArray = Array.from(fileList).map((file) => URL.createObjectURL(file));
+    setFormData((prevFormData) => [...prevFormData, ...fileList])
     setImages((prevImages) => [...prevImages, ...imageArray]);
+
   };
 
   const handleDragOver = (event) => {
@@ -227,8 +267,8 @@ const AddProductPage = () => {
   const categoryOptions = ["mobile", "electronic", "clothes", "kitchen"];
   const defaultVariants = {
     mobile: [
-      { title: "storage", type: ["6GB + 128GB", "8GB + 256 GB"] },
-      { title: "color", type: ["red", "blue", "black"] },
+      { title: "storage", type: [{ variant: "6GB + 128GB" }, { variant: "8GB + 256 GB" }] },
+      { title: "color", type: [{ variant: "red" }, { variant: "blue" }, { variant: "black" }] },
     ],
     electronic: [
       { title: "wattage", type: ["100W", "200W", "300W"] },
@@ -246,7 +286,7 @@ const AddProductPage = () => {
 
   return (
     <div className={styles.add_product_page}>
-      <form className={styles.all_product_info} onSubmit={handleSubmit}>
+      <form id="productInfo" className={styles.all_product_info} onSubmit={handleSubmit}>
         <div className={styles.group_1}>
           <label className={styles.product_name}>
             Product Name
@@ -302,11 +342,11 @@ const AddProductPage = () => {
                     <input
                       type="text"
                       placeholder="Type"
-                      value={type}
+                      value={type.variant}
                       onChange={(event) => handleTypeChange(event, variantIndex, typeIndex)}
                     />
                     <input
-                      name={type}
+                      name={type.variant}
                       type="text"
                       placeholder="Variant Price"
                       value={variantPrice[variant.title] !== undefined ? variantPrice[variant.title][type] : ""}
@@ -382,6 +422,7 @@ const AddProductPage = () => {
                 <CiImageOn style={{ fontSize: "2.5rem" }} />
                 Drag and Drop or click to add images
                 <input
+                  name='images'
                   type="file"
                   multiple
                   ref={fileInputRef}
