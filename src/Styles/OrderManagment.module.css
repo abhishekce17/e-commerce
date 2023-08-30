@@ -58,9 +58,15 @@
   padding: 0 25px;
   color: var(--light-grey);
   display: grid;
-  grid-template-columns: 150px 200px minmax(250px, 1fr) repeat(4, 1fr);
+  grid-template-columns: 200px 280px minmax(200px, 1fr) repeat(4, 1fr);
   gap: 15px;
 }
+
+.product_info img {
+  width: 25%;
+  height: auto;
+}
+
 .return_request .headings,
 .return_request .product_info {
   grid-template-columns: 150px 200px minmax(230px, 1fr) 1fr 1fr 200px 1fr;
@@ -97,10 +103,10 @@
   /* border-color: var(--light-bg-color); */
 }
 
-.accepted > div,
+.completed > div,
 .pending > div,
-.proces > div,
-.canceled > div,
+.inProcess > div,
+.cancelled > div,
 .order_status > div:last-child > div {
   padding: 8px 10px;
   border-radius: 8px;
@@ -123,26 +129,26 @@
   border-color: orange;
 }
 
-.accepted > div {
+.completed > div {
   color: green;
   background-color: rgba(161, 242, 161, 0.8);
 }
-.product_info:hover .accepted > div {
+.product_info:hover .completed > div {
   border-color: green;
 }
-.canceled > div {
+.cancelled > div {
   color: red;
   background-color: rgba(247, 198, 198, 0.8);
 }
-.product_info:hover .canceled > div {
+.product_info:hover .cancelled > div {
   border-color: red;
 }
-.proces > div {
+.inProcess > div {
   color: blue;
   background-color: rgba(173, 216, 230, 0.8);
 }
 
-.product_info:hover .proces > div {
+.product_info:hover .inProcess > div {
   border-color: blue;
 }
 
@@ -152,18 +158,30 @@
 }
 
 .product_details {
+  margin: 10px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 250px 1fr;
+}
+
+.product_details img {
+  width: 60%;
+  height: auto;
 }
 
 .product_details > div {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  flex-wrap: wrap;
 }
 
+/* .product_details > div > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+} */
+
 .product_details > div h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 
 .product_details > div p,
@@ -171,9 +189,8 @@
   color: gray;
 }
 
-.product_details > div > div > div {
-  font-size: 1.2rem;
-  /* width: max-content; */
+.product_details > div > div > div > div {
+  font-size: 1.1rem;
   font-weight: 500;
   padding: 20px 25px;
   border-radius: 8px;
@@ -194,8 +211,11 @@
 
 .billing_address > div,
 .order_status > div > div {
-  padding-left: 10px;
-  font-size: 1.2rem;
+  width: 100%;
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid var(--light-bg-color);
+  font-size: 1.1rem;
 }
 .order_status > div > p {
   color: gray;

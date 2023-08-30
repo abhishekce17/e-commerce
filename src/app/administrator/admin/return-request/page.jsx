@@ -19,7 +19,7 @@ const page = () => {
             <div>Payment Mode</div>
           </div>
           <div className={styles.product_info} >
-            <div> <Link href={"http://localhost:3000/administrator/admin/order-managment/order-details/orderId"} > #AB152CL </Link> </div>
+            <div> <Link href={`/administrator/admin/order-managment/order-details/orderId`} > #AB152CL </Link> </div>
             <div>Nothing Phone 2 120 Htz</div>
             <div>Mobiles</div>
             <div>2250</div>

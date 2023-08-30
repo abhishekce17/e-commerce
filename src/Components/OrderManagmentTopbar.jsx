@@ -3,12 +3,11 @@ import React, { useState } from 'react';
 import { RiSearch2Line } from 'react-icons/ri';
 import styles from '@/Styles/OrderManagment.module.css'; // Assuming you have a CSS module file
 
-const OrderManagmentTopbar = () => {
+const OrderManagmentTopbar = (params) => {
   const [selectedOption, setSelectedOption] = useState('All orders');
-
   const handleOptionClick = (option) => {
+    params.filterOrders(option)
     setSelectedOption(option);
-    console.log(option);
   };
 
   return (

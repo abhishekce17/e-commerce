@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import styles from "@/Styles/CategoryManagment.module.css"
 import { ImCircleUp } from 'react-icons/im'
+import { useRouter } from 'next/navigation';
 
 
 const AddCategory = () => {
+  const router = useRouter()
   const [newCategory, setNewCategory] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [newBrand, setNewBrand] = useState('');
@@ -36,10 +38,10 @@ const AddCategory = () => {
   const handleAddCategory = () => {
     if (newCategory !== '') {
       const newCategoryObj = {
-        name: newCategory,
-        brands: [],
-        variants: [],
-        tags: []
+        category: newCategory,
+        categoryBrands: [],
+        defaultVariants: [],
+        filterTags: []
       };
       setCategories([...categories, newCategoryObj]);
       setNewCategory('');
@@ -50,7 +52,7 @@ const AddCategory = () => {
     if (selectedCategory !== null && newBrand !== '') {
       const updatedCategories = [...categories];
       const selectedCategoryObj = updatedCategories[selectedCategory];
-      selectedCategoryObj.brands.push(newBrand);
+      selectedCategoryObj.categoryBrands.push(newBrand);
       setCategories(updatedCategories);
       setNewBrand('');
     }
@@ -62,17 +64,17 @@ const AddCategory = () => {
       const selectedCategoryObj = updatedCategories[selectedCategory];
 
       // Check if the variant with the same title already exists
-      const existingVariant = selectedCategoryObj.variants.find(variant => variant.title === newVariantTitle);
+      const existingVariant = selectedCategoryObj.defaultVariants.find(variant => variant.title === newVariantTitle);
       if (existingVariant) {
         // If the variant exists, add the new type to it
-        existingVariant.types.push(newVariantType);
+        existingVariant.type.push({ variant: newVariantType });
       } else {
         // If the variant does not exist, create a new variant
         const newVariantObj = {
           title: newVariantTitle,
-          types: [newVariantType]
+          type: [{ variant: newVariantType }]
         };
-        selectedCategoryObj.variants.push(newVariantObj);
+        selectedCategoryObj.defaultVariants.push(newVariantObj);
       }
 
       setCategories(updatedCategories);
@@ -85,7 +87,7 @@ const AddCategory = () => {
     if (selectedCategory !== null && newTag !== '') {
       const updatedCategories = [...categories];
       const selectedCategoryObj = updatedCategories[selectedCategory];
-      selectedCategoryObj.tags.push(newTag);
+      selectedCategoryObj.filterTags.push(newTag);
       setCategories(updatedCategories);
       setNewTag('');
     }
@@ -95,7 +97,7 @@ const AddCategory = () => {
     if (selectedCategory !== null) {
       const updatedCategories = [...categories];
       const selectedCategoryObj = updatedCategories[selectedCategory];
-      selectedCategoryObj.brands = selectedCategoryObj.brands.filter((brand) => brand !== brandToRemove);
+      selectedCategoryObj.categoryBrands = selectedCategoryObj.categoryBrands.filter((brand) => brand !== brandToRemove);
       setCategories(updatedCategories);
     }
   };
@@ -104,11 +106,11 @@ const AddCategory = () => {
     if (selectedCategory !== null) {
       const updatedCategories = [...categories];
       const selectedCategoryObj = updatedCategories[selectedCategory];
-      if (selectedCategoryObj.variants.length > variantIndex) {
-        const selectedVariantObj = selectedCategoryObj.variants[variantIndex];
-        selectedVariantObj.types.splice(typeIndex, 1);
-        if (selectedVariantObj.types.length === 0) {
-          selectedCategoryObj.variants.splice(variantIndex, 1);
+      if (selectedCategoryObj.defaultVariants.length > variantIndex) {
+        const selectedVariantObj = selectedCategoryObj.defaultVariants[variantIndex];
+        selectedVariantObj.type.splice(typeIndex, 1);
+        if (selectedVariantObj.type.length === 0) {
+          selectedCategoryObj.defaultVariants.splice(variantIndex, 1);
         }
       }
       setCategories(updatedCategories);
@@ -119,7 +121,7 @@ const AddCategory = () => {
     if (selectedCategory !== null) {
       const updatedCategories = [...categories];
       const selectedCategoryObj = updatedCategories[selectedCategory];
-      selectedCategoryObj.tags = selectedCategoryObj.tags.filter((tag) => tag !== tagToRemove);
+      selectedCategoryObj.filterTags = selectedCategoryObj.filterTags.filter((tag) => tag !== tagToRemove);
       setCategories(updatedCategories);
     }
   };
@@ -138,14 +140,23 @@ const AddCategory = () => {
     setSelectedCategory(categoryIndex);
   };
 
-  const handleSubmit = () => {
-
+  const handleSubmit = async () => {
+    if (categories.length) {
+      const response = await fetch("/api/AdminCategories/AddCategories", {
+        method: "POST",
+        body: JSON.stringify(categories)
+      })
+      const result = await response.json()
+      if (result.status === 200) {
+        router.push("/administrator/admin/category-managment")
+      }
+    }
   }
 
   const renderCategoryOptions = () => {
     return categories.map((category, index) => (
       <option key={index} value={index}>
-        {category.name}
+        {category.category}
       </option>
     ));
   };
@@ -153,7 +164,7 @@ const AddCategory = () => {
   // const renderBrands = () => {
   //   if (selectedCategory !== null && categories[selectedCategory] !== undefined) {
   //     const selectedCategoryObj = categories[selectedCategory];
-  //     return selectedCategoryObj.brands.map((brand, brandIndex) => (
+  //     return selectedCategoryObj.categoryBrands.map((brand, brandIndex) => (
   //       <li key={brandIndex}>
   //         {brand}
   //         <button onClick={() => handleRemoveBrand(brand)}>Remove</button>
@@ -166,11 +177,11 @@ const AddCategory = () => {
   // const renderVariants = () => {
   //   if (selectedCategory !== null && categories[selectedCategory] !== undefined) {
   //     const selectedCategoryObj = categories[selectedCategory];
-  //     return selectedCategoryObj.variants.map((variant, variantIndex) => (
+  //     return selectedCategoryObj.defaultVariants.map((variant, variantIndex) => (
   //       <li key={variantIndex}>
   //         {variant.title}
   //         <ul>
-  //           {variant.types.map((type, typeIndex) => (
+  //           {variant.type.map((type, typeIndex) => (
   //             <li key={typeIndex}>
   //               {type}
   //               <button onClick={() => handleRemoveVariantType(variantIndex, typeIndex)}>Remove</button>
@@ -186,7 +197,7 @@ const AddCategory = () => {
   // const renderTags = () => {
   //   if (selectedCategory !== null && categories[selectedCategory] !== undefined) {
   //     const selectedCategoryObj = categories[selectedCategory];
-  //     return selectedCategoryObj.tags.map((tag, tagIndex) => (
+  //     return selectedCategoryObj.filterTags.map((tag, tagIndex) => (
   //       <li key={tagIndex}>
   //         {tag}
   //         <button onClick={() => handleRemoveTag(tag)}>Remove</button>
@@ -202,16 +213,16 @@ const AddCategory = () => {
       return (
         <div className={styles.row_preview} >
           <label>
-           <ImCircleUp className={styles.list_style} /> Category
+            <ImCircleUp className={styles.list_style} /> Category
           </label>
           <p>
-            {selectedCategoryObj.name}
+            {selectedCategoryObj.category}
           </p>
           <label>
-          <ImCircleUp className={styles.list_style} /> Brands
+            <ImCircleUp className={styles.list_style} /> Brands
           </label>
 
-          {selectedCategoryObj.brands.map((brand, index) => {
+          {selectedCategoryObj.categoryBrands.map((brand, index) => {
             return (<div key={index} >
               <span>{brand}</span>
               <button onClick={() => handleRemoveBrand(brand)}>Remove</button>
@@ -219,21 +230,21 @@ const AddCategory = () => {
           })}<br />
 
           <label>
-          <ImCircleUp className={styles.list_style} /> Variants
+            <ImCircleUp className={styles.list_style} /> Variants
           </label>
           <ul>
-            {selectedCategoryObj.variants.map((variant, variantIndex) => (
+            {selectedCategoryObj.defaultVariants.map((variant, variantIndex) => (
               <li key={variantIndex}>
                 <label>
-                <ImCircleUp className={styles.list_style} /> Title
+                  <ImCircleUp className={styles.list_style} /> Title
                 </label>
                 <p>
                   {variant.title}<br />
                 </p>
                 <label>
-                <ImCircleUp className={styles.list_style} /> Type
+                  <ImCircleUp className={styles.list_style} /> Type
                 </label>
-                {variant.types.map((type, index) => {
+                {variant.type.map((type, index) => {
                   return (<div key={index} >
                     <span>{type}</span>
                     <button onClick={() => handleRemoveVariantType(variantIndex, index)}>Remove</button>
@@ -243,15 +254,14 @@ const AddCategory = () => {
             ))}
           </ul>
           <label>
-          <ImCircleUp className={styles.list_style} /> Tags
+            <ImCircleUp className={styles.list_style} /> Tags
           </label>
-           {selectedCategoryObj.tags.map((tag, index) => {
+          {selectedCategoryObj.filterTags.map((tag, index) => {
             return (<div key={index} >
               <span>{tag}</span>
               <button onClick={() => handleRemoveTag(tag)}>Remove</button>
             </div>)
           })}
-          <button onClick={handleSubmit}>Submit</button>
         </div>
       );
     }
@@ -279,7 +289,7 @@ const AddCategory = () => {
           <div  >
             <div className={styles.add_brand} >
               <div>
-                <label>Brands for </label>{categories[selectedCategory].name}
+                <label>Brands for </label>{categories[selectedCategory].category}
               </div>
               {/* <ul>{renderBrands()}</ul> */}
               <div>
@@ -290,7 +300,7 @@ const AddCategory = () => {
 
             <div className={styles.add_variant} >
               <div>
-                <label>Variant for </label>{categories[selectedCategory].name}
+                <label>Variant for </label>{categories[selectedCategory].category}
               </div>
               {/* <ul>{renderVariants()}</ul> */}
               <div>
@@ -312,7 +322,7 @@ const AddCategory = () => {
 
             <div className={styles.add_tags} >
               <div>
-                <label>Tag for </label>{categories[selectedCategory].name}
+                <label>Tag for </label>{categories[selectedCategory].category}
               </div>
               {/* <ul>{renderTags()}</ul> */}
               <div>
@@ -327,6 +337,11 @@ const AddCategory = () => {
         )
         }
         {renderPreview()}
+        <div style={{ gridColumn: "span 2" }} >
+          <center>
+            <button className={styles.submitButton} onClick={handleSubmit}>Submit</button>
+          </center>
+        </div>
       </div>
     </div>
   );

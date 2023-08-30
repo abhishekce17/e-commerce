@@ -1,27 +1,28 @@
 "use client"
-import React, { useState } from 'react';
-import styles from '@/Styles/SpecialDealsManagment.module.css';
-import Image from 'next/image';
-import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import { RiCloseLine, RiSearchLine } from 'react-icons/ri';
 import { IoIosImages } from 'react-icons/io';
+import Image from 'next/image';
+import Link from 'next/link';
+import styles from '@/Styles/SpecialDealsManagment.module.css';
+import Loading from '../loading';
+import { useRouter } from 'next/navigation';
+
 
 const SpecialDeals = () => {
-  const [startDeals, setStartDeals] = useState(true);
-  const [searchSaleProduct, setSearchSaleProduct] = useState("")
-  const [bannerImages, setBannerImages] = useState([{ pcImage: null, mobileImage: null, product: {} }]);
+  const router = useRouter()
+  const [isLoading, SetIsLoading] = useState(true)
+  const [searchSaleProduct, setSearchSaleProduct] = useState("");
+  const [bannerImages, setBannerImages] = useState([
+    { pcImage: null, mobileImage: null, product: {} }
+  ]);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  // const [discountPercentage, setDiscountPercentage] = useState(0);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [bannerProduct, setBannerProduct] = useState("")
+  const [productList, setProductList] = useState([]);
+  const [bannerProductList, setBannerProductList] = useState([]);
+  const [bannerProdcuctQuery, setBannerProdcuctQuery] = useState({ 0: "" })
   const [selectAll, setSelectAll] = useState(false);
-
-  const handleStartDeals = () => {
-    setBannerImages([{ pcImage: null, mobileImage: null, product: {} }])
-    setSelectedProducts([])
-    setStartDeals(!startDeals);
-  };
+  const [removableSelectedProducts, setRemovableSelectedProducts] = useState([])
+  const [tempData, setTempData] = useState([]);
 
   const handleBannerImageUpload = (event, index, imageType) => {
     const file = event.target.files[0];
@@ -36,13 +37,17 @@ const SpecialDeals = () => {
     setBannerImages(updatedBannerImages);
   };
 
+  function ProdcutInfo() {
+
+  }
 
   const handleAddBannerImage = () => {
+    setBannerProdcuctQuery({ ...bannerProdcuctQuery, [bannerImages.length]: "" })
     setBannerImages([...bannerImages, { pcImage: null, pcText: '', product: {} }]);
   };
 
   const handleBannerProduct = (productId, index) => {
-    const selectedProduct = BannerProductList.find((product) => product.id === productId);
+    const selectedProduct = bannerProductList.find((product) => product.productId === productId);
     setBannerImages((prevBannerImages) => {
       const updatedBannerImages = [...prevBannerImages];
       const bannerProduct = updatedBannerImages[index].product;
@@ -53,25 +58,62 @@ const SpecialDeals = () => {
       }
       return updatedBannerImages;
     });
-    setBannerProduct("")
+    setBannerProdcuctQuery({ ...bannerProdcuctQuery, [index]: "" })
   };
 
 
-  const handleRemoveBannerImage = (index) => {
-    const updatedBannerImages = [...bannerImages];
-    updatedBannerImages.splice(index, 1);
-    setBannerImages(updatedBannerImages);
+  const handleRemoveBannerImage = async (index, dealId) => {
+    if (dealId !== undefined) {
+      console.log("calling remove route")
+      const response = await fetch(`/api/AdminDealseSetting/RemoveDeal/${dealId}`, {
+        method: "DELETE"
+      })
+      const result = await response.json()
+      if (result?.status == 200) {
+        window.alert("Deal Remove Successfully")
+        router.replace("/administrator/admin/special-deals")
+      }
+    }
+    else {
+      const updatedBannerImages = [...bannerImages];
+      updatedBannerImages.splice(index, 1);
+      setBannerImages(updatedBannerImages);
+      setBannerProdcuctQuery((prevBannerProductQuery) => {
+        const tempData = prevBannerProductQuery
+        delete tempData[index]
+        return Object.assign({}, Object.values(tempData));
+      });
+    }
   };
+
 
   const handleProductToggle = (productId) => {
+    const productToRemove = productList.find(product => product.productId === productId);
+    if (productToRemove?.dealProduct && tempData.length) {
+      const dealIdToRemove = tempData.find(data => data.productId === productId)?.dealId;
+
+      if (dealIdToRemove) {
+        if (removableSelectedProducts.includes(dealIdToRemove)) {
+          const updatedRemovableProducts = removableSelectedProducts.filter(dealId => dealId !== dealIdToRemove);
+          setRemovableSelectedProducts(updatedRemovableProducts);
+        } else {
+          setRemovableSelectedProducts(prevRemovableProducts => [
+            ...prevRemovableProducts,
+            dealIdToRemove
+          ]);
+        }
+      }
+    }
+
     setSelectedProducts((prevSelectedProducts) => {
-      const selectedProduct = productList.find((product) => product.id === productId);
-      if (prevSelectedProducts.find((product) => product.id === productId) !== undefined) {
-        return prevSelectedProducts.filter((product) => product.id !== productId);
+      const selectedProduct = productList.find((product) => product.productId === productId);
+      if (prevSelectedProducts.find((product) => product.productId === productId) !== undefined) {
+        return prevSelectedProducts.filter((product) => product.productId !== productId);
       } else {
         return [...prevSelectedProducts, selectedProduct];
       }
     });
+    setSearchSaleProduct("")
   };
 
 
@@ -91,56 +133,105 @@ const SpecialDeals = () => {
     return finalValue.toFixed(2);
   };
 
-  const handleProductDiscountChange = (event, productId, index) => {
+  const handleProductDiscountChange = (event, productId, index, title, variant, variantIndex, typeIndex) => {
     const { name, value } = event.target;
     const percentage = parseInt(value);
+
+    const updateProductWithDiscount = (product, discount, typeIndex) => {
+      return {
+        ...product,
+        discount,
+        initialDiscount: product.initialDiscount !== undefined ? product.initialDiscount : product.discount,
+        netValue: calculateFinalValue(product.price, discount),
+        variants: product.variants.map((varinatProduct, vIndex) => {
+          if (vIndex === variantIndex) {
+            return {
+              ...varinatProduct,
+              type: varinatProduct.type.map((variantType, tIndex) =>
+                tIndex === typeIndex
+                  ? {
+                    ...variantType,
+                    discount,
+                    initialDiscount: variantType.initialDiscount !== undefined ? variantType.initialDiscount : variantType.discount,
+                    netValue: calculateFinalValue(variantType.price, discount),
+                  }
+                  : variantType
+              ),
+            };
+          }
+          return varinatProduct;
+        }),
+      };
+    };
+
     if (name !== "bannerProduct") {
       setSelectedProducts((prevSelectedProducts) =>
         prevSelectedProducts.map((product) =>
-          product.id === productId ? { ...product, discount: percentage, netValue: calculateFinalValue(product.price, percentage) } : product
+          product.productId === productId ? updateProductWithDiscount(product, percentage, typeIndex) : product
         )
       );
-    }
-    else {
+    } else {
       setBannerImages((prevBannerImages) => {
         const updatedBannerImages = [...prevBannerImages];
-        console.log(updatedBannerImages)
-        console.log(index)
-        updatedBannerImages[index].product.discount = percentage;
-        updatedBannerImages[index].product.netValue = calculateFinalValue(updatedBannerImages[index].product.price, percentage);
-        return updatedBannerImages;
-      })
-    };
-  }
+        const bannerProduct = updatedBannerImages[index].product;
 
-  const handleSearchProduct = (e) => {
+        if (bannerProduct.productId !== undefined) {
+          updatedBannerImages[index].product = updateProductWithDiscount(bannerProduct, percentage, typeIndex);
+        }
+
+        return updatedBannerImages;
+      });
+    }
+  };
+
+
+
+
+  const handleSearchProduct = (e, index) => {
     const { name, value } = e.target
     if (name === "bannerProduct") {
-      setBannerProduct(value)
+      setBannerProdcuctQuery({ ...bannerProdcuctQuery, [index]: value })
     }
     if (name === "saleProducts") {
       setSearchSaleProduct(value)
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+
     event.preventDefault();
-    // Perform submit logic here
+    const formDataAPI = new FormData()
+
+    bannerImages.map((product) => {
+      (product.mobileImage !== undefined && product.mobileImage !== null) && formDataAPI.append(`${product.product.productId} mobileView`, product.mobileImage);
+      (product.pcImage !== undefined && product.pcImage !== null) && formDataAPI.append(`${product.product.productId} pcView`, product.pcImage);
+    })
+    formDataAPI.append("body", JSON.stringify({ bannerProduct: bannerImages, selectedProducts: selectedProducts }))
+
+    if (selectedProducts.some(x => x.dealId === undefined) || bannerImages.some(y => y.product.productId !== undefined)) {
+      const response = await fetch("/api/AdminDealseSetting/AddDealse", {
+        method: "POST",
+        body: formDataAPI
+      })
+
+      const result = await response.json()
+      if (result.status === 200) {
+        window.alert('successfully added')
+        // router.replace("/administrator/admin/special-deals")
+      }
+      else if (result.status === 500) {
+        window.alert(`Error ${Object.values(result.error)}`)
+      }
+    }
+    if (removableSelectedProducts.length) {
+      const encodedArray = encodeURIComponent(JSON.stringify(removableSelectedProducts))
+      const dealRemoveResponse = await fetch(`/api/AdminDealseSetting/RemoveDeal/DealIdArray/${encodedArray}`, {
+        method: "DELETE"
+      })
+      const dealRemoveResult = await dealRemoveResponse.json()
+    }
+
   };
-
-  const productList = [
-    { id: 1, name: 'Product 1', category: 'Mobiles', stock: 2250, price: 1522 },
-    { id: 2, name: 'Product 2', category: 'Mobiles', stock: 2250, price: 1522 },
-    { id: 3, name: 'Product 3', category: 'Mobiles', stock: 2250, price: 1522 },
-    // Add more products as needed
-  ];
-
-  const BannerProductList = [
-    { id: 1, name: 'Product 1', category: 'Mobiles', stock: 2250, price: 1522 },
-    { id: 2, name: 'Product 2', category: 'Mobiles', stock: 2250, price: 1522 },
-    { id: 3, name: 'Product 3', category: 'Mobiles', stock: 2250, price: 1522 },
-    // Add more products as needed
-  ];
 
   const handleDrop = (event, index, imageType) => {
     event.preventDefault();
@@ -156,22 +247,66 @@ const SpecialDeals = () => {
     setBannerImages(updatedBannerImages);
   };
 
+  async function fetchingAllProductsSnap() {
+    const res = await fetch(`/api/product-revenue-details`, {
+      method: "GET",
+    });
+    const result = await res.json()
+    if (result.status === 200) {
+      // console.log(result.data)
+      setProductList(result.data)
+      setBannerProductList(result.data)
+    }
+  }
+
+
+  async function existDeals() {
+    const res = await fetch(`/api/AdminDealseSetting/FetchDealse`, {
+      method: "GET",
+    });
+    const result = await res.json()
+    if (result.status === 200) {
+      setSelectedProducts(result.data.selectedDeals);
+
+      setTempData([
+        ...result.data.selectedDeals.map(deal => ({
+          productId: deal.productId,
+          dealId: deal.dealId
+        }))
+      ]);
+      setBannerImages(prevBannerImages => [
+        ...prevBannerImages,
+        ...result.data.bannerDeals.map(({ pcViewURL, mobileViewURL, dealId, ...product }) => ({
+          pcImageUrl: pcViewURL,
+          mobileImageUrl: mobileViewURL,
+          dealId: dealId,
+          product: product
+        }))
+      ]);
+
+      // console.log(result.data)
+    }
+    SetIsLoading(false)
+  }
+
+  useEffect(() => {
+    fetchingAllProductsSnap()
+    existDeals()
+  }, [])
+
   const handleDragOver = (event) => {
     event.preventDefault();
   };
 
   return (
     <div className={styles.SpecialDeals_page} >
-      <div className={styles.activate_deals_option} >
-        Add Special Deals Products
-        <button className={startDeals && styles.activated} onClick={handleStartDeals}></button>
-      </div>
-      {startDeals && (
+      {isLoading ? Loading()
+        :
         <form onSubmit={handleSubmit}>
           <div className={styles.select_banner_images} >
             <div className={styles.image_preview}>
               {bannerImages.map((banner, index) => (
-                <div key={`image-${index}`} >
+                <div key={`banner-${banner.id}-${index}`} >
                   <div className={styles.laptop_view_image} >
                     {banner.pcImageUrl && (
                       <div className={styles.image_container}>
@@ -237,7 +372,7 @@ const SpecialDeals = () => {
                       </label>
                     )}
                   </div>
-                  {banner.product.id !== undefined &&
+                  {banner.product.productId !== undefined &&
                     <div className={`${styles.view_products} ${styles.select_banner_product}`}>
                       <h3>Banner Product</h3>
                       <div className={styles.headings}>
@@ -248,62 +383,104 @@ const SpecialDeals = () => {
                         <div>Discount</div>
                         <div>Final Price</div>
                       </div>
-                      {/* {selectedProducts.map((product) => ( */}
-                      <div key={banner.product.id} className={styles.product_info}>
-                        <input
-                          type="checkbox"
-                          checked
-                          // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
-                          onChange={() => handleBannerProduct(banner.product.id, index)}
-                        />
-                        <div>
-                          <Image src={'/category.jpg'} width={100} height={100} alt="name" />
-                          <Link href={`/administrator/admin/product-managment/product-details/${banner.product.id}`}>
-                            <p>{banner.product.name}</p>
-                          </Link>
-                        </div>
-                        <div>{banner.product.category}</div>
-                        <div>{banner.product.stock}</div>
-                        <div>${banner.product.price}</div>
-                        <>
-                          <div className={styles.deals_input}>
+
+                      {
+                        banner.product.variants.length === 0 || banner.product.variants === "" ?
+                          <div key={banner.product.productId} className={styles.product_info}>
                             <input
-                              type="text"
-                              placeholder="Discount"
-                              name='bannerProduct'
-                              value={banner.product.discount || ""}
-                              onChange={(event) => handleProductDiscountChange(event, banner.product.id, index)}
+                              type="checkbox"
+                              checked
+                            // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
+                            // onChange={() => handleBannerProduct(banner.product.productId, index)}
                             />
+                            <div>
+                              <Image src={banner.product.productFirtsImgURL} width={100} height={100} alt="name" />
+                              <Link href={`/administrator/admin/product-managment/product-details/${banner.product.productId}`}>
+                                <p>{banner.product.productName}</p>
+                              </Link>
+                            </div>
+                            <div>{banner.product.category}</div>
+                            <div>{banner.product.stock}</div>
+                            <div>{banner.product.price}</div>
+                            <>
+                              <div className={styles.deals_input}>
+                                <input
+                                  disabled={banner.dealId !== undefined}
+                                  type="text"
+                                  placeholder="Discount"
+                                  name='bannerProduct'
+                                  value={banner.product.discount || ""}
+                                  onChange={(event) => handleProductDiscountChange(event, banner.product.productId, index)}
+                                />
+                              </div>
+                              <div className={styles.deals_input}>
+                                <input
+                                  type="text"
+                                  placeholder="Net Value"
+                                  disabled
+                                  value={calculateFinalValue(banner.product.price, banner.product.discount)}
+                                />
+                              </div>
+                            </>
                           </div>
-                          <div className={styles.deals_input}>
-                            <input
-                              type="text"
-                              placeholder="Net Value"
-                              disabled
-                              value={banner.product.netValue || ""}
-                            // onChange={(event) => handleProductNetValueChange(event, product.id)}
-                            />
-                          </div>
-                        </>
-                      </div>
-                      {/* ))} */}
-
-
-
-
+                          :
+                          banner.product.variants.map((productVariant, key1) => {
+                            return productVariant.type.map((variantType, key2) => {
+                              return (
+                                <div key={`product-${banner.product.productId}-${key1}-${key2}`} className={styles.product_info}>
+                                  <input
+                                    type="checkbox"
+                                    checked
+                                    // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
+                                    onChange={() => handleBannerProduct(banner.product.productId, index)}
+                                  />
+                                  <div>
+                                    <Image src={banner.product.productFirtsImgURL} width={100} height={100} alt="name" />
+                                    <Link href={`/administrator/admin/product-managment/product-details/${banner.product.productId}`}>
+                                      <p>{banner.product.productName} ({variantType.variant})</p>
+                                    </Link>
+                                  </div>
+                                  <div>{banner.product.category}</div>
+                                  <div>{variantType.stock}</div>
+                                  <div>{variantType.price}</div>
+                                  <>
+                                    <div className={styles.deals_input}>
+                                      <input
+                                        disabled={banner.dealId !== undefined}
+                                        type="text"
+                                        placeholder="Discount"
+                                        name='bannerProduct'
+                                        value={variantType.discount || ""}
+                                        onChange={(event) => handleProductDiscountChange(event, banner.product.productId, index, productVariant.title, variantType.variant, key1, key2)}
+                                      />
+                                    </div>
+                                    <div className={styles.deals_input}>
+                                      <input
+                                        type="text"
+                                        placeholder="Net Value"
+                                        disabled
+                                        value={calculateFinalValue(variantType.price, variantType.discount)}
+                                      />
+                                    </div>
+                                  </>
+                                </div>
+                              )
+                            })
+                          })
+                      }
                     </div>
                   }
-                  {banner.product.id === undefined &&
+                  {banner.product.productId === undefined &&
                     <div className={styles.banner_product} >
                       <RiSearchLine style={{ position: 'relative', top: '4px' }} />
-                      <input type='text' name='bannerProduct' value={bannerProduct} onChange={handleSearchProduct} placeholder='Search banner product, by name, product id or page link' />
+                      <input type='text' name='bannerProduct' value={bannerProdcuctQuery[index]} onChange={(e) => { handleSearchProduct(e, index) }} placeholder='Search banner product, by name, product id or page link' />
                     </div>
                   }
-                  <button type="button" onClick={() => handleRemoveBannerImage(index)}>
+                  <button type="button" onClick={() => handleRemoveBannerImage(index, banner.dealId)}>
                     Remove
                   </button>
 
-                  {bannerProduct.length > 0 && banner.product.id === undefined &&
+                  {bannerProdcuctQuery[index].length > 0 && banner.product.productId === undefined &&
                     <div className={`${styles.view_products} ${styles.not_selected} ${styles.select_banner_product}`}>
                       <div className={styles.headings}>
                         <div style={{ gridColumn: "1 / span 2" }} >Product</div>
@@ -311,52 +488,55 @@ const SpecialDeals = () => {
                         <div>Stock</div>
                         <div>Price</div>
                       </div>
-                      {BannerProductList.map((product) => (
-                        <div key={product.id} className={styles.product_info}>
-                          <input
-                            type="checkbox"
-                            checked={bannerImages.find((selected) => selected.product.id === product.id) !== undefined}
-                            // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
-                            onChange={() => handleBannerProduct(product.id, index)}
-                          />
-                          <div>
-                            <Image src={'/category.jpg'} width={100} height={100} alt="name" />
-                            <Link href={`/administrator/admin/product-managment/product-details/${product.id}`}>
-                              <p>{product.name}</p>
-                            </Link>
-                          </div>
-                          <div>{product.category}</div>
-                          <div>{product.stock}</div>
-                          <div>${product.price}</div>
-                          {/* <>
-                          <div className={styles.deals_input}>
-                            <input
-                              type="text"
-                              placeholder="Discount"
-                              value={product.discount || ""}
-                              onChange={(event) => handleProductDiscountChange(event, product.id)}
-                            />
-                          </div>
-                          <div className={styles.deals_input}>
-                            <input
-                              type="text"
-                              placeholder="Net Value"
-                              disabled
-                              value={product.netValue || ""}
-                            // onChange={(event) => handleProductNetValueChange(event, product.id)}
-                            />
-                          </div>
-                        </> */}
-                        </div>
+                      {bannerProductList.map((product) => (
+                        <>
+                          {product.variants.length === 0 || product.variants === "" ?
+                            <div key={`banner product-${product.productId}`} className={styles.product_info}>
+                              <input
+                                type="checkbox"
+                                checked={bannerImages.find((selected) => selected.product.productId === product.productId) !== undefined}
+                                // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
+                                onChange={() => handleBannerProduct(product.productId, index)}
+                              />
+                              <div>
+                                <Image src={product.productFirtsImgURL} width={100} height={100} alt="name" />
+                                <Link href={`/administrator/admin/product-managment/product-details/${product.productId}`}>
+                                  <p>{product.productName}</p>
+                                </Link>
+                              </div>
+                              <div>{product.category}</div>
+                              <div>{product.stock}</div>
+                              <div>{product.price}</div>
+                            </div>
+                            :
+                            product.variants.map((varinatProduct, key1) => {
+                              return varinatProduct.type.map((variantType, key2) => {
+                                return (
+                                  <div key={[product.productId, key1, key2]} className={styles.product_info}>
+                                    <input
+                                      type="checkbox"
+                                      checked={bannerImages.find((selected) => selected.product.productId === product.productId) !== undefined}
+                                      onChange={() => handleBannerProduct(product.productId, index, varinatProduct.title, variantType.variant)}
+                                    />
+                                    <div>
+                                      <Image src={product.productFirtsImgURL} width={100} height={100} alt="name" />
+                                      <Link href={`/administrator/admin/product-managment/product-details/${product.productId}`}>
+                                        <p>{product.productName} ({variantType.variant})</p>
+                                      </Link>
+                                    </div>
+                                    <div>{product.category}</div>
+                                    <div>{variantType.stock}</div>
+                                    <div>{calculateFinalValue(variantType.price, variantType.discount)}</div>
+                                  </div>
+                                )
+                              })
+                            })
+                          }
+                        </>
                       ))}
-
-
-
 
                     </div>
                   }
-
-
 
                 </div>
               ))}
@@ -379,48 +559,94 @@ const SpecialDeals = () => {
                   <div>Discount</div>
                   <div>Final Price</div>
                 </div>
-                {selectedProducts.map((product) => (
-                  <div key={product.id} className={styles.product_info}>
-                    <input
-                      type="checkbox"
-                      checked
-                      // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
-                      onChange={() => handleProductToggle(product.id)}
-                    />
-                    <div>
-                      <Image src={'/category.jpg'} width={100} height={100} alt="name" />
-                      <Link href={`/administrator/admin/product-managment/product-details/${product.id}`}>
-                        <p>{product.name}</p>
-                      </Link>
-                    </div>
-                    <div>{product.category}</div>
-                    <div>{product.stock}</div>
-                    <div>${product.price}</div>
-                    <>
-                      <div className={styles.deals_input}>
+                {selectedProducts.map((product) => {
+                  return (
+                    product.variants.length === 0 || product.variants === "" ?
+                      <div key={product.productId} className={styles.product_info}>
                         <input
-                          type="text"
-                          placeholder="Discount"
-                          value={product.discount || ""}
-                          onChange={(event) => handleProductDiscountChange(event, product.id)}
+                          type="checkbox"
+                          checked
+                          // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
+                          onChange={() => handleProductToggle(product.productId)}
                         />
+                        <div>
+                          <Image src={product.productFirtsImgURL} width={100} height={100} alt="name" />
+                          <Link href={`/administrator/admin/product-managment/product-details/${product.productId}`}>
+                            <p>{product.productName}</p>
+                          </Link>
+                        </div>
+                        <div>{product.category}</div>
+                        <div>{product.stock}</div>
+                        <div>{product.price}</div>
+                        <>
+                          <div className={styles.deals_input}>
+                            <input
+                              disabled={product.dealId !== undefined || product.dealProduct}
+                              type="text"
+                              placeholder="Discount"
+                              name="saleProduct"
+                              value={product.discount || ""}
+                              onChange={(event) => handleProductDiscountChange(event, product.productId)}
+                            />
+                          </div>
+                          <div className={styles.deals_input}>
+                            <input
+                              type="text"
+                              placeholder="Net Value"
+                              disabled
+                              value={calculateFinalValue(product.price, product.discount)}
+                            />
+                          </div>
+                        </>
                       </div>
-                      <div className={styles.deals_input}>
-                        <input
-                          type="text"
-                          placeholder="Net Value"
-                          disabled
-                          value={product.netValue || ""}
-                        // onChange={(event) => handleProductNetValueChange(event, product.id)}
-                        />
-                      </div>
-                    </>
-                  </div>
-                ))}
-
-
-
-
+                      :
+                      product.variants.map((productVariant, key1) => {
+                        return (
+                          productVariant.type.map((variantType, key2) => {
+                            return (
+                              <div key={[product.productId, key1, key2]} className={styles.product_info}>
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  // checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
+                                  onChange={() => handleProductToggle(product.productId)}
+                                />
+                                <div>
+                                  <Image src={product.productFirtsImgURL} width={100} height={100} alt="name" />
+                                  <Link href={`/administrator/admin/product-managment/product-details/${product.productId}`}>
+                                    <p>{product.productName} ({variantType.variant})</p>
+                                  </Link>
+                                </div>
+                                <div>{product.category}</div>
+                                <div>{variantType.stock}</div>
+                                <div>{variantType.price}</div>
+                                <>
+                                  <div className={styles.deals_input}>
+                                    <input
+                                      disabled={product.dealId !== undefined || product.dealProduct}
+                                      type="text"
+                                      placeholder="Discount"
+                                      name="saleProduct"
+                                      value={variantType.discount || ""}
+                                      onChange={(event) => handleProductDiscountChange(event, product.productId, undefined, variantType.title, variantType.variant, key1, key2)}
+                                    />
+                                  </div>
+                                  <div className={styles.deals_input}>
+                                    <input
+                                      type="text"
+                                      placeholder="Net Value"
+                                      disabled
+                                      value={calculateFinalValue(variantType.price, variantType.discount)}
+                                    />
+                                  </div>
+                                </>
+                              </div>
+                            )
+                          })
+                        )
+                      })
+                  )
+                })}
               </div>
             </>
           }
@@ -441,56 +667,63 @@ const SpecialDeals = () => {
                     <div>Product</div>
                     <div>Category</div>
                     <div>Stock</div>
-                    <div>Price</div>
+                    <div>Final Price</div>
                   </div>
-                  {productList.map((product, index) => (
-                    <div key={product.id} className={styles.product_info}>
-                      <input
-                        type="checkbox"
-                        checked={selectedProducts.find((selected) => selected.id === product.id) !== undefined}
-                        onChange={() => handleProductToggle(product.id)}
-                      />
-                      <div>
-                        <Image src={'/category.jpg'} width={100} height={100} alt="name" />
-                        <Link href={`/administrator/admin/product-managment/product-details/${product.id}`}>
-                          <p>{product.name}</p>
-                        </Link>
-                      </div>
-                      <div>{product.category}</div>
-                      <div>{product.stock}</div>
-                      <div>${product.price}</div>
-                      {/* {selectedProducts.find((selected) => selected.id === product.id) !== undefined && (
-                        <>
-                          <div className={styles.deals_input}>
-                            <input
-                              type="text"
-                              placeholder="Discount"
-                              value={selectedProducts.find((selected) => selected.id === product.id).discount || ""}
-                              onChange={(event) => handleProductDiscountChange(event, product.id)}
-                            />
+                  {productList.map((product) => (
+                    <>
+                      {product.variants.length === 0 ?
+                        <div key={product.productId} className={styles.product_info}>
+                          <input
+                            type="checkbox"
+                            checked={selectedProducts.find((selected) => selected.productId === product.productId) !== undefined}
+                            onChange={() => handleProductToggle(product.productId)}
+                          />
+                          <div>
+                            <Image src={product.productFirtsImgURL} width={100} height={100} alt="name" />
+                            <Link href={`/administrator/admin/product-managment/product-details/${product.productId}`}>
+                              <p>{product.productName}</p>
+                            </Link>
                           </div>
-                          <div className={styles.deals_input}>
-                            <input
-                              type="text"
-                              placeholder="Net Value"
-                              disabled
-                              value={selectedProducts.find((selected) => selected.id === product.id).netValue || ""}
-                            // onChange={(event) => handleProductNetValueChange(event, product.id)}
-                            />
-                          </div>
-                        </>
-                      )} */}
-                    </div>
+                          <div>{product.category}</div>
+                          <div>{product.stock}</div>
+                          <div>{calculateFinalValue(product.price, product.discount)}</div>
+                        </div>
+                        :
+                        product.variants.map((varinatProduct, key1) => {
+                          return varinatProduct.type.map((variantType, key2) => {
+                            return (
+                              <div key={[product.productId, key1, key2]} className={styles.product_info}>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedProducts.find((selected) => selected.productId === product.productId) !== undefined}
+                                  onChange={() => handleProductToggle(product.productId, varinatProduct.title, variantType.variant)}
+                                />
+                                <div>
+                                  <Image src={product.productFirtsImgURL} width={100} height={100} alt="name" />
+                                  <Link href={`/administrator/admin/product-managment/product-details/${product.productId}`}>
+                                    <p>{product.productName} ({variantType.variant})</p>
+                                  </Link>
+                                </div>
+                                <div>{product.category}</div>
+                                <div>{variantType.stock}</div>
+                                <div>{calculateFinalValue(variantType.price, variantType.discount)}</div>
+                              </div>
+                            )
+                          })
+                        })
+                      }
+                    </>
                   ))}
                 </>
               }
             </div>
           </div>
           <center>
-            <button type="submit" style={{ width: "150px", fontWeight: "600" }}>Save</button>
+            <button type="submit" style={{ width: "max-content", fontWeight: "600" }}>Save Changes</button>
           </center>
         </form>
-      )}
+      }
+
     </div>
   );
 };

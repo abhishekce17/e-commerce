@@ -95,8 +95,8 @@
 .headings,
 .product_info {
   display: grid;
-  grid-template-columns: 40px minmax(350px, 1fr) repeat(5, 1fr);
-  gap: 10px;
+  grid-template-columns: 40px minmax(400px, 1fr) 120px repeat(5, 1fr);
+  gap: 15px;
 }
 .featured_product_managemnet .headings,
 .featured_product_managemnet .product_info {
@@ -116,6 +116,12 @@
   align-self: center;
   width: 19px;
   height: 19px;
+}
+
+.product_info img {
+  width: 30%;
+  height: auto;
+  margin-right: 10px;
 }
 
 .action_icons {

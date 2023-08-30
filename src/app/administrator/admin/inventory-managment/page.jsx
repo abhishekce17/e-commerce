@@ -7,177 +7,139 @@ import axios from "axios";
 import { AiFillMinusSquare, AiFillPlusSquare } from "react-icons/ai";
 import Link from "next/link";
 import Image from "next/image";
+import Loading from "../loading";
 
-const page = () => {
+
+const Page = () => {
   const [selectedPincode, setSelectedPincode] = useState([431206]);
   const [pincodes, setPincodes] = useState(allPincodes);
   const [Cities, setCities] = useState([]);
-  const [categories, setCategories] = useState(["Mobile", "Electronics", "Kitchen"])
+  const [categories, setCategories] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [productStocksInfo, setProductStockInfo] = useState([
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Mobile"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Electronics"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Electronics"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Electronics"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Mobile"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Mobile"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Kitchen"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Kitchen"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Kitchen"
-    },
-    {
-      product: "Nothing Phone 2 8 GEN 1+",
-      product_image: "/category.jpg",
-      productStock: 56,
-      id: "#148562adf",
-      category: "Mobile"
-    },
-  ]);
-  const [filteredProductInfo, setFilteredProductInfo] = useState(productStocksInfo)
+  const [productStocksInfo, setProductStockInfo] = useState([]);
+  const [filteredProductInfo, setFilteredProductInfo] = useState([]);
   const [upperBarValue, setUpperBarValue] = useState("product-stocks");
+  const [updatedProductsId, setUpdatedProductsId] = useState(new Set())
+
   const fetchCities = async () => {
     try {
-      const response = await axios.get(
-        `https://countriesnow.space/api/v0.1/countries/state/cities/q?country=India&state=Maharashtra`
+      const { data } = await axios.get(
+        "https://countriesnow.space/api/v0.1/countries/state/cities/q?country=India&state=Maharashtra"
       );
-      const { data } = response.data;
-      setCities(data);
+      setCities(data.data);
     } catch (error) {
       console.log("Error fetching cities:", error);
     }
   };
 
+  const fetchingAllProductsSnap = async () => {
+    try {
+      const res = await fetch(`/api/product-revenue-details`, {
+        method: "GET",
+      });
+      const result = await res.json();
+      if (result.status === 200) {
+        setProductStockInfo(result.data);
+        setFilteredProductInfo(result.data)
+      }
+    } catch (error) {
+      console.log("Error fetching product data:", error);
+    }
+  };
+
+  async function fetchCategories() {
+    const response = await fetch("/api/AdminCategories/FetchCategories")
+    const resultData = await response.json()
+    setCategories(resultData.data)
+  }
+
   useEffect(() => {
     fetchCities();
+    fetchingAllProductsSnap();
+    fetchCategories()
   }, []);
 
   const handleFilterSelection = (e) => {
     if (upperBarValue === "deliverable-pincode") {
-      let newPincodeArray = allPincodes.filter(
-        (value) => value.districtName === e.target.value
-      );
+      const newPincodeArray = allPincodes.filter((value) => value.districtName === e.target.value);
       setPincodes(newPincodeArray);
       setSelectAll(false);
-    }
-    else {
-      if (e.target.value != "") {
-        let newProductInfoArray = productStocksInfo.filter((value) => {
-          return value.category === e.target.value
-        })
-        return setFilteredProductInfo(newProductInfoArray)
+    } else {
+      if (e.target.value !== "") {
+        const newProductInfoArray = productStocksInfo.filter((value) => value.category === e.target.value);
+        setFilteredProductInfo(newProductInfoArray);
+      } else {
+        setFilteredProductInfo(productStocksInfo);
       }
-      return setFilteredProductInfo(productStocksInfo)
     }
   };
 
   const handleSelectAll = (e) => {
+    const filteredPincodes = pincodes.map((value) => value.pincode);
     setSelectAll(e.target.checked);
-    if (e.target.checked) {
-      setSelectedPincode((prevSelected) => {
-        const filteredPincodes = pincodes.map((value) => value.pincode);
-        const newSelected = [
-          ...new Set([...prevSelected, ...filteredPincodes]),
-        ];
-        return newSelected;
-      });
-    } else {
-      setSelectedPincode((prevSelected) => {
-        const filteredPincodes = pincodes.map((value) => value.pincode);
-        const newSelected = prevSelected.filter(
-          (selected) => !filteredPincodes.includes(selected)
-        );
-        return newSelected;
-      });
+    setSelectedPincode((prevSelected) =>
+      e.target.checked
+        ? [...new Set([...prevSelected, ...filteredPincodes])]
+        : prevSelected.filter((selected) => !filteredPincodes.includes(selected))
+    );
+  };
+
+  const handleSubmit = async () => {
+    if (upperBarValue === "product-stocks") {
+      const response = await fetch("/api/inventory/AdminUpdateStocks", {
+        method: "POST",
+        body: JSON.stringify({ data: Array.from(updatedProductsId) })
+      })
+      const result = await response.json()
+      if (result.status === 200) {
+        alert('Updated Successfully')
+      }
+    }
+    else if (upperBarValue === "deliverable-pincode") {
+      const response = await fetch("/api/inventory/AdminDeliveryPincode", {
+        method: "POST",
+        body: JSON.stringify({ data: selectedPincode })
+      })
+      const result = await response.json()
+      if (result.status === 200) {
+        alert('Added Successfully')
+      }
     }
   };
 
-  const handleSubmit = () => { };
+  const updateProductStocks = (index, operation, varinatIndex, typeIndex, e) => {
+    const updatedProductStocks = [...filteredProductInfo];
+    if (varinatIndex === undefined && typeIndex === undefined) {
 
-  // const updateProductStocks = (e, index, operation) => {
-  const updateProductStocks = (e, index, operation) => {
-    const updatedProductStocks = [...productStocksInfo];
-    const currentStock = updatedProductStocks[index].productStock;
-
-    if (operation === "plus") {
-      updatedProductStocks[index].productStock = currentStock + 1;
-    } else if (operation === "minus" && currentStock > 0) {
-      updatedProductStocks[index].productStock = currentStock - 1;
-    } else {
-      updatedProductStocks[index].productStock =
-        parseInt(e.target.value, 10) || 0;
+      const currentStock = updatedProductStocks[index]?.stock || 0;
+      if (operation === "increament") {
+        updatedProductStocks[index].stock = Number(currentStock) + 1;
+      } else if (operation === "decreament" && currentStock > 0) {
+        updatedProductStocks[index].stock = Number(currentStock) - 1;
+      } else {
+        updatedProductStocks[index].stock = parseInt(operation.target.value, 10) || 0;
+      }
     }
-    setProductStockInfo(updatedProductStocks);
+    else {
+      const currentStock = updatedProductStocks[index]?.variants[varinatIndex].type[typeIndex].stock || 0;
+      if (operation === "increament") {
+        updatedProductStocks[index].variants[varinatIndex].type[typeIndex].stock = Number(currentStock) + 1;
+      } else if (operation === "decreament" && currentStock > 0) {
+        updatedProductStocks[index].variants[varinatIndex].type[typeIndex].stock = Number(currentStock) - 1;
+      } else {
+        updatedProductStocks[index].variants[varinatIndex].type[typeIndex].stock = parseInt(e.target.value, 10) || 0;
+      }
+    }
+    setUpdatedProductsId((prevIds) => new Set(prevIds).add(filteredProductInfo[index]));
+    setFilteredProductInfo(updatedProductStocks);
   };
-
-  // }
 
   const handleCheckboxChange = (e, pincode) => {
-    setSelectedPincode((prevSelected) => {
-      if (e.target.checked) {
-        // Add the pincode if it doesn't exist in the array
-        if (!prevSelected.includes(pincode)) {
-          return [...prevSelected, pincode];
-        }
-      } else {
-        // Remove the pincode if it exists in the array
-        return prevSelected.filter((selected) => selected !== pincode);
-      }
-      return prevSelected;
-    });
-    console.log(selectedPincode);
+    setSelectedPincode((prevSelected) =>
+      e.target.checked
+        ? [...prevSelected, pincode]
+        : prevSelected.filter((selected) => selected !== pincode)
+    );
   };
 
   const handleOptionClick = (option) => {
@@ -189,15 +151,13 @@ const page = () => {
       <div className={styles.view_Inventory}>
         <div className={styles.upper_top_bar}>
           <div
-            className={`${styles.option} ${upperBarValue === "product-stocks" && styles.selected
-              }`}
+            className={`${styles.option} ${upperBarValue === "product-stocks" && styles.selected}`}
             onClick={() => handleOptionClick("product-stocks")}
           >
             Product Stocks
           </div>
           <div
-            className={`${styles.option} ${upperBarValue === "deliverable-pincode" && styles.selected
-              }`}
+            className={`${styles.option} ${upperBarValue === "deliverable-pincode" && styles.selected}`}
             onClick={() => handleOptionClick("deliverable-pincode")}
           >
             Deliverable pincode
@@ -205,121 +165,118 @@ const page = () => {
         </div>
         <div className={styles.top_bar}>
           <div>
-            {" "}
-            <RiSearch2Line style={{ position: "relative", top: "4px" }} />{" "}
-            <input type="text" placeholder="Search..." />{" "}
+            <RiSearch2Line style={{ position: "relative", top: "4px" }} />
+            <input type="text" placeholder="Search..." />
           </div>
           <div>
             <button onClick={handleSubmit}>Submit</button>
-
-            {upperBarValue === "deliverable-pincode" ?
+            {upperBarValue === "deliverable-pincode" ? (
               <select onChange={handleFilterSelection}>
                 <option value="" defaultValue>
                   Filter by Cities
                 </option>
-                {Cities.map((value, index) => {
-                  return (
-                    <option key={index} value={value}>
-                      {" "}
-                      {value}{" "}
-                    </option>
-                  );
-                })}
+                {Cities.map((value, index) => (
+                  <option key={index} value={value}>
+                    {value}
+                  </option>
+                ))}
               </select>
-              :
+            ) : (
               <select onChange={handleFilterSelection}>
                 <option value="" defaultValue>
                   Filter by Categories
                 </option>
-                {categories.map((value, index) => {
-                  return (
-                    <option key={index} value={value}>
-                      {" "}
-                      {value}{" "}
-                    </option>
-                  );
-                })}
+                {categories.map((value, index) => (
+                  <option key={index} value={value.category}>
+                    {value.category}
+                  </option>
+                ))}
               </select>
-            }
-
+            )}
           </div>
         </div>
-        {upperBarValue === "deliverable-pincode" ? (
+        {Cities && productStocksInfo.length ? (
           <>
-            <div className={styles.headings}>
-              <input onChange={handleSelectAll} type="checkbox" />
-              <div>Post Office</div>
-              <div>Pincode</div>
-              <div>Taluka</div>
-              <div>District</div>
-              <div>State</div>
-            </div>
-            {pincodes.map((value, index) => {
-              return (
-                <div key={index} className={styles.pincode_info}>
-                  <input
-                    type="checkbox"
-                    checked={selectedPincode.includes(value.pincode)}
-                    onChange={(e) => handleCheckboxChange(e, value.pincode)}
-                  />
-                  <div>{value.officeName}</div>
-                  <div>{value.pincode}</div>
-                  <div>{value.taluk}</div>
-                  <div>{value.districtName}</div>
-                  <div>{value.stateName}</div>
+            {upperBarValue === "deliverable-pincode" ? (
+              <>
+                <div className={styles.headings}>
+                  <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
+                  <div>Post Office</div>
+                  <div>Pincode</div>
+                  <div>Taluka</div>
+                  <div>District</div>
+                  <div>State</div>
                 </div>
-              );
-            })}
+                {pincodes.map((value, index) => (
+                  <div key={index} className={styles.pincode_info}>
+                    <input
+                      type="checkbox"
+                      checked={selectedPincode.includes(value.pincode)}
+                      onChange={(e) => handleCheckboxChange(e, value.pincode)}
+                    />
+                    <div>{value.officeName}</div>
+                    <div>{value.pincode}</div>
+                    <div>{value.taluk}</div>
+                    <div>{value.districtName}</div>
+                    <div>{value.stateName}</div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className={styles.all_products}>
+                {filteredProductInfo.map((value, index) => (
+                  <div className={styles.product_info} key={index}>
+                    <div style={{ position: "relative" }}>
+                      <div className={styles.product_id}>{value.productId}</div>
+                      <Image style={{ padding: "20px" }} src={value.productFirtsImgURL} width={300} height={300} alt={value.productName} />
+                      <Link href={"/administrator/admin/product-managment/product-details/" + value.productId}>
+                        <p>{value.productName}</p>
+                      </Link>
+                    </div>
+                    <div>
+                      {value.variants.length ?
+                        value.variants.map((eachVariant, key) => (
+                          eachVariant.type.map((eachType, innerKey) => (
+                            <div key={[key, innerKey]} >
+                              <div style={{ textAlign: "center", backgroundColor: "var(--light-bg-color)", color: "white", userSelect: "none" }} > {eachType.variant} </div>
+                              <AiFillMinusSquare className={styles.increament} onClick={() => updateProductStocks(index, "decreament", key, innerKey)} />
+                              <input
+                                type="number"
+                                value={eachType.stock || 0}
+                                onChange={(e) => updateProductStocks(index, undefined, key, innerKey, e)}
+                                min={0}
+                              />
+                              <AiFillPlusSquare className={styles.decreament} onClick={() => updateProductStocks(index, "increament", key, innerKey)} />
+                            </div>
+                          ))
+                        ))
+                        :
+
+                        <div >
+                          <div style={{ textAlign: "center", backgroundColor: "var(--light-bg-color)", color: "white", userSelect: "none" }} > Stock </div>
+                          <AiFillMinusSquare className={styles.increament} onClick={() => updateProductStocks(index, "decreament")} />
+                          <input
+                            type="number"
+                            value={value.stock}
+                            onChange={(e) => updateProductStocks(index, e)}
+                            min={0}
+                          />
+                          <AiFillPlusSquare className={styles.decreament} onClick={() => updateProductStocks(index, "increament")} />
+                        </div>
+
+                      }
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         ) : (
-          <div className={styles.all_products}>
-            {filteredProductInfo.map((value, index) => {
-              return (
-                <div className={styles.product_info} key={index}>
-                  <div style={{ position: "relative" }} >
-                    <div className={styles.product_id} >{value.id}</div>
-                    <Image
-                      src={value.product_image}
-                      width={300}
-                      height={300}
-                      alt="name"
-                    />
-                    <Link
-                      href={
-                        "administrator/admin/product-managment/product-details/product_Id"
-                      }
-                    >
-                      <p>{value.product}</p>
-                    </Link>
-                  </div>
-                  <div>
-                    <AiFillMinusSquare
-                      onClick={(e) => {
-                        updateProductStocks(e, productStocksInfo.indexOf(value), "minus");
-                      }}
-                    />
-                    <input
-                      type="number"
-                      value={value.productStock}
-                      onChange={(e) => {
-                        updateProductStocks(e, productStocksInfo.indexOf(value));
-                      }}
-                      min={0}
-                    />
-                    <AiFillPlusSquare
-                      onClick={(e) => {
-                        updateProductStocks(e, productStocksInfo.indexOf(value), "plus");
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <Loading />
         )}
       </div>
     </div>
   );
 };
 
-export default page;
+export default Page;

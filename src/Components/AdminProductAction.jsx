@@ -4,41 +4,92 @@ import styles from "@/Styles/ProductsManagment.module.css"
 import { RxCross1 } from 'react-icons/rx';
 import { CiImageOn } from 'react-icons/ci';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
-const AdminProdcutActionPage = () => {
-    const router = useRouter()
-    const [productName, setProductName] = useState('');
-    const [price, setPrice] = useState('');
-    const [discount, setDiscount] = useState("");
-    const [netValue, setNetValue] = useState("");
-    const [images, setImages] = useState([]);
-    const [brandName, setBrandName] = useState('');
-    const [category, setCategory] = useState('');
-    const [specifications, setSpecifications] = useState(['']);
-    const [moreDetails, setMoreDetails] = useState('');
-    const [variants, setVariants] = useState([]);
+const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateProduct, handleAddProduct, handleDeleteProduct, revenueDetails, categories }) => {
+    const [productName, setProductName] = useState(FetchedProductDetails?.productName || '');
+    const [price, setPrice] = useState(FetchedProductDetails?.price || '');
+    const [discount, setDiscount] = useState(FetchedProductDetails?.discount || "");
+    // const [netValue, setNetValue] = useState(FetchedProductDetails?.netValue || "");
+    const [images, setImages] = useState(FetchedProductDetails?.imgURLs || []);
+    const [brandName, setBrandName] = useState(FetchedProductDetails?.brandName || '');
+    const [category, setCategory] = useState(FetchedProductDetails?.category || '');
+    const [specifications, setSpecifications] = useState(FetchedProductDetails?.specifications || ['']);
+    const [moreDetails, setMoreDetails] = useState(FetchedProductDetails?.moreDetails || '');
+    const [variants, setVariants] = useState(FetchedProductDetails?.variants || []);
     const fileInputRef = useRef(null);
-    const [variantPrice, setVariantPrice] = useState({})
+    const [variantPrice, setVariantPrice] = useState(FetchedProductDetails?.variantPrice || {})
     const [formData, setFormData] = useState([])
+    const [defaultVariants, setDefaultVariants] = useState(categories.filter(element => element.category === category).defaultVariants)
 
     const handleProductNameChange = (event) => {
         setProductName(event.target.value);
     };
 
+    function renderRevenue(variantPrice) {
+        return (
+            <div className={styles.revenueContainer} >
+                <div className={styles.subgroup1_2}  >
+                    {!Object.keys(variantPrice).length || !Object.values(variantPrice).length ?
+                        <div style={{ gridTemplateColumns: "repeat(3, 1fr)" }} >
+                            <label className={styles.product_discount}>
+                                <p>Stock</p>
+                                <input disabled type="text" value={revenueDetails.stock} onChange={handleDiscountChange} inputMode="numeric" pattern="[0-9]*" />
+
+                            </label>
+                            <label className={styles.product_discount}>
+                                <p>Sold</p>
+                                <input type="Text" disabled value={revenueDetails.sold} />
+                            </label>
+                            <label className={styles.product_discount}>
+                                <p>Revenue (₹) </p>
+                                <input type="Text" disabled value={revenueDetails.totalRevenue} />
+                            </label>
+                        </div>
+                        :
+                        <>
+                            {/* //working here to populate revenue */}
+                            {revenueDetails.variants.map((value, valueIndex) => {
+                                return value.type.map((key, eachValueIndex) => {
+                                    return <div key={eachValueIndex} style={{ gridTemplateColumns: "repeat(4, 1fr)" }} >
+                                        <label>
+                                            <p>Variant</p>
+                                            <input type='text' value={`${key.variant}`} disabled />
+                                        </label>
+                                        <label className={styles.product_discount}>
+                                            <p>Stock</p>
+                                            <input disabled={editMode} type="text" name={key} value={key.stock || "0"} onChange={handleVariantDiscountChange} inputMode="numeric" pattern="[0-9]*" />
+                                        </label>
+                                        <label className={styles.product_discount}>
+                                            <p>Sold </p>
+                                            <input type="Text" disabled value={key.sold || "0"} />
+                                        </label>
+                                        <label className={styles.product_discount}>
+                                            <p>Revenue (₹) </p>
+                                            <input type="Text" disabled value={key.revenue || "0"} />
+                                        </label>
+                                    </div>
+                                })
+                            })}
+                        </>
+                    }
+                </div>
+            </div>
+        )
+    }
+
     const removeDiscountNetValue = (type, variantRemoved) => {
-        let updatedNetValue = { ...netValue };
+        // let updatedNetValue = { ...netValue };
         let updatedDiscount = { ...discount };
 
         delete updatedDiscount[type]; // Delete discount for the given type
-        delete updatedNetValue[type]; // Delete net value for the given type
+        // delete updatedNetValue[type]; // Delete net value for the given type
 
-        setNetValue(updatedNetValue);
+        // setNetValue(updatedNetValue);
         setDiscount(updatedDiscount);
         console.log(variantPrice)
         if (variantRemoved) {
             setDiscount("");
-            setNetValue("");
+            // setNetValue("");
         }
     };
 
@@ -51,8 +102,8 @@ const AdminProdcutActionPage = () => {
     const handleDiscountChange = (event) => {
         const numericValue = event.target.value.replace(/[^0-9]/g, ''); // Filter out non-numeric characters
         setDiscount(numericValue);
-        const calculatedNetValue = price - (price * (numericValue / 100)); // Calculate net value
-        setNetValue(calculatedNetValue.toFixed(2)); // Set net value with 2 decimal places
+        // const calculatedNetValue = price - (price * (numericValue / 100)); // Calculate net value
+        // setNetValue(calculatedNetValue.toFixed(2)); // Set net value with 2 decimal places
     };
 
     const handleVariantDiscountChange = (event) => {
@@ -64,20 +115,19 @@ const AdminProdcutActionPage = () => {
                 return { ...prev, [name]: numericValue };
             });
 
-            const calculatedNetValue = Object.values(variantPrice).map((price) => {
-                return price[name] !== undefined
-                    ? Number(price[name]) - Number(price[name]) * (numericValue / 100)
-                    : "";
-            });
-            setNetValue((prev) => {
-                return { ...prev, [name]: calculatedNetValue.filter(x => typeof x === "number")[0] };
-            });
+            // const calculatedNetValue = Object.values(variantPrice).map((price) => {
+            //     return price[name] !== undefined
+            //         ? Number(price[name]) - Number(price[name]) * (numericValue / 100)
+            //         : "";
+            // });
+            // setNetValue((prev) => {
+            //     return { ...prev, [name]: calculatedNetValue.filter(x => typeof x === "number")[0] };
+            // });
         } else {
             setDiscount({});
-            setNetValue({});
+            // setNetValue({});
         }
     };
-
 
     const handleImageChange = async (event) => {
         const fileList = event.target.files;
@@ -101,13 +151,10 @@ const AdminProdcutActionPage = () => {
     };
 
     const handleCategoryChange = (event) => {
+        console.log(categories)
         const selectedCategory = event.target.value;
         setCategory(selectedCategory);
-        if (selectedCategory && selectedCategory in defaultVariants) {
-            setVariants(defaultVariants[selectedCategory]);
-        } else {
-            setVariants([]);
-        }
+        setVariants(categories.filter(element => element.category === selectedCategory)[0].defaultVariants || []);
     };
 
     const handleSpecificationChange = (event, index) => {
@@ -203,7 +250,6 @@ const AdminProdcutActionPage = () => {
         const updatedVariants = [...variants];
         updatedVariants[variantIndex].type.splice(typeIndex, 1);
         let updateVariantPrice = { ...variantPrice };
-        console.log(updateVariantPrice[variantTitle])
         if (updateVariantPrice[variantTitle] !== undefined) {
             removeDiscountNetValue(type, false)
             delete updateVariantPrice[variantTitle][type]
@@ -222,7 +268,7 @@ const AdminProdcutActionPage = () => {
         let updatedVariants = variants.map((variant, index) => {
             if (variantPrice[variant.title] != undefined) {
                 let newVariant = Object.values(variant.type).map((eachValues, valueIndex) => {
-                    return { ...eachValues, discount: Number(discount[eachValues.variant]), netPrice: Number(netValue[eachValues.variant]), price: Number(variantPrice[variant.title]?.[eachValues.variant]) }
+                    return { ...eachValues, discount: Number(discount[eachValues.variant]), price: Number(variantPrice[variant.title]?.[eachValues.variant]) }
                 })
                 return { ...variant, type: newVariant }
             }
@@ -236,18 +282,26 @@ const AdminProdcutActionPage = () => {
             category: category,
             price: Number(price),
             specifications: specifications,
-            variant: updatedVariants,
+            variants: updatedVariants,
             discount: Number(discount),
-            netPrice: Number(netValue)
+            imgURLs: FetchedProductDetails?.imgURLs || [],
+            averageRating: FetchedProductDetails?.averageRating || 0
         }))
-        const res = await fetch("http://localhost:3000/api/add-products", {
-            method: "POST",
-            body: formDataAPI,
-        });
-        const result = await res.json()
-        if (result.status === 200) {
-            router.replace("/administrator/admin/product-managment")
+        formDataAPI.append("categoryId", categories.filter(element => element.category === category)[0].categoryId)
+        if (typeof editMode === "undefined" && typeof handleUpdateProduct === "undefined" && typeof handleAddProduct === "function") {
+            handleAddProduct(formDataAPI)
         }
+        else {
+            handleUpdateProduct(formDataAPI)
+        }
+        // const res = await fetch("http://localhost:3000/api/add-products", {
+        //     method: "POST",
+        //     body: formDataAPI,
+        // });
+        // const result = await res.json()
+        // if (result.status === 200) {
+        //     router.replace("/administrator/admin/product-managment")
+        // }
     };
 
     const handleDrop = (event) => {
@@ -263,26 +317,24 @@ const AdminProdcutActionPage = () => {
         event.preventDefault();
     };
 
-    const addedBrands = ["realme", "xiaomi", "redmi", "samsung", "apple"];
-    const categoryOptions = ["mobile", "electronic", "clothes", "kitchen"];
-    const defaultVariants = {
-        mobile: [
-            { title: "storage", type: [{ variant: "6GB + 128GB" }, { variant: "8GB + 256 GB" }] },
-            { title: "color", type: [{ variant: "red" }, { variant: "blue" }, { variant: "black" }] },
-        ],
-        electronic: [
-            { title: "wattage", type: ["100W", "200W", "300W"] },
-            { title: "color", type: ["silver", "black"] },
-        ],
-        clothes: [
-            { title: "size", type: ["S", "M", "L", "XL"] },
-            { title: "color", type: ["white", "blue", "black"] },
-        ],
-        kitchen: [
-            { title: "material", type: ["plastic", "metal"] },
-            { title: "color", type: ["red", "green"] },
-        ],
-    };
+    // const defaultVariants = {
+    //     Mobile: [
+    //         { title: "storage", type: [{ variant: "6GB + 128GB" }, { variant: "8GB + 256 GB" }] },
+    //         { title: "color", type: [{ variant: "red" }, { variant: "blue" }, { variant: "black" }] },
+    //     ],
+    //     electronic: [
+    //         { title: "wattage", type: ["100W", "200W", "300W"] },
+    //         { title: "color", type: ["silver", "black"] },
+    //     ],
+    //     clothes: [
+    //         { title: "size", type: ["S", "M", "L", "XL"] },
+    //         { title: "color", type: ["white", "blue", "black"] },
+    //     ],
+    //     kitchen: [
+    //         { title: "material", type: ["plastic", "metal"] },
+    //         { title: "color", type: ["red", "green"] },
+    //     ],
+    // };
 
     return (
         <div className={styles.add_product_page}>
@@ -291,28 +343,28 @@ const AdminProdcutActionPage = () => {
                     <label className={styles.product_name}>
                         Product Name
                         <div>
-                            <input type="text" value={productName} onChange={handleProductNameChange} placeholder='Product name (Not more than 50 characters)' maxLength={50} />
+                            <input disabled={editMode} type="text" value={productName} onChange={handleProductNameChange} placeholder='Product name (Not more than 50 characters)' maxLength={50} />
                         </div>
                     </label>
                     <div className={styles.display_grid}>
-                        <label className={styles.brand_name}>
-                            Brand Name
-                            <select value={brandName} onChange={handleBrandNameChange}>
-                                <option value="">Select Brand</option>
-                                {addedBrands.map((brand, index) => (
-                                    <option key={`brand-${index}`} value={brand}>
-                                        {brand}
+                        <label className={styles.product_category}>
+                            Category
+                            <select disabled={editMode} value={category} onChange={handleCategoryChange}>
+                                <option value="">Select Category</option>
+                                {categories.map((option, index) => (
+                                    <option key={`category-${index}`} value={option.category}>
+                                        {option.category}
                                     </option>
                                 ))}
                             </select>
                         </label>
-                        <label className={styles.product_category}>
-                            Category
-                            <select value={category} onChange={handleCategoryChange}>
-                                <option value="">Select Category</option>
-                                {categoryOptions.map((option, index) => (
-                                    <option key={`category-${index}`} value={option}>
-                                        {option}
+                        <label className={styles.brand_name}>
+                            Brand Name
+                            <select disabled={editMode} value={brandName} onChange={handleBrandNameChange}>
+                                <option value="">Select Brand</option>
+                                {category !== '' && categories.filter(cat => cat.category === category)[0].categoryBrands.map((brand, index) => (
+                                    <option key={`brand-${index}`} value={brand}>
+                                        {brand}
                                     </option>
                                 ))}
                             </select>
@@ -324,52 +376,56 @@ const AdminProdcutActionPage = () => {
                             <div key={`variant-${variantIndex}`} className={styles.variant_item}>
                                 <div className={styles.light_grey} >Title</div>
                                 <input
+                                    disabled={editMode}
                                     type="text"
                                     placeholder="Variant title"
                                     value={variant.title}
                                     onChange={(event) => handleVariantChange(event, variantIndex)}
                                 />
-                                <button
-                                    style={{ marginRight: "10px" }}
-                                    type="button"
-                                    onClick={() => handleRemoveVariant(variantIndex, variant.title)}
-                                >
-                                    Remove Variant
-                                </button>
+                                {!editMode &&
+                                    <button
+                                        style={{ marginRight: "10px" }}
+                                        type="button"
+                                        onClick={() => handleRemoveVariant(variantIndex, variant.title)}
+                                    >
+                                        Remove Variant
+                                    </button>}
                                 <div className={styles.light_grey} >Types</div>
                                 {variant.type.map((type, typeIndex) => (
-                                    <div key={`type-${variantIndex}-${typeIndex}`} className={styles.variant_type}>
+                                    <div key={`type-${variantIndex}-${typeIndex}`} className={styles.variant_type} style={{ marginBottom: "10px" }} >
                                         <input
+                                            disabled={editMode}
                                             type="text"
                                             placeholder="Type"
                                             value={type.variant}
                                             onChange={(event) => handleTypeChange(event, variantIndex, typeIndex)}
                                         />
                                         <input
+                                            disabled={editMode}
                                             name={type.variant}
                                             type="text"
                                             placeholder="Variant Price"
-                                            value={variantPrice[variant.title] !== undefined ? variantPrice[variant.title][type] : ""}
+                                            value={variantPrice[variant.title] !== undefined ? variantPrice[variant.title][type.variant] : ""}
                                             onChange={(event) => handleVariantPrice(event, variant.title)}
                                         />
-                                        <button
+                                        {!editMode && <button
                                             type="button"
                                             onClick={() => handleRemoveType(variantIndex, variant.title, type, typeIndex)}
                                         >
                                             <RxCross1 />
-                                        </button>
+                                        </button>}
                                     </div>
                                 ))}
-                                <button type="button" onClick={() => handleAddType(variantIndex)}>
+                                {!editMode && <button type="button" onClick={() => handleAddType(variantIndex)}>
                                     Add Type
-                                </button>
+                                </button>}
 
                             </div>
                         ))}
                         <div>
-                            <button type="button" onClick={handleAddVariant}>
+                            {!editMode && <button type="button" onClick={handleAddVariant}>
                                 Add Variants
-                            </button>
+                            </button>}
                         </div>
                     </div>
                     <div className={styles.subgroup1_3}>
@@ -377,24 +433,28 @@ const AdminProdcutActionPage = () => {
                         {specifications.map((specification, index) => (
                             <div key={`specification-${index}`} className={styles.specification_item}>
                                 <input
+                                    disabled={editMode}
                                     style={{ marginRight: "10px" }}
                                     type="text"
                                     value={specification}
                                     onChange={(event) => handleSpecificationChange(event, index)}
                                 />
-                                <button style={{ margin: '0' }} type="button" onClick={() => handleRemoveSpecification(index)}>
+                                {!editMode && <button style={{ margin: '0' }} type="button" onClick={() => handleRemoveSpecification(index)}>
                                     <RxCross1 />
-                                </button>
+                                </button>}
                             </div>
                         ))}
-                        <button style={{ margin: "0", width: "max-content" }} type="button" onClick={handleAddSpecification}>
-                            Add Specification
-                        </button>
+                        {
+                            !editMode &&
+                            <button style={{ margin: "0", width: "max-content" }} type="button" onClick={handleAddSpecification}>
+                                Add Specification
+                            </button>
+                        }
                         <div>
                             <label className={styles.more_details}>
                                 More Details
                                 <div>
-                                    <textarea value={moreDetails} onChange={handleMoreDetailsChange} rows={20} cols={51} />
+                                    <textarea disabled={editMode} value={moreDetails} onChange={handleMoreDetailsChange} rows={20} cols={51} />
                                 </div>
                             </label>
                         </div>
@@ -408,29 +468,33 @@ const AdminProdcutActionPage = () => {
                         {images.map((image, index) => (
                             <div key={`image-${index}`}>
                                 <Image width={200} height={200} src={image} alt={`Product ${index}`} className={styles.product_image} />
-                                <button className={styles.remove_image} type="button" onClick={() => handleRemoveImage(index)}>
+
+                                {!editMode && <button className={styles.remove_image} type="button" onClick={() => handleRemoveImage(index)}>
                                     <RxCross1 />
-                                </button>
+                                </button>}
                             </div>
                         ))}
-                        <label className={styles.product_images}>
-                            <div
-                                onDrop={handleDrop}
-                                onDragOver={handleDragOver}
-                                className={styles.image_drop_area}
-                            >
-                                <CiImageOn style={{ fontSize: "2.5rem" }} />
-                                Drag and Drop or click to add images
-                                <input
-                                    name='images'
-                                    type="file"
-                                    multiple
-                                    ref={fileInputRef}
-                                    style={{ display: 'none' }}
-                                    onChange={handleImageChange}
-                                />
-                            </div>
-                        </label>
+                        {
+                            !editMode &&
+                            <label className={styles.product_images}>
+                                <div
+                                    onDrop={handleDrop}
+                                    onDragOver={handleDragOver}
+                                    className={styles.image_drop_area}
+                                >
+                                    <CiImageOn style={{ fontSize: "2.5rem" }} />
+                                    Drag and Drop or click to add images
+                                    <input
+                                        name='images'
+                                        type="file"
+                                        multiple
+                                        ref={fileInputRef}
+                                        style={{ display: 'none' }}
+                                        onChange={handleImageChange}
+                                    />
+                                </div>
+                            </label>
+                        }
                     </div>
                     {/* </div> */}
                     <div className={styles.subgroup1_2} >
@@ -438,42 +502,55 @@ const AdminProdcutActionPage = () => {
                             <div>
                                 <label className={styles.product_price}>
                                     <p>Price (₹)</p>
-                                    <input type="text" value={price} onChange={handlePriceChange} inputMode="numeric" pattern="[0-9]*" />
+                                    <input disabled={editMode} type="text" value={price} onChange={handlePriceChange} inputMode="numeric" pattern="[0-9]*" />
                                 </label>
                                 <label className={styles.product_discount}>
                                     <p>Discount (%)</p>
-                                    <input type="text" value={discount} onChange={handleDiscountChange} inputMode="numeric" pattern="[0-9]*" />
+                                    <input disabled={editMode} type="text" value={discount} onChange={handleDiscountChange} inputMode="numeric" pattern="[0-9]*" />
 
                                 </label>
                                 <label className={styles.product_discount}>
                                     <p>Net Value (₹) </p>
-                                    <input type="Text" disabled value={netValue} />
+                                    <input type="Text" disabled value={price - (price * (discount / 100))} />
                                 </label>
                             </div>
                             :
                             <>
                                 {Object.values(variantPrice).map((value, valueIndex) => {
                                     return Object.keys(value).map((key, eachValueIndex) => {
-                                        return <div key={eachValueIndex} >
-                                            <label>
-                                                <p>Price ₹(Variant)</p>
-                                                <input type='text' value={`${value[key]}(${key})`} disabled />
-                                            </label>
-                                            <label className={styles.product_discount}>
-                                                <p>Discount (%)</p>
-                                                <input type="text" name={key} value={discount[key] || ""} onChange={handleVariantDiscountChange} inputMode="numeric" pattern="[0-9]*" />
-                                            </label>
-                                            <label className={styles.product_discount}>
-                                                <p>Net Value (₹) </p>
-                                                <input type="Text" disabled value={netValue[key] || ""} />
-                                            </label>
-                                        </div>
+                                        return (
+                                            value[key] !== null &&
+                                            <div key={eachValueIndex} >
+                                                <label>
+                                                    <p>Price ₹(Variant)</p>
+                                                    <input type='text' value={`${value[key]}(${key})`} disabled />
+                                                </label>
+                                                <label className={styles.product_discount}>
+                                                    <p>Discount (%)</p>
+                                                    <input disabled={editMode} type="text" name={key} value={discount[key] || ""} onChange={handleVariantDiscountChange} inputMode="numeric" pattern="[0-9]*" />
+                                                </label>
+                                                <label className={styles.product_discount}>
+                                                    <p>Net Value (₹) </p>
+                                                    <input type="Text" disabled value={Number(value[key]) - Number((value[key]) * (discount[key] / 100)) || ""} />
+                                                </label>
+                                            </div>)
                                     })
                                 })}
                             </>
                         }
                     </div>
-                    <button className={styles.add_product_button} type="submit">Add Product</button>
+                    {typeof editMode === "boolean" && typeof handleUpdateProduct === "function" &&
+                        <>
+                            <button className={styles.add_product_button} type="submit" > {editMode ? "Edit Product" : "Save Product"}</button>
+                            <button className={styles.add_product_button} style={{ background: "#ff4545" }} onClick={handleDeleteProduct} type="button" > Delete Product </button>
+                            {
+                                renderRevenue(variantPrice)
+                            }
+                        </>
+                    }
+                    {typeof editMode === "undefined" && typeof handleUpdateProduct === "undefined" &&
+                        <button className={styles.add_product_button} type="submit"> Add Product </button>
+                    }
                 </div>
             </form>
         </div>

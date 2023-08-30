@@ -1,18 +1,62 @@
 "use client"
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from "@/Styles/ProductsManagment.module.css"
 import { RiSearch2Line } from 'react-icons/ri'
-import { BiEditAlt } from "react-icons/bi"
 import Image from 'next/image'
-import { MdDeleteOutline } from 'react-icons/md'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Loading from '../loading'
 
 const page = () => {
+
+  const [fetchedProducts, setFetchedProducts] = useState([])
+
   let router = useRouter()
   const handleClick = () => {
     router.push("/administrator/admin/product-managment/add-products")
   }
+
+  function calulateNetValue(price, discount) {
+    return price - (price * (discount / 100))
+  }
+
+  function renderProductinfo(data, type, index) {
+    return (
+      <div key={index} className={styles.product_info} style={{ margin: "20px 0" }} >
+        <input type='checkbox' />
+        <div>
+          <Image src={data.productFirtsImgURL} width={100} height={100} alt='name' />
+          <Link href={"administrator/admin/product-managment/product-details/" + data.productId} >
+            <p> {data.productName} </p>
+          </Link>
+        </div>
+        <div>{type?.variant || "---"}</div>
+        <div>{data.category}</div>
+        <div>{type?.stock || data.stock}</div>
+        <div>{calulateNetValue(type?.price || data.price, type?.discount || data.discount)}</div>
+        <div>{type?.sold || data.sold}</div>
+        <div> {type?.revenue || data.revenue} </div>
+      </div>
+    )
+  }
+
+  async function fetchingAllProductsSnap() {
+    const res = await fetch(`/api/product-revenue-details`, {
+      method: "GET",
+      // body: formDataAPI,
+    });
+    const result = await res.json()
+    if (result.status === 200) {
+      setFetchedProducts(result.data)
+    }
+  }
+
+  useEffect(() => {
+
+    fetchingAllProductsSnap()
+
+  }, [])
+
   return (
     <div className={styles.product_managemnet} >
       <div className={styles.view_products} >
@@ -23,26 +67,36 @@ const page = () => {
         <div className={styles.headings} >
           <input type='checkbox' />
           <div>Product</div>
+          <div>Variant</div>
           <div>Category</div>
           <div>Stock</div>
           <div>Net Price</div>
-          <div>sold</div>
-          <div>Total Revenue</div>
+          <div>Sold</div>
+          <div>Revenue</div>
         </div>
-        <div className={styles.product_info} >
-          <input type='checkbox' />
-          <div>
-            <Image src={"/category.jpg"} width={100} height={100} alt='name' />
-            <Link href={"administrator/admin/product-managment/product-details/product_Id"} >
-              <p>Nothing Phone 2 120 Htz</p>
-            </Link>
-          </div>
-          <div>Mobiles</div>
-          <div>2250</div>
-          <div>$1522</div>
-          <div>147,523</div>
-          <div>152468</div>
-        </div>
+
+        {
+          fetchedProducts.length ?
+            fetchedProducts.map((data, index1) => {
+              return (
+                !data.variants.length ?
+                  renderProductinfo(data, undefined, index1)
+                  :
+                  data.variants.map((eachVariant, index2) => {
+                    return (
+                      eachVariant.type.map((type, index3) => {
+                        return ((type.price !== undefined
+                          && type.discount !== undefined)
+                          ? renderProductinfo(data, type, index3, data) :
+                          renderProductinfo(data, undefined, index3))
+                      })
+                    )
+                  })
+              )
+            }) :
+            Loading()
+        }
+
       </div>
     </div>
   )
