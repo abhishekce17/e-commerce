@@ -1,20 +1,22 @@
 "use client"
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "../Styles/Navbar.module.css";
-import {BiChevronDown} from "react-icons/bi"
-import {CgShoppingCart, CgSearch} from "react-icons/cg"
-import {RiAccountCircleLine} from "react-icons/ri"
+import { BiChevronDown } from "react-icons/bi"
+import { CgShoppingCart, CgSearch } from "react-icons/cg"
+import { RiAccountCircleLine } from "react-icons/ri"
 import { useRouter } from "next/navigation";
+import UserAuthContext from "@/app/contextProvider";
 
 const Navbar = () => {
   let router = useRouter()
-  let [queryValue, setQueryValue] = useState("")
+  const context = useContext(UserAuthContext)
+  const [queryValue, setQueryValue] = useState("");
   const handleQueryRequest = (e) => {
     e.preventDefault()
-    router.push("/search/"+queryValue.replace(" ","-"))
+    router.push("/search/" + queryValue.replace(" ", "-"))
   }
-  const handleChange = (e) =>{
+  const handleChange = (e) => {
     setQueryValue(e.target.value)
   }
   return (
@@ -51,14 +53,20 @@ const Navbar = () => {
           <Link href={"/special-deals"}>Deals</Link>
         </li>
         <li className={styles.search_bar} id="search-bar" >
-        <form onSubmit={handleQueryRequest} >
-          <input type="text" placeholder="Search Product" value={queryValue} onChange={handleChange} spellCheck="false"/>
-          <CgSearch className={styles.seach_icon} />
-        </form>
+          <form onSubmit={handleQueryRequest} >
+            <input type="text" placeholder="Search Product" value={queryValue} onChange={handleChange} spellCheck="false" />
+            <CgSearch className={styles.seach_icon} />
+          </form>
         </li>
-        <li>
-          <Link href={"/account/your-account"}><RiAccountCircleLine className={styles.account_icon} />Account</Link>
-        </li>
+        {
+          context.isUserLoggedIn ?
+            <li>
+              <Link href={"/account/your-account"}><RiAccountCircleLine className={styles.account_icon} />Account</Link>
+            </li> :
+            <li>
+              <Link href={"/authentication/sign-in"}>Sign In</Link>
+            </li>
+        }
         <li>
           <Link href={"/cart"}><CgShoppingCart className={styles.cart_icon} />Cart</Link>
         </li>

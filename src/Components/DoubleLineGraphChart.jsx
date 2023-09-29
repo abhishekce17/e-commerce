@@ -2,14 +2,12 @@
 import React, { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
 
-const DoubleLineGraphChart = () => {
+const DoubleLineGraphChart = ({ monthlyOrders, monthlyRevenue }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
   useEffect(() => {
     // Sample data for monthly orders and revenue
-    const monthlyOrders = [50, 70, 90, 60, 80, 100, 120, 110, 130, 140];
-    const monthlyRevenue = [1000, 1500, 2000, 1800, 2500, 3000, 2800, 3200, 4000, 3800];
 
     // Ensure the previous chart instance is destroyed
     if (chartInstanceRef.current) {
@@ -54,7 +52,7 @@ const DoubleLineGraphChart = () => {
         }
       }
     });
-  }, []);
+  }, [monthlyOrders, monthlyRevenue]);
 
   return <canvas ref={chartRef}></canvas>;
 };

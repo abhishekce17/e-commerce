@@ -8,7 +8,8 @@
 
 .add_question_and_answers input,
 .add_question_and_answers textarea,
-.about_us textarea {
+.about_us textarea,
+.about_us input {
   font-family: inherit;
   margin: 10px 0;
   width: 100%;
@@ -34,6 +35,7 @@
   background-color: var(--light-bg-color);
   border: none;
   border-radius: 8px;
+  cursor: pointer;
 }
 .added_faq {
   font-size: 1.1rem;
@@ -52,4 +54,41 @@
   font-size: 1rem;
   padding: 5px 9px;
   margin-right: 10px;
+}
+
+.add_question_and_answers button:active,
+.added_faq button:active,
+.about_us button:active {
+  background-color: var(--dark-bg-color);
+}
+
+.about_us {
+  padding: 0 12vw;
+  padding-top: 20px;
+  /* border: 1px solid var(--light-bg-color); */
+}
+
+.about_us p,
+.about_us label {
+  white-space: pre-line;
+}
+
+.about_us p {
+  line-height: 1.5;
+  border: 1px solid var(--light-bg-color);
+  position: relative;
+  padding: 10px 15px;
+  margin-bottom: 40px !important;
+}
+
+.about_us p a {
+  color: rgb(69, 69, 255);
+}
+
+.about_us p > strong {
+  position: absolute;
+  color: var(--light-bg-color);
+  top: -30px;
+  left: 0;
+  font-size: 1.1rem;
 }

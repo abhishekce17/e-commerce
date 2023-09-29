@@ -52,7 +52,7 @@ const page = ({ params }) => {
                                             <div>
                                                 <p>variant</p>
                                                 <div>
-                                                    {productsDetails.variants.map((value, key) => {
+                                                    {productsDetails.variant.map((value, key) => {
                                                         return (
                                                             <>
                                                                 <div> {value.type} </div>

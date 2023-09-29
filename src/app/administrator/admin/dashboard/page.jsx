@@ -1,17 +1,109 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import styles from "@/Styles/AdminLayout.module.css"
 import { BsArrowUpRight, BsFillClipboard2CheckFill, BsFillClipboardPlusFill, BsPersonLinesFill } from 'react-icons/bs';
 import { FaBoxOpen } from "react-icons/fa"
 import { MdPendingActions } from 'react-icons/md';
 import Link from 'next/link';
-import { BiChevronsRight } from 'react-icons/bi';
+import { BiChevronsRight, BiRefresh } from 'react-icons/bi';
 import DoubleLineGraphChart from '@/Components/DoubleLineGraphChart';
 import PieChart from '@/Components/PieChart';
 import Image from 'next/image';
 
 const page = () => {
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ]
+  const [totalSales, setTotalSales] = useState(0)
+  const [totalOrsers, setTotalOrders] = useState({ order: 0, accepted: 0, pending: 0 })
+  const [totalCustomers, setTotalCustomers] = useState(0)
+  const [monthlyGrowth, setMonthlyGrowth] = useState({ order: 0, sales: 0, customer: 0 })
+  const [graphData, setGraphData] = useState({
+    monthlyOrders: [],
+    monthlyRevenue: []
+  })
+  const [pieChartData, setPieChartData] = useState({
+    categories: [],
+    sales: []
+  })
 
-  let total = "1,23,456";
+  const fetchReport = async () => {
+    try {
+      const response = await fetch("/api/AdminDashboard/Analytics");
+      const result = await response.json();
+
+      if (result.status === 200) {
+        const { YearlyReport, MonthlyReport, categoryData } = result.fetchedData;
+        const currentYear = new Date().getFullYear();
+        const currentMonth = monthNames[new Date().getUTCMonth()].toLowerCase();
+        console.log(categoryData)
+        // Update total sales
+        const yearlyData = YearlyReport.find((x) => x.ReportYear === currentYear);
+        setTotalSales(
+          yearlyData.totalSales.toLocaleString("en-IN", {
+            style: "currency",
+            currency: "INR",
+          })
+        );
+
+        // Update total orders
+        setTotalOrders({
+          order: yearlyData.totalOrder.toLocaleString("en-IN", {
+            useGrouping: true,
+          }),
+          accepted: (546).toLocaleString("en-IN", {
+            useGrouping: true,
+          }),
+          pending: (46).toLocaleString("en-IN", {
+            useGrouping: true,
+          }),
+        });
+
+        // Update total customers
+        setTotalCustomers((566).toLocaleString("en-IN", { useGrouping: true }));
+
+        // Update monthly growth
+        const currentMonthData = MonthlyReport.find(
+          (x) => x[currentMonth] !== undefined
+        );
+        setMonthlyGrowth({
+          order: currentMonthData[currentMonth].totalOrder,
+          customer: currentMonthData[currentMonth].customerGrowth,
+          sales: currentMonthData[currentMonth].totalRevenueGenerated,
+        });
+
+        // Update graph data
+        const monthlyOrders = MonthlyReport.map((data, index) =>
+          data[monthNames[index].toLowerCase()].totalOrder
+        );
+        const monthlyRevenue = MonthlyReport.map((data, index) =>
+          data[monthNames[index].toLowerCase()].totalRevenueGenerated
+        );
+        setGraphData({
+          monthlyOrders,
+          monthlyRevenue,
+        });
+        setPieChartData({
+          categories: categoryData.map(x => x.category),
+          sales: categoryData.map(x => x.totalSaleAmount)
+        })
+      } else {
+        alert("Error: " + result.error.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while fetching data.");
+    }
+  };
+
+
+
+  useEffect(() => {
+    // setTotalSales((125796).number.toLocaleString('en-IN', {useGrouping: true}))
+    fetchReport()
+    // let totalSales = "1,23,456";
+  }, [])
 
   return (
     <div className={styles.dashboard} >
@@ -21,10 +113,10 @@ const page = () => {
             <BsFillClipboardPlusFill />
             <span> Total sales</span>
           </div>
-          <p>₹{total}</p>
+          <p>{totalSales}</p>
           <div>
-            <span> <BsArrowUpRight /> 12%</span>
-            <span>+10k this week </span>
+            {/* <span> <BsArrowUpRight /> 12%</span> */}
+            <span><BsArrowUpRight /> {Math.round(monthlyGrowth.sales)} in {monthNames[new Date().getUTCMonth()]} </span>
           </div>
         </div>
         <div className={styles.orders} >
@@ -33,20 +125,20 @@ const page = () => {
               <FaBoxOpen />
               <span> Total Orders</span>
             </div>
-            <p>₹{total}</p>
+            <p>{totalOrsers.order}</p>
             <div>
-              <span> <BsArrowUpRight /> 12%</span>
-              <span>+10k this week </span>
+              {/* <span> <BsArrowUpRight /> 12%</span> */}
+              <span><BsArrowUpRight /> {Math.round(monthlyGrowth.order)} in {monthNames[new Date().getUTCMonth()]} </span>
             </div>
           </div>
           <div className={styles.orders_details} style={{ borderLeft: "1px solid var(--light-bg-color)", paddingLeft: "25px" }} >
             <div>
               <span><BsFillClipboard2CheckFill /> Accepted</span>
-              <span>25,125</span>
+              <span>{totalOrsers.accepted}</span>
             </div>
             <div>
               <span><MdPendingActions /> Pending</span>
-              <span>25,125</span>
+              <span>{totalOrsers.pending}</span>
             </div>
           </div>
         </div>
@@ -55,20 +147,20 @@ const page = () => {
             <BsPersonLinesFill />
             <span> Total Customers</span>
           </div>
-          <p>₹{total}</p>
+          <p>{totalCustomers}</p>
           <div>
-            <span> <BsArrowUpRight /> 12%</span>
-            <span>+10k this week </span>
+            {/* <span> <BsArrowUpRight /> 12%</span> */}
+            <span><BsArrowUpRight /> {Math.round(monthlyGrowth.customer)} in {monthNames[new Date().getUTCMonth()]} </span>
           </div>
         </div>
         <div className={styles.graph} >
-          <DoubleLineGraphChart />
+          <DoubleLineGraphChart monthlyOrders={graphData.monthlyOrders} monthlyRevenue={graphData.monthlyRevenue} />
         </div>
         <div className={styles.pie_chart} >
           <center style={{ paddingBottom: "10px" }} >
             <strong>Sales by category</strong>
           </center>
-          <PieChart />
+          <PieChart categories={pieChartData.categories} sales={pieChartData.sales} />
         </div>
         <div className={styles.recent_orders} >
           <center>
@@ -145,9 +237,11 @@ const page = () => {
             <div>12345</div>
             <div>12345569</div>
           </div>
-          <span><Link href={"#"} >view all<BiChevronsRight /></Link></span>
         </div>
       </div>
+      <button className={styles.refreshData} >
+        <BiRefresh />
+      </button>
     </div>
   )
 }

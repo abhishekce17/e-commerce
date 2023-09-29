@@ -1,130 +1,155 @@
 .sidebar_container {
-    height: 100%;
-    position: sticky;
-    top: 0;
+  height: 100%;
+  position: sticky;
+  top: 0;
 }
 
 .dashboard {
-    background: var(--admin-bg);
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  background: var(--admin-bg);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .dashboard_container {
-    padding: 50px;
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(6, 1fr);
-    gap: 15px;
+  padding: 50px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 15px;
 }
 
 .revenue,
-.orders, .customers, .top_products, .graph, .pie_chart, .recent_orders {
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 15px;
+.orders,
+.customers,
+.top_products,
+.graph,
+.pie_chart,
+.recent_orders {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
 }
 
 .orders {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 25px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
 }
 
-.orders_details div{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.orders_details div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.orders_details div span:last-child{
-    font-size: 1.5rem;
-    font-weight: 600;
-    padding:5px 0 5px 5px ;
+.orders_details div span:last-child {
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 5px 0 5px 5px;
 }
-
 
 .revenue p,
-.orders div p, .customers p {
-    padding: 20px 0;
-    font-size: 2rem;
-    font-weight: 600;
+.orders div p,
+.customers p {
+  padding: 20px 0;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 .revenue div:last-child,
 .customers div:last-child,
 .orders div:first-child div:last-child {
-    color: var(--light-grey);
-    display: flex;
-    justify-content: space-between;
+  color: var(--light-grey);
+  display: flex;
+  justify-content: space-between;
 }
 
 .orders {
-    grid-column: span 2;
+  grid-column: span 2;
 }
 
 .graph {
-    grid-column: span 3;
-    grid-row: span 3;
+  grid-column: span 3;
+  grid-row: span 3;
 }
 
 .pie_chart {
-    grid-row: span 2;
+  grid-row: span 2;
 }
 
 .top_products {
-    grid-column: span 3;
-    grid-column: span 3;
-    grid-row: span 2;
-    position: relative;
-    width: 100%;
+  grid-column: span 3;
+  grid-column: span 3;
+  grid-row: span 2;
+  position: relative;
+  width: 100%;
 }
 
-.heading_row, .value_row{
-    display:grid;
-    grid-template-columns: minmax(150px, 1fr) repeat(3, minmax(max-content, 150px));
+.heading_row,
+.value_row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) repeat(
+      3,
+      minmax(max-content, 150px)
+    );
 }
 
-.heading_row{
-    font-size: 1rem;
-    color: var(--light-grey);
+.heading_row {
+  font-size: 1rem;
+  color: var(--light-grey);
 }
 
 .value_row + * {
-    border-top: 1px solid var(--light-bg-color);
+  border-top: 1px solid var(--light-bg-color);
 }
 
-.value_row div{
-    padding: 12px 0;
-    font-size: 1.1rem;
+.value_row div {
+  padding: 12px 0;
+  font-size: 1.1rem;
 }
 
-.value_row div:first-child, .value_row div:last-child{
-    font-weight: 500;
+.value_row div:first-child,
+.value_row div:last-child {
+  font-weight: 500;
 }
 
-.top_products > span{
-    position: absolute;
-    border: none;
-    right: 10px;
-    bottom: 10px;
+.top_products > span {
+  position: absolute;
+  border: none;
+  right: 10px;
+  bottom: 10px;
 }
 
 .recent_orders {
-    grid-row: span 3;
+  grid-row: span 3;
 }
-.recent_orders > div{
-    font-size: 0.9rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.recent_orders > div {
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-.recent_orders > div > div > div{
-    color: var(--light-grey);
-    display: flex;
-    justify-content: space-between;
+.recent_orders > div > div > div {
+  color: var(--light-grey);
+  display: flex;
+  justify-content: space-between;
+}
+.refreshData {
+  background-color: rgb(56, 250, 185);
+  outline: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 2.2rem;
+  padding: 8px 8px 0px 8px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
 }

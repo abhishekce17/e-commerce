@@ -36,6 +36,7 @@ export async function POST(req) {
         const addedProduct = await addDoc(collection(db, "products"), body);
 
         let snapShot = {
+            brandName: body.brandName,
             productId: addedProduct.id,
             category: body.category,
             productName: body.productName,

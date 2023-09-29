@@ -1,0 +1,42 @@
+{
+    "status": 201,
+    "user": {
+        "user": {
+            "uid": "mxlQqQXbIlPIUaM1njDExF1UNVx2",
+            "email": "abhisheklprajapati18@gmail.com",
+            "emailVerified": false,
+            "isAnonymous": false,
+            "providerData": [
+                {
+                    "providerId": "password",
+                    "uid": "abhisheklprajapati18@gmail.com",
+                    "displayName": null,
+                    "email": "abhisheklprajapati18@gmail.com",
+                    "phoneNumber": null,
+                    "photoURL": null
+                }
+            ],
+            "stsTokenManager": {
+                "refreshToken": "AMf-vByzEKeNguPuXz6rKEoJKvQ3ED4VWAN7f8vPYmLvNnV96gcFaXzy4xAfHFIjZI8Q4WCkIumV51UKHiPQzf7T2yhlt0bfd5MyW-C--9SwjJ9TpyExodnMkYP4uhwptqIetaeGsnp-mJIkWkzTF4rlJEoYQbPHocCZSSmRgo9CmwfAv5ibCzXPkUMbf6hv76dZS0dKxsRWBEmvEhacCfoq0VHL8jJjFQ27z0kxNedv35QqW0FXiIo",
+                "accessToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5MGFkMTE4YTk0MGFkYzlmMmY1Mzc2YjM1MjkyZmVkZThjMmQwZWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZS1jb21tZXJjZS0yNTBjMyIsImF1ZCI6ImUtY29tbWVyY2UtMjUwYzMiLCJhdXRoX3RpbWUiOjE2OTM5ODQ5MzcsInVzZXJfaWQiOiJteGxRcVFYYklsUElVYU0xbmpERXhGMVVOVngyIiwic3ViIjoibXhsUXFRWGJJbFBJVWFNMW5qREV4RjFVTlZ4MiIsImlhdCI6MTY5Mzk4NDkzNywiZXhwIjoxNjkzOTg4NTM3LCJlbWFpbCI6ImFiaGlzaGVrbHByYWphcGF0aTE4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJhYmhpc2hla2xwcmFqYXBhdGkxOEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.jSpcx8RfjswkMaI1C73ieg5cRKXo1LdwyOQw9OcdqdBu9_StxciFR_dcDdW17bTbdftYQyOwZxOAo3fhOtwkdYtfZennTzmWGOf8rNkkQIndiHXppIpaGlQEtDKobw26-mKFtsS2ojFFad8r5oEJwJ9Hkb3fDMs0TumZsZyA_eulp0Cw_B0W4R2thDmbvtLFGhEXoQ52BYg8gmyG8pEWXorJVNjKTElhcfUD9zSRyodaop1LjbkXjxZS2in5mMnvMZxTvryEpQtjL5sRmulFeJLMDes5YYaHR5Nmzy8FbOVKv1jQpJugC3mLNC11zNPBF5ot8-1tl8xhetobzbuU1g",
+                "expirationTime": 1693988538198
+            },
+            "createdAt": "1693900914566",
+            "lastLoginAt": "1693984937424",
+            "apiKey": "AIzaSyAnnkf7j06DT4bkzXr_3awWQcXD0vt8CyE",
+            "appName": "[DEFAULT]"
+        },
+        "providerId": null,
+        "_tokenResponse": {
+            "kind": "identitytoolkit#VerifyPasswordResponse",
+            "localId": "mxlQqQXbIlPIUaM1njDExF1UNVx2",
+            "email": "abhisheklprajapati18@gmail.com",
+            "displayName": "",
+            "idToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjE5MGFkMTE4YTk0MGFkYzlmMmY1Mzc2YjM1MjkyZmVkZThjMmQwZWUiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZS1jb21tZXJjZS0yNTBjMyIsImF1ZCI6ImUtY29tbWVyY2UtMjUwYzMiLCJhdXRoX3RpbWUiOjE2OTM5ODQ5MzcsInVzZXJfaWQiOiJteGxRcVFYYklsUElVYU0xbmpERXhGMVVOVngyIiwic3ViIjoibXhsUXFRWGJJbFBJVWFNMW5qREV4RjFVTlZ4MiIsImlhdCI6MTY5Mzk4NDkzNywiZXhwIjoxNjkzOTg4NTM3LCJlbWFpbCI6ImFiaGlzaGVrbHByYWphcGF0aTE4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJhYmhpc2hla2xwcmFqYXBhdGkxOEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCJ9fQ.jSpcx8RfjswkMaI1C73ieg5cRKXo1LdwyOQw9OcdqdBu9_StxciFR_dcDdW17bTbdftYQyOwZxOAo3fhOtwkdYtfZennTzmWGOf8rNkkQIndiHXppIpaGlQEtDKobw26-mKFtsS2ojFFad8r5oEJwJ9Hkb3fDMs0TumZsZyA_eulp0Cw_B0W4R2thDmbvtLFGhEXoQ52BYg8gmyG8pEWXorJVNjKTElhcfUD9zSRyodaop1LjbkXjxZS2in5mMnvMZxTvryEpQtjL5sRmulFeJLMDes5YYaHR5Nmzy8FbOVKv1jQpJugC3mLNC11zNPBF5ot8-1tl8xhetobzbuU1g",
+            "registered": true,
+            "refreshToken": "AMf-vByzEKeNguPuXz6rKEoJKvQ3ED4VWAN7f8vPYmLvNnV96gcFaXzy4xAfHFIjZI8Q4WCkIumV51UKHiPQzf7T2yhlt0bfd5MyW-C--9SwjJ9TpyExodnMkYP4uhwptqIetaeGsnp-mJIkWkzTF4rlJEoYQbPHocCZSSmRgo9CmwfAv5ibCzXPkUMbf6hv76dZS0dKxsRWBEmvEhacCfoq0VHL8jJjFQ27z0kxNedv35QqW0FXiIo",
+            "expiresIn": "3600"
+        },
+        "operationType": "signIn"
+    }
+}

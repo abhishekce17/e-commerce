@@ -66,7 +66,8 @@
 .top_bar > button,
 .add_product_button,
 .variant_container button,
-.subgroup1_3 button {
+.subgroup1_3 button,
+.featured_product_managemnet button {
   font-size: 1.1rem;
   padding: 11px 20px;
   color: #fff;
@@ -313,4 +314,8 @@
 .each_review .rating_details p:nth-child(2) {
   font-size: 0.9vw;
   color: var(--light-grey);
+}
+
+.featured_product_managemnet button:active {
+  background-color: var(--dark-bg-color);
 }

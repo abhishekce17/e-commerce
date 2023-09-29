@@ -2,11 +2,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Chart from 'chart.js/auto';
 
-const PieChart = () => {
+const PieChart = ({ categories, sales }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
-  const [categories, setCategories] = useState(['Electronics %', 'Clothing %', 'Books %', 'Home Goods %', 'Mobiles %', "Sports %", "kitchen %"]);
-  const [sales, setSales] = useState([40, 30, 20, 10, 70, 50, 80]);
+  // const [categories, setCategories] = useState();
+  // const [sales, setSales] = useState();
 
   useEffect(() => {
     // Calculate total sales
@@ -43,7 +43,7 @@ const PieChart = () => {
             position: 'bottom',
             align: 'start',
             labels: {
-              padding: 7,
+              padding: 4,
               usePointStyle: true,
             },
           },

@@ -198,7 +198,7 @@ const SpecialDeals = () => {
   }
 
   const handleSubmit = async (event) => {
-
+    console.log(removableSelectedProducts)
     event.preventDefault();
     const formDataAPI = new FormData()
 
@@ -229,6 +229,9 @@ const SpecialDeals = () => {
         method: "DELETE"
       })
       const dealRemoveResult = await dealRemoveResponse.json()
+      if (dealRemoveResult.status === 200) {
+        window.alert("Successfully removed products from the special deals")
+      }
     }
 
   };
@@ -274,8 +277,7 @@ const SpecialDeals = () => {
           dealId: deal.dealId
         }))
       ]);
-      setBannerImages(prevBannerImages => [
-        ...prevBannerImages,
+      setBannerImages([
         ...result.data.bannerDeals.map(({ pcViewURL, mobileViewURL, dealId, ...product }) => ({
           pcImageUrl: pcViewURL,
           mobileImageUrl: mobileViewURL,
@@ -480,7 +482,7 @@ const SpecialDeals = () => {
                     Remove
                   </button>
 
-                  {bannerProdcuctQuery[index].length > 0 && banner.product.productId === undefined &&
+                  {bannerProdcuctQuery[index]?.length > 0 && banner.product.productId === undefined &&
                     <div className={`${styles.view_products} ${styles.not_selected} ${styles.select_banner_product}`}>
                       <div className={styles.headings}>
                         <div style={{ gridColumn: "1 / span 2" }} >Product</div>

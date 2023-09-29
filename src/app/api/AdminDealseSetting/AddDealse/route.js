@@ -55,7 +55,7 @@ async function updateDocumentsInBatch(collectionPath, queryField, queryValue, up
         const docRef = doc.ref;
         if (merge && doc.data().variants.length) {
             const variants = mergeVariants(doc.data().variants, updateDetails.variants)
-            batch.update(docRef, { variants: variants, discount: deleteField() });
+            batch.update(docRef, { ...updateDetails, variants: variants, discount: deleteField() });
         }
         else {
             batch.update(docRef, updateDetails);
@@ -120,7 +120,7 @@ export async function POST(req) {
             if (dealId === undefined && imgUrlPromises.length) {
                 const dataTobeUpdated = product.variants.length === 0 || product.variants === '' ? { discount: product.discount, } : { variants: product.variants };
                 updatePromises.push(
-                    await addDoc(collection(db, "SpecialDealseBannerProduct"), { ...product, ...imgUrlPromises.filter(e => e.productId === product.productId)[0] }),
+                    await addDoc(collection(db, "SpecialDealseBannerProduct"), { ...product, discount: null, ...imgUrlPromises.filter(e => e.productId === product.productId)[0] }),
                     updateDocumentsInBatch("Administration/Admin/Revenue", "productId", product.productId, dataTobeUpdated, false),
                     updateDocumentsInBatch("ProductSnapDetails", "productId", product.productId, { dealProduct: true, ...dataTobeUpdated }, true),
                     (async () => {

@@ -1,42 +1,61 @@
 "use client"
 import styles from "@/Styles/AccountSetting.module.css"
-import { useState } from "react";
+import UserAuthContext from "@/app/contextProvider";
+import { useContext, useState } from "react";
 
 const page = () => {
+    const context = useContext(UserAuthContext)
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState({
-        name: 'John Doe',
-        email: 'johndoe@example.com',
-        password: '********',
-        phone: '1234567890',
-        address: { house_no : "123 mail city", area : "mankhurd", landmark : "sudarshan dairy", city : "Mumbai", state:"maharashtra" ,pincode:"400043" },
-    });
+    const [formData, setFormData] = useState(context.userData.Personal);
+    // const oldEmail = context.userData.Personal.contact.email
+
+    // console.log(context.userData)
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        if (name.startsWith('address.')) {
-          const addressField = name.split('.')[1];
-          setFormData({
-            ...formData,
-            address: {
-              ...formData.address,
-              [addressField]: value,
-            },
-          });
+        if (name.startsWith('address.') || name.startsWith('contact.')) {
+            const objectField = name.split('.')[1];
+            const objectKey = name.split(".")[0]
+            setFormData({
+                ...formData,
+                [objectKey]: {
+                    ...formData[objectKey],
+                    [objectField]: value,
+                },
+            });
         } else {
-          setFormData({ ...formData, [name]: value });
+            setFormData({ ...formData, [name]: value });
         }
-        console.log(formData)
-      };
+    };
     const handleEditClick = () => {
         setIsEditing(true);
     };
 
-    const handleSaveClick = () => {
-        // Perform save logic here
-        // You can access the updated form data in the formData state
-        // Send the updated data to your backend API or handle it accordingly
-        // Display success or error message based on the response
+
+    const handleChnagePassword = () => {
+
+    }
+
+    const verifyEmail = async () => {
+
+    }
+
+
+    const handleSaveClick = async () => {
+        const updateInfoResponse = await fetch("/api/UserInformation/UpdateInfo", {
+            method: "PATCH",
+            body: JSON.stringify(formData)
+            // body: JSON.stringify({ formData, updateEmail: (oldEmail !== formData.contact.email) }) : in future
+        })
+        const updateInfoResult = await updateInfoResponse.json();
+        if (updateInfoResult.status === 200) {
+            context.setUserData((prev) => { return { ...prev, formData } })
+            // setFormData(updateInfoResult.updatedUserData)
+            alert("Updated Successfully")
+        }
+        else {
+            alert("Something went wrong please try again leter");
+        }
         setIsEditing(false);
     };
 
@@ -46,39 +65,24 @@ const page = () => {
             <div className={styles.account_settings_page}>
                 <div className={styles.form}>
                     <div>
-
+                        <label htmlFor="email">Email:
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="contact.email"
+                            value={formData.contact.email}
+                            // onChange={handleInputChange}
+                            disabled
+                        />
+                    </div>
+                    <div>
                         <label htmlFor="name">Name:</label>
                         <input
                             type="text"
                             id="name"
                             name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            disabled={!isEditing}
-                        />
-                    </div>
-                    <div>
-
-
-                        <label htmlFor="email">Email:</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            disabled={!isEditing}
-                        />
-                    </div>
-
-                    <div>
-
-                        <label htmlFor="password">Password:</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password}
+                            value={formData.fullName}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
@@ -90,8 +94,8 @@ const page = () => {
                         <input
                             type="text"
                             id="phone"
-                            name="phone"
-                            value={formData.phone}
+                            name="contact.phoneNo"
+                            value={formData.contact.phoneNo}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
@@ -102,7 +106,7 @@ const page = () => {
                         <input
                             id="address"
                             name="address.house_no"
-                            value={formData.address.house_no}
+                            value={formData.address?.house_no}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
@@ -110,7 +114,7 @@ const page = () => {
                         <input
                             id="address"
                             name="address.area"
-                            value={formData.address.area}
+                            value={formData.address?.area}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
@@ -118,7 +122,7 @@ const page = () => {
                         <input
                             id="address"
                             name="address.landmark"
-                            value={formData.address.landmark}
+                            value={formData.address?.landmark}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
@@ -126,7 +130,7 @@ const page = () => {
                         <input
                             id="address"
                             name="address.city"
-                            value={formData.address.city}
+                            value={formData.address?.city}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
@@ -134,7 +138,7 @@ const page = () => {
                         <input
                             id="address"
                             name="address.state"
-                            value={formData.address.state}
+                            value={formData.address?.state}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
@@ -142,18 +146,21 @@ const page = () => {
                         <input
                             id="address"
                             name="address.pincode"
-                            value={formData.address.pincode}
+                            value={formData.address?.pincode}
                             onChange={handleInputChange}
                             disabled={!isEditing}
                         />
                     </div>
                 </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }} >
 
-                {isEditing ? (
-                    <button className={styles.action} onClick={handleSaveClick}>Save</button>
-                ) : (
-                    <button className={styles.action} onClick={handleEditClick}>Edit</button>
-                )}
+                    {isEditing ? (
+                        <button className={styles.action} onClick={handleSaveClick}>Save</button>
+                    ) : (
+                        <button className={styles.action} onClick={handleEditClick}>Edit</button>
+                    )}
+                    <button className={styles.action} onClick={handleChnagePassword}>Change Password</button>
+                </div>
             </div>
         </>
     );

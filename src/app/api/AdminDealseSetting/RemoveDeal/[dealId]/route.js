@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, query, where, getDocs, updateDoc, doc, deleteDoc, getDoc, deleteField } from "firebase/firestore";
+import cloudinary from 'cloudinary/lib/v2';
+import cloudinary_config from "@/cloudinary-config/config";
 
 export async function DELETE(req, { params }) {
     try {
@@ -13,7 +15,7 @@ export async function DELETE(req, { params }) {
         if (bannerProductDocSnapshot.exists()) {
             const bannerProductData = bannerProductDocSnapshot.data();
             const productId = bannerProductData.productId;
-            const initialDiscount = bannerProductData.initialDiscount !== undefined ? bannerProductData.initialDiscount : bannerProductData.discount;
+            const initialDiscount = bannerProductData.initialDiscount !== undefined ? bannerProductData.initialDiscount : null;
 
             // Update the actual product document
             const productDocRef = doc(db, "products", productId);
@@ -36,6 +38,7 @@ export async function DELETE(req, { params }) {
                             variant.type.map(subVariant => {
                                 subVariant.discount = subVariant.initialDiscount !== undefined ? subVariant.initialDiscount : subVariant.discount;
                                 delete subVariant.initialDiscount;
+                                delete subVariant.netValue;
                             });
                         }
                     });
@@ -63,6 +66,16 @@ export async function DELETE(req, { params }) {
                 }
 
             }
+
+            //Deleting Image from the cloud storage
+            cloudinary.config(cloudinary_config);
+            const imgURL = [bannerProductData.mobileViewURL, bannerProductData.pcViewURL]
+            const imgURI = imgURL.map(url => {
+                const lastIndex = url.lastIndexOf('/');
+                return `E-Commerce/${url.slice(lastIndex + 1).split(".")[0]}`;
+            });
+            cloudinary.api.delete_resources(imgURI,
+                { type: 'upload', resource_type: 'image' })
 
             // Delete banner product document
             await deleteDoc(bannerProductDocRef);

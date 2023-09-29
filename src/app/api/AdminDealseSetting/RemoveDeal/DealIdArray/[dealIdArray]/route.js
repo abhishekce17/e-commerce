@@ -2,81 +2,94 @@ import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, query, where, getDocs, updateDoc, doc, deleteDoc, getDoc, deleteField } from "firebase/firestore";
 
+// ... (import statements)
+
 export async function DELETE(req, { params }) {
     try {
-        const dealIdArray = params.dealIdArray; // Assuming an array of dealIds is passed in the request body
-        const dealIds = JSON.parse(decodeURIComponent(dealIdArray))
-        // console.log(dealIds)
-        // Iterate through the array of dealIds
+        console.log("Calling REMOVE FUNCTION");
+        const dealIdArray = params.dealIdArray;
+        const dealIds = JSON.parse(decodeURIComponent(dealIdArray));
+
         for (const dealId of dealIds) {
-            // Fetch the selected product document
             const selectedProductDocRef = doc(db, "SpecialDealseSelectedProducts", dealId);
             const selectedProductDocSnapshot = await getDoc(selectedProductDocRef);
-            // console.log(selectedProductDocSnapshot.data())
+
             if (selectedProductDocSnapshot.exists()) {
                 const selectedProductData = selectedProductDocSnapshot.data();
                 const productId = selectedProductData.productId;
                 const initialDiscount = selectedProductData.initialDiscount;
-                if (selectedProductData.variants.length && (initialDiscount === null || initialDiscount === "")) {
 
-                    console.log("Variants Exists\nVariants =>", selectedProductData.variants)
+                const relatedCollections = ["Administration/Admin/Revenue", "ProductSnapDetails"];
+
+                for (const collectionPath of relatedCollections) {
+                    const querySnapshotQuery = query(collection(db, collectionPath), where("productId", "==", productId));
+                    const querySnapshot = await getDocs(querySnapshotQuery);
+
+                    querySnapshot.forEach(async (doc) => {
+                        const docRef = doc.ref;
+
+                        if (selectedProductData.variants.length) {
+                            const variantData = doc.data().variants;
+
+                            variantData.map(variant => {
+                                if (variant.type && Array.isArray(variant.type)) {
+                                    variant.type.map(subVariant => {
+                                        if (subVariant.price !== undefined && subVariant.price !== null) {
+                                            subVariant.discount = subVariant.initialDiscount;
+                                            delete subVariant.initialDiscount;
+                                        }
+                                    });
+                                }
+                            });
+
+                            await updateDoc(docRef, {
+                                variants: variantData,
+                                initialDiscount: deleteField(),
+                                dealProduct: deleteField(),
+                            });
+                        } else {
+                            await updateDoc(docRef, {
+                                discount: initialDiscount,
+                                initialDiscount: deleteField(),
+                                dealProduct: deleteField(),
+                            });
+                        }
+                    });
                 }
-                else {
-                    console.log("Variants doesn't Exists\nInitial Discount =>", selectedProductData.initialDiscount)
 
+                const productDocRef = doc(db, "products", productId);
+                const productDocSnapshot = await getDoc(productDocRef);
+
+                if (productDocSnapshot.exists()) {
+                    const productData = productDocSnapshot.data();
+                    let dataToUpdate = {
+                        discount: initialDiscount || null,
+                        initialDiscount: deleteField(),
+                        dealProduct: deleteField(),
+                        productId: deleteField(),
+                        productFirtsImgURL: deleteField(),
+                    };
+
+                    if (productData.variants && Array.isArray(productData.variants)) {
+                        const variantData = productData.variants;
+
+                        variantData.map(variant => {
+                            if (variant.type && Array.isArray(variant.type)) {
+                                variant.type.map(subVariant => {
+                                    if (subVariant.price !== undefined && subVariant.price !== null) {
+                                        subVariant.discount = subVariant.initialDiscount;
+                                        delete subVariant.initialDiscount;
+                                    }
+                                });
+                            }
+                        });
+
+                        dataToUpdate = { ...dataToUpdate, variants: variantData, discount: null };
+                    }
+
+                    await updateDoc(productDocRef, dataToUpdate);
+                    await deleteDoc(selectedProductDocRef);
                 }
-                // console.log(typeof initialDiscount)
-                //         // Update related documents and remove initialDiscount
-                //         const relatedCollections = ["Administration/Admin/Revenue", "ProductSnapDetails"];
-                //         for (const collectionPath of relatedCollections) {
-                //             const querySnapshotQuery = query(collection(db, collectionPath), where("productId", "==", productId));
-                //             const querySnapshot = await getDocs(querySnapshotQuery);
-
-                //             querySnapshot.forEach(async (doc) => {
-                //                 const docRef = doc.ref;
-                //                 await updateDoc(docRef, {
-                //                     discount: initialDiscount,
-                //                     initialDiscount: deleteField(),
-                //                     dealProduct : deleteField(),
-                //                 });
-                //             });
-                //         }
-
-                //         // Update the actual product document
-                //         const productDocRef = doc(db, "products", productId);
-                //         const productDocSnapshot = await getDoc(productDocRef);
-                //         if (productDocSnapshot.exists()) {
-                //             const productData = productDocSnapshot.data();
-
-                //             // Update main product discount
-                //             await updateDoc(productDocRef, {
-                //                 discount: initialDiscount,
-                //                 initialDiscount: deleteField(),
-                //                 dealProduct : deleteField(),
-                //                 productId : deleteField(),
-                //                 productFirtsImgURL : deleteField()
-                //             });
-
-                // //             // Update variant discounts
-                //             if (productData.variant && Array.isArray(productData.variant)) {
-                //                 productData.variant.forEach(variant => {
-                //                     if (variant.type && Array.isArray(variant.type)) {
-                //                         variant.type.forEach(subVariant => {
-                //                             subVariant.discount = initialDiscount;
-                //                             delete subVariant.initialDiscount;
-                //                         });
-                //                     }
-                //                 });
-
-                //                 // Update the product document with modified variant data
-                //                 await updateDoc(productDocRef, {
-                //                     variant: productData.variant,
-                //                 });
-                //             }
-                //         }
-
-                //         // Delete selected product document
-                // await deleteDoc(selectedProductDocRef);
             }
         }
 
@@ -86,3 +99,5 @@ export async function DELETE(req, { params }) {
         return NextResponse.json({ status: 500, error: e });
     }
 }
+
+
