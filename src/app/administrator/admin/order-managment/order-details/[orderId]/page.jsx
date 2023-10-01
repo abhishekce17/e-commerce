@@ -35,7 +35,7 @@ const Page = ({ params }) => {
             console.log(orderDetails.items)
         }
         fetchOrders()
-    }, [])
+    }, [params.orderId])
 
     return (
         <div className={styles.order_details_page} >
@@ -126,7 +126,8 @@ const Page = ({ params }) => {
                             <div> {orderDetails.orderStatus} </div>
                         </div>
                     </div>
-                    <button className={styles.accept_button} >Accept</button> // onclick make changes in status and make visible a button to  generate and also able to print a bill
+                    <button className={styles.accept_button} >Accept</button>
+                    {/* onclick make changes in status and make visible a button to  generate and also able to print a bill */}
                 </div>
                 : Loading()
             }

@@ -21,7 +21,7 @@ const AdminSidebar = () => {
   let route = pathname.split("/")[3];
   useEffect(() => {
     setActiveMenuItem(route)
-  }, [pathname])
+  }, [route])
 
   return (
     <Sidebar style={{ minHeight: "100vh" }} backgroundColor="#fff" collapsed={false}
