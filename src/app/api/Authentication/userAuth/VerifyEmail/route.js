@@ -1,4 +1,4 @@
-'use server'
+// 'use server'
 import { sendEmailVerification } from "firebase/auth";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { NextResponse } from "next/server";

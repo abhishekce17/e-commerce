@@ -1,4 +1,4 @@
-'use server'
+// 'use server'
 import { fetchSignInMethodsForEmail, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
