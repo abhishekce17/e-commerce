@@ -1,4 +1,4 @@
-// 'use server'
+'use server'
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { NextResponse } from "next/server";
 import { cookies } from 'next/headers'

@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 // import { cookies } from 'next/headers'
 
 
-export async function DELETE() {
+export async function DELETE(req) {
     try {
-        // cookies().delete('authToken')
+        req.cookies.delete('authToken')
         return NextResponse.json({ status: 200 });
     } catch (error) {
         console.log(error.message);
