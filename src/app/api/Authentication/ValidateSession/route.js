@@ -8,14 +8,7 @@ export const dynamic = 'force-static';
 
 export async function GET(req) {
     try {
-        const cookieData = cookies().getAll()
-        const cookiePromise = new Promise((resolve) =>
-            setTimeout(() => {
-                resolve(cookieData)
-            }, 1000)
-        )
-        // const authToken = cookies().get("authToken");
-        const authToken = await cookiePromise;
+        const authToken = cookies().get("authToken");
         if (authToken === undefined) return NextResponse.json({ status: 401 })
         const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
         if (userData) {
