@@ -7,6 +7,7 @@ import { sign } from 'jsonwebtoken';
 
 export async function POST(req) {
     try {
+        console.log("from signIn route");
         const auth = getAuth();
         const { email, password } = await req.json();
         const response = await signInWithEmailAndPassword(auth, email, password);

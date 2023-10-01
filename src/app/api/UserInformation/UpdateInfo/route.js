@@ -6,6 +6,7 @@ import { verify } from "jsonwebtoken";
 // import { getAuth, updateEmail as updateFirebaseEmail } from "firebase/auth";
 export async function PATCH(req) {
     try {
+        console.log("from updateinfo route");
         const authToken = cookies().get("authToken")
         const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
 

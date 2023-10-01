@@ -7,6 +7,7 @@ import { verify } from "jsonwebtoken";
 
 export async function GET(req) {
     try {
+        console.log("from userInfo route");
         const authToken = cookies().get("authToken")
         console.log(authToken)
         if (authToken !== undefined) {
