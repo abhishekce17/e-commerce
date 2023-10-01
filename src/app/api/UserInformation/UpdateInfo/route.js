@@ -4,6 +4,7 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 // import { getAuth, updateEmail as updateFirebaseEmail } from "firebase/auth";
+export const dynamic = 'force-dynamic'
 export async function PATCH(req) {
     try {
         console.log("from updateinfo route");

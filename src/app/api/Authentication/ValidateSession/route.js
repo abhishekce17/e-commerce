@@ -5,7 +5,7 @@ import { db } from "@/firebase-config/config";
 import { verify } from 'jsonwebtoken';
 import { doc, getDoc } from "firebase/firestore";
 
-
+export const dynamic = 'force-dynamic'
 export async function GET(req) {
     try {
         console.log("from validate route");
