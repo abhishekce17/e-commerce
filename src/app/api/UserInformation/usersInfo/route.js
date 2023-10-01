@@ -4,7 +4,7 @@ import { getDoc, doc, collection, getDocs } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 
-
+export const dynamic = 'force-dynamic'
 export async function GET(req) {
     try {
         console.log("from userInfo route");
