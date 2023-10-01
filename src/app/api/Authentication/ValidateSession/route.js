@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { db } from "@/firebase-config/config";
 import { verify } from 'jsonwebtoken';
 import { doc, getDoc } from "firebase/firestore";
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static';
 
 export async function GET(req) {
     try {
