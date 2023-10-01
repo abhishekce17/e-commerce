@@ -176,7 +176,7 @@ const SignUpForm = () => {
         <div className={styles.formField}>
           <button className={styles.formFieldButton} disabled={timeInterval} > {timeInterval ? `waiting for varification ${timeInterval}` : "Sign Up"}</button>{" "}
           <Link href="/authentication/sign-in" className={styles.formFieldLink}>
-            I'm already a member
+            I&apos;m already a member
           </Link>
         </div>
       </form>

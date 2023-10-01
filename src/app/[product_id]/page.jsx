@@ -134,7 +134,7 @@ const Page = ({ params }) => {
           <p>
             Snapdragon 8 Gen 2 Mobile Platform adopts TSMC 4NM process which has 10% higher CPU peak performance and 20% higher GPU peak performance than Snapdragon 8+ Gen 1. Also, equipped with LPDDR5X RAM & UFS 4.0 storage.
             The 2K AMOLED display has 77.8% more pixels than the 1080P display. E6 Performs much better than E4 in terms of power consumption and brightness. 25% less in Power Consumption and 1800 nits Local Peak Brightness
-            iQOO 11's 120W FlashCharge charges 50% battery in just 8 mins and 100% battery in just 25 mins
+            iQOO 11&apos;s 120W FlashCharge charges 50% battery in just 8 mins and 100% battery in just 25 mins
             V2 Chip provides better gaming and photography experience. It can increase the frame rate from 45fps 60fps to 90fps & 120fps respectively. It also facilitates users to shoot better night videos photos.
           </p>
         </div>
