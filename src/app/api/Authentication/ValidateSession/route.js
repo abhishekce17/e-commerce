@@ -8,7 +8,7 @@ export const dynamic = 'force-static';
 
 export async function GET(req) {
     try {
-        const cookieData = cookies().get("authToken")
+        const cookieData = cookies().getAll()
         const cookiePromise = new Promise((resolve) =>
             setTimeout(() => {
                 resolve(cookieData)
