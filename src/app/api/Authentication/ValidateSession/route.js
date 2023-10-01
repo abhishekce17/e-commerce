@@ -15,7 +15,7 @@ export async function GET(req) {
             }, 1000)
         )
         // const authToken = cookies().get("authToken");
-        const authToken = await cookiePromise();
+        const authToken = await cookiePromise;
         if (authToken === undefined) return NextResponse.json({ status: 401 })
         const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
         if (userData) {
