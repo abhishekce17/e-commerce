@@ -1,3 +1,4 @@
+"use client"
 import styles from './page.module.css'
 import Banner from '@/Components/Banner'
 import Featured from '@/Components/Featured'
@@ -5,8 +6,14 @@ import Deals from '@/Components/Deals'
 // import Footer from '@/Components/Footer'
 import NewArrivals from '@/Components/NewArrivals'
 import TopCategory from '@/Components/TopCategory'
+import { useState, useContext } from 'react';
+import UserAuthContext from './contextProvider'
+
 
 export default function Home() {
+  const context = useContext(UserAuthContext)
+  const [userData, setUserData] = useState(context.userData.Personal)
+  console.log("user data", userData);
   return (<>
     <main>
       <Banner
@@ -19,7 +26,7 @@ export default function Home() {
       <NewArrivals />
       <TopCategory />
     </main>
-      {/* <Footer/> */}
+    {/* <Footer/> */}
   </>
   )
 }
