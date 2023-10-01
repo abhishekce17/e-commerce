@@ -8,7 +8,7 @@ import { BsCartX } from 'react-icons/bs'
 import Loading from '../loading'
 import Image from 'next/image'
 
-const page = () => {
+const Page = () => {
 
   const [ordersSnapDetails, setOrdersSnapDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true)
@@ -82,4 +82,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

@@ -7,7 +7,7 @@ import FilterComponent from "@/Components/FilterComponent"
 
 
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
 
     let wishist = false;
     let product_count = 15;
@@ -15,7 +15,7 @@ const page = ({ params }) => {
         <div className={styles.layout} >
             <center> <p style={{ fontSize: "20px", fontWeight: 600 }} > Showing Result for {params.query.replace("-", " ")} </p></center>
             <div className={styles.layout_container} data-listing="true" >
-                <FilterComponent  />
+                <FilterComponent />
                 <div>
                     {[...Array(product_count)].map((undefined, index) => {
                         return (
@@ -45,4 +45,4 @@ const page = ({ params }) => {
     )
 }
 
-export default page
+export default Page

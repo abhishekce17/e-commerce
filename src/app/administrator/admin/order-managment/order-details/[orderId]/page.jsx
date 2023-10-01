@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { RiAccountCircleFill } from "react-icons/ri"
 import Loading from '../../../loading'
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
 
     function dateFormate(seconds) {
         const timestampInSeconds = seconds; // Replace with your timestamp
@@ -134,4 +134,4 @@ const page = ({ params }) => {
     )
 }
 
-export default page
+export default Page

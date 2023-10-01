@@ -8,7 +8,7 @@ import { ImCircleDown } from 'react-icons/im'
 import { useRouter } from 'next/navigation'
 import Loading from '../loading'
 
-const page = () => {
+const Page = () => {
   let router = useRouter()
   const [isSelected, setIsSelected] = useState(false);
   const [subSelection, setSubSelection] = useState("")
@@ -141,4 +141,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

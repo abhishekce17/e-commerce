@@ -7,7 +7,7 @@ import { AiFillHeart, AiOutlineHeart, AiOutlineShareAlt, AiOutlinePlus, AiOutlin
 import { RiAccountCircleFill } from "react-icons/ri"
 
 
-const page = ({ params }) => {
+const Page = ({ params }) => {
   // console.log(params.product_id)
   let default_variant = { color: "red", storage: "4GB + 64GB" }
   let color_variants = ["red", "#bff", "yellow", "blue"];
@@ -146,14 +146,14 @@ const page = ({ params }) => {
         </div>
         <ul>
 
-{
+          {
 
-  [...Array(7)].map((undefined, index)=>{
-    return(
-          <li key={index} > <Link href={"/product-link"} > <Image width={500} height={500} src={"/category.jpg"} alt='product-image' /> <div><p>Nothing Phone 2 8+ GEN 1 120Hz display</p> <p>From 12$</p> </div> </Link> </li>
-    )
-  })
-}
+            [...Array(7)].map((undefined, index) => {
+              return (
+                <li key={index} > <Link href={"/product-link"} > <Image width={500} height={500} src={"/category.jpg"} alt='product-image' /> <div><p>Nothing Phone 2 8+ GEN 1 120Hz display</p> <p>From 12$</p> </div> </Link> </li>
+              )
+            })
+          }
         </ul>
       </div>
       <div className={styles.customer_review_ratings} >
@@ -207,4 +207,4 @@ const page = ({ params }) => {
   )
 }
 
-export default page
+export default Page

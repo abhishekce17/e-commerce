@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Loading from '../../loading';
 
 
-const page = () => {
+const Page = () => {
   const router = useRouter()
   const [categories, setCategories] = useState(null)
 
@@ -45,4 +45,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

@@ -5,7 +5,7 @@ import { MdDeleteOutline } from 'react-icons/md'
 import { RiAccountCircleFill } from "react-icons/ri"
 
 
-const page = () => {
+const Page = () => {
     const [navigationValue, setNavigationVAlue] = useState("orders")
 
     const handleNaviagation = (value) => {
@@ -100,4 +100,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

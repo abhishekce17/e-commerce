@@ -5,7 +5,7 @@ import UserAuthContext from '@/app/contextProvider';
 import Link from 'next/link';
 import { useState, useEffect, useContext } from 'react';
 
-const page = () => {
+const Page = () => {
     const context = useContext(UserAuthContext)
     const [userData, setUserData] = useState(context.userData.Personal)
     const [recentOrders, setRecentOrders] = useState([])
@@ -54,4 +54,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

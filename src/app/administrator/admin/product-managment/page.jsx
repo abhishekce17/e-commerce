@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Loading from '../loading'
 
-const page = () => {
+const Page = () => {
 
   const [fetchedProducts, setFetchedProducts] = useState([])
 
@@ -102,4 +102,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

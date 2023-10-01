@@ -29,14 +29,14 @@ const page = () => {
       <div className={styles.order_history}>
         {orders.map((product, orderIndex) => (
           <Link href={"/order-details/orderId"} key={orderIndex} className={styles.each_order}>
-                <Image height={520} width={520} src={product.image} alt={product.name}  />
-                <p> 
-                <span>{product.name}</span>
-                <span>{product.variant}</span> 
-                </p>
-                <p>{product.price}</p>
-                <p>{product.deliveryStatus}</p>
-                <p>Order on {product.date}</p>
+            <Image height={520} width={520} src={product.image} alt={product.name} />
+            <p>
+              <span>{product.name}</span>
+              <span>{product.variant}</span>
+            </p>
+            <p>{product.price}</p>
+            <p>{product.deliveryStatus}</p>
+            <p>Order on {product.date}</p>
           </Link>
         ))}
       </div>

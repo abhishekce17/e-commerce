@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from 'react';
 
-const page = () => {
+const Page = () => {
   let router = useRouter()
   let cartItems = [
     {
@@ -53,11 +53,11 @@ const page = () => {
   }
   const handleProceedToCheckout = () => {
     router.push("/place-your-order/order-summary")
-    // Logic to navigate to the checkout page
+    // Logic to navigate to the checkout Page
   };
 
   const handleContinueShopping = () => {
-    // Logic to navigate back to the home page
+    // Logic to navigate back to the home Page
   };
 
   const renderCartItems = () => {
@@ -121,7 +121,7 @@ const page = () => {
             )}
           </div>
           <div className={styles.subtotal_total} >
-            <p>Subtotal <span>({cartItems.reduce( (item1, item2) => item1.quantity + item2.quantity )} items)</span> : ${calculateSubtotal()}</p>
+            <p>Subtotal <span>({cartItems.reduce((item1, item2) => item1.quantity + item2.quantity)} items)</span> : ${calculateSubtotal()}</p>
             <button className={styles.action_proceed} onClick={handleProceedToCheckout}>Proceed to Checkout</button>
             <button className={styles.action} onClick={handleContinueShopping}>Continue Shopping</button>
           </div>
@@ -133,4 +133,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -3,7 +3,7 @@ import styles from "@/Styles/AccountSetting.module.css"
 import UserAuthContext from "@/app/contextProvider";
 import { useContext, useState } from "react";
 
-const page = () => {
+const Page = () => {
     const context = useContext(UserAuthContext)
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState(context.userData.Personal);
@@ -166,4 +166,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

@@ -10,7 +10,7 @@ import DoubleLineGraphChart from '@/Components/DoubleLineGraphChart';
 import PieChart from '@/Components/PieChart';
 import Image from 'next/image';
 
-const page = () => {
+const Page = () => {
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
@@ -246,4 +246,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

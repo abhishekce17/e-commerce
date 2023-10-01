@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Loading from '../loading'
 
-const page = () => {
+const Page = () => {
   let router = useRouter()
   const [customerSnapDetails, setCustomerSnapDetails] = useState([])
 
@@ -65,4 +65,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
