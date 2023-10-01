@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 // import { getAuth, updateEmail as updateFirebaseEmail } from "firebase/auth";
 export async function PATCH(req) {
     try {
-        const authToken = cookies().get("authToken");
+        const authToken = req.cookies.get("authToken")
         const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
 
         if (!userData) {
