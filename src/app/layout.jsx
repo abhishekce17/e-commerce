@@ -22,30 +22,30 @@ export default function RootLayout({ children }) {
 
   let pathname = usePathname()
 
-  const fetchUserData = async () => {
-    const infoResponse = await fetch("/api/UserInformation/usersInfo")
-    const infoResult = await infoResponse.json()
-    if (infoResult.status === 200) {
-      setUserData(infoResult.userData)
-      setIsLoading(false)
-    } else if (infoResult.status === 401) {
-      setIsLoading(false)
-    }
-  }
-
 
   useEffect(() => {
-    const validateUserSession = async () => {
-      const sessionResponse = await fetch("/api/Authentication/ValidateSession")
-      const sessionResult = await sessionResponse.json()
-      if (sessionResult.status === 200) {
-        setIsUserLoggedIn(true);
-        fetchUserData()
-      } else if (sessionResult.status === 401) {
+
+    const fetchUserData = async () => {
+      const infoResponse = await fetch("/api/UserInformation/usersInfo")
+      const infoResult = await infoResponse.json()
+      if (infoResult.status === 200) {
+        setUserData(infoResult.userData)
+        setIsLoading(false)
+      } else if (infoResult.status === 401) {
         setIsLoading(false)
       }
     }
-    validateUserSession()
+    // const validateUserSession = async () => {
+    //   const sessionResponse = await fetch("/api/Authentication/ValidateSession")
+    //   const sessionResult = await sessionResponse.json()
+    //   if (sessionResult.status === 200) {
+    //     setIsUserLoggedIn(true);
+    fetchUserData()
+    //   } else if (sessionResult.status === 401) {
+    //     setIsLoading(false)
+    //   }
+    // }
+    // validateUserSession()
   }, [])
 
 
