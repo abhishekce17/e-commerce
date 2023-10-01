@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { getDoc, doc, collection, getDocs } from "firebase/firestore";
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 
 
 export async function GET(req) {
     try {
-        const authToken = req.cookies.get("authToken")
+        const authToken = cookies().get("authToken")
         console.log(authToken)
         if (authToken !== undefined) {
             const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
