@@ -28,7 +28,7 @@ const AddCategory = ({ params }) => {
       setCategories([result.data])
     }
     fetchCategory()
-  }, [])
+  }, [params.categoryId])
 
   const handleBrandChange = (e) => {
     setNewBrand(e.target.value);
