@@ -1,5 +1,5 @@
 import React from "react"
-import { FaGooglePay, FaPhone, FaMoneyCheckAlt } from "react - icons/fa";
+import { FaGooglePay, FaPhone, FaMoneyCheckAlt } from "react-icons/fa";
 import { SiPaytm } from "react-icons/si"
 import styles from "@/Styles/paymentMethods.module.css"
 
