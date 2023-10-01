@@ -28,78 +28,78 @@ const Page = () => {
     sales: []
   })
 
-  const fetchReport = async () => {
-    try {
-      const response = await fetch("/api/AdminDashboard/Analytics");
-      const result = await response.json();
-
-      if (result.status === 200) {
-        const { YearlyReport, MonthlyReport, categoryData } = result.fetchedData;
-        const currentYear = new Date().getFullYear();
-        const currentMonth = monthNames[new Date().getUTCMonth()].toLowerCase();
-        console.log(categoryData)
-        // Update total sales
-        const yearlyData = YearlyReport.find((x) => x.ReportYear === currentYear);
-        setTotalSales(
-          yearlyData.totalSales.toLocaleString("en-IN", {
-            style: "currency",
-            currency: "INR",
-          })
-        );
-
-        // Update total orders
-        setTotalOrders({
-          order: yearlyData.totalOrder.toLocaleString("en-IN", {
-            useGrouping: true,
-          }),
-          accepted: (546).toLocaleString("en-IN", {
-            useGrouping: true,
-          }),
-          pending: (46).toLocaleString("en-IN", {
-            useGrouping: true,
-          }),
-        });
-
-        // Update total customers
-        setTotalCustomers((566).toLocaleString("en-IN", { useGrouping: true }));
-
-        // Update monthly growth
-        const currentMonthData = MonthlyReport.find(
-          (x) => x[currentMonth] !== undefined
-        );
-        setMonthlyGrowth({
-          order: currentMonthData[currentMonth].totalOrder,
-          customer: currentMonthData[currentMonth].customerGrowth,
-          sales: currentMonthData[currentMonth].totalRevenueGenerated,
-        });
-
-        // Update graph data
-        const monthlyOrders = MonthlyReport.map((data, index) =>
-          data[monthNames[index].toLowerCase()].totalOrder
-        );
-        const monthlyRevenue = MonthlyReport.map((data, index) =>
-          data[monthNames[index].toLowerCase()].totalRevenueGenerated
-        );
-        setGraphData({
-          monthlyOrders,
-          monthlyRevenue,
-        });
-        setPieChartData({
-          categories: categoryData.map(x => x.category),
-          sales: categoryData.map(x => x.totalSaleAmount)
-        })
-      } else {
-        alert("Error: " + result.error.message);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred while fetching data.");
-    }
-  };
 
 
 
   useEffect(() => {
+    const fetchReport = async () => {
+      try {
+        const response = await fetch("/api/AdminDashboard/Analytics");
+        const result = await response.json();
+
+        if (result.status === 200) {
+          const { YearlyReport, MonthlyReport, categoryData } = result.fetchedData;
+          const currentYear = new Date().getFullYear();
+          const currentMonth = monthNames[new Date().getUTCMonth()].toLowerCase();
+          console.log(categoryData)
+          // Update total sales
+          const yearlyData = YearlyReport.find((x) => x.ReportYear === currentYear);
+          setTotalSales(
+            yearlyData.totalSales.toLocaleString("en-IN", {
+              style: "currency",
+              currency: "INR",
+            })
+          );
+
+          // Update total orders
+          setTotalOrders({
+            order: yearlyData.totalOrder.toLocaleString("en-IN", {
+              useGrouping: true,
+            }),
+            accepted: (546).toLocaleString("en-IN", {
+              useGrouping: true,
+            }),
+            pending: (46).toLocaleString("en-IN", {
+              useGrouping: true,
+            }),
+          });
+
+          // Update total customers
+          setTotalCustomers((566).toLocaleString("en-IN", { useGrouping: true }));
+
+          // Update monthly growth
+          const currentMonthData = MonthlyReport.find(
+            (x) => x[currentMonth] !== undefined
+          );
+          setMonthlyGrowth({
+            order: currentMonthData[currentMonth].totalOrder,
+            customer: currentMonthData[currentMonth].customerGrowth,
+            sales: currentMonthData[currentMonth].totalRevenueGenerated,
+          });
+
+          // Update graph data
+          const monthlyOrders = MonthlyReport.map((data, index) =>
+            data[monthNames[index].toLowerCase()].totalOrder
+          );
+          const monthlyRevenue = MonthlyReport.map((data, index) =>
+            data[monthNames[index].toLowerCase()].totalRevenueGenerated
+          );
+          setGraphData({
+            monthlyOrders,
+            monthlyRevenue,
+          });
+          setPieChartData({
+            categories: categoryData.map(x => x.category),
+            sales: categoryData.map(x => x.totalSaleAmount)
+          })
+        } else {
+          alert("Error: " + result.error.message);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred while fetching data.");
+      }
+    };
     // setTotalSales((125796).number.toLocaleString('en-IN', {useGrouping: true}))
     fetchReport()
     // let totalSales = "1,23,456";

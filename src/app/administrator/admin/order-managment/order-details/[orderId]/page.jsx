@@ -26,14 +26,14 @@ const Page = ({ params }) => {
     let date = new Date();
     const [orderDetails, setOrderDetails] = useState({});
     const [isLoading, setIsLoading] = useState(true)
-    const fetchOrders = async () => {
-        const resultData = await fetch(`/api/AdminOrderDetails/${params.orderId}`)
-        const fetchedOrdersDetails = await resultData.json()
-        setOrderDetails(fetchedOrdersDetails.data)
-        setIsLoading(false)
-        console.log(orderDetails.items)
-    }
     useEffect(() => {
+        const fetchOrders = async () => {
+            const resultData = await fetch(`/api/AdminOrderDetails/${params.orderId}`)
+            const fetchedOrdersDetails = await resultData.json()
+            setOrderDetails(fetchedOrdersDetails.data)
+            setIsLoading(false)
+            console.log(orderDetails.items)
+        }
         fetchOrders()
     }, [])
 

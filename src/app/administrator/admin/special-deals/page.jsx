@@ -250,48 +250,48 @@ const SpecialDeals = () => {
     setBannerImages(updatedBannerImages);
   };
 
-  async function fetchingAllProductsSnap() {
-    const res = await fetch(`/api/product-revenue-details`, {
-      method: "GET",
-    });
-    const result = await res.json()
-    if (result.status === 200) {
-      // console.log(result.data)
-      setProductList(result.data)
-      setBannerProductList(result.data)
-    }
-  }
-
-
-  async function existDeals() {
-    const res = await fetch(`/api/AdminDealseSetting/FetchDealse`, {
-      method: "GET",
-    });
-    const result = await res.json()
-    if (result.status === 200) {
-      setSelectedProducts(result.data.selectedDeals);
-
-      setTempData([
-        ...result.data.selectedDeals.map(deal => ({
-          productId: deal.productId,
-          dealId: deal.dealId
-        }))
-      ]);
-      setBannerImages([
-        ...result.data.bannerDeals.map(({ pcViewURL, mobileViewURL, dealId, ...product }) => ({
-          pcImageUrl: pcViewURL,
-          mobileImageUrl: mobileViewURL,
-          dealId: dealId,
-          product: product
-        }))
-      ]);
-
-      // console.log(result.data)
-    }
-    SetIsLoading(false)
-  }
 
   useEffect(() => {
+    async function fetchingAllProductsSnap() {
+      const res = await fetch(`/api/product-revenue-details`, {
+        method: "GET",
+      });
+      const result = await res.json()
+      if (result.status === 200) {
+        // console.log(result.data)
+        setProductList(result.data)
+        setBannerProductList(result.data)
+      }
+    }
+
+
+    async function existDeals() {
+      const res = await fetch(`/api/AdminDealseSetting/FetchDealse`, {
+        method: "GET",
+      });
+      const result = await res.json()
+      if (result.status === 200) {
+        setSelectedProducts(result.data.selectedDeals);
+
+        setTempData([
+          ...result.data.selectedDeals.map(deal => ({
+            productId: deal.productId,
+            dealId: deal.dealId
+          }))
+        ]);
+        setBannerImages([
+          ...result.data.bannerDeals.map(({ pcViewURL, mobileViewURL, dealId, ...product }) => ({
+            pcImageUrl: pcViewURL,
+            mobileImageUrl: mobileViewURL,
+            dealId: dealId,
+            product: product
+          }))
+        ]);
+
+        // console.log(result.data)
+      }
+      SetIsLoading(false)
+    }
     fetchingAllProductsSnap()
     existDeals()
   }, [])

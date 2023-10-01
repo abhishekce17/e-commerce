@@ -21,39 +21,39 @@ const Page = () => {
   const [upperBarValue, setUpperBarValue] = useState("product-stocks");
   const [updatedProductsId, setUpdatedProductsId] = useState(new Set())
 
-  const fetchCities = async () => {
-    try {
-      const { data } = await axios.get(
-        "https://countriesnow.space/api/v0.1/countries/state/cities/q?country=India&state=Maharashtra"
-      );
-      setCities(data.data);
-    } catch (error) {
-      console.log("Error fetching cities:", error);
-    }
-  };
-
-  const fetchingAllProductsSnap = async () => {
-    try {
-      const res = await fetch(`/api/product-revenue-details`, {
-        method: "GET",
-      });
-      const result = await res.json();
-      if (result.status === 200) {
-        setProductStockInfo(result.data);
-        setFilteredProductInfo(result.data)
-      }
-    } catch (error) {
-      console.log("Error fetching product data:", error);
-    }
-  };
-
-  async function fetchCategories() {
-    const response = await fetch("/api/AdminCategories/FetchCategories")
-    const resultData = await response.json()
-    setCategories(resultData.data)
-  }
 
   useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const { data } = await axios.get(
+          "https://countriesnow.space/api/v0.1/countries/state/cities/q?country=India&state=Maharashtra"
+        );
+        setCities(data.data);
+      } catch (error) {
+        console.log("Error fetching cities:", error);
+      }
+    };
+
+    const fetchingAllProductsSnap = async () => {
+      try {
+        const res = await fetch(`/api/product-revenue-details`, {
+          method: "GET",
+        });
+        const result = await res.json();
+        if (result.status === 200) {
+          setProductStockInfo(result.data);
+          setFilteredProductInfo(result.data)
+        }
+      } catch (error) {
+        console.log("Error fetching product data:", error);
+      }
+    };
+
+    async function fetchCategories() {
+      const response = await fetch("/api/AdminCategories/FetchCategories")
+      const resultData = await response.json()
+      setCategories(resultData.data)
+    }
     fetchCities();
     fetchingAllProductsSnap();
     fetchCategories()

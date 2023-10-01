@@ -10,14 +10,14 @@ const Page = () => {
   let router = useRouter()
   const [customerSnapDetails, setCustomerSnapDetails] = useState([])
 
-  const fetchCustomerSnapDetails = async () => {
-    const response = await fetch("/api/AdminCustomerSnap/fetchCustomerSnapDetails")
-    const result = await response.json()
-    if (result.status === 200) {
-      setCustomerSnapDetails(result.data)
-    }
-  }
   useEffect(() => {
+    const fetchCustomerSnapDetails = async () => {
+      const response = await fetch("/api/AdminCustomerSnap/fetchCustomerSnapDetails")
+      const result = await response.json()
+      if (result.status === 200) {
+        setCustomerSnapDetails(result.data)
+      }
+    }
     fetchCustomerSnapDetails()
   }, [])
 

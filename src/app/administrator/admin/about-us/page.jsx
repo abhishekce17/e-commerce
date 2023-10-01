@@ -98,19 +98,6 @@ const AboutUs = () => {
   };
 
 
-  const fetchInformation = async () => {
-    const fetchResponse = await fetch("/api/AdminCompanyDetails/FetchDetails")
-    const fetchedData = await fetchResponse.json()
-    if (fetchedData.status === 200) {
-      setIsInfoValid(true)
-      setSubmittedInfo(fetchedData.companyInfo)
-      setCompanyInfo(fetchedData.companyInfo)
-      setIsEditing(false);
-      setIsLoading(false)
-    } else {
-      alert("Error : " + fetchedData.details)
-    }
-  }
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -124,6 +111,19 @@ const AboutUs = () => {
   };
 
   useEffect(() => {
+    const fetchInformation = async () => {
+      const fetchResponse = await fetch("/api/AdminCompanyDetails/FetchDetails")
+      const fetchedData = await fetchResponse.json()
+      if (fetchedData.status === 200) {
+        setIsInfoValid(true)
+        setSubmittedInfo(fetchedData.companyInfo)
+        setCompanyInfo(fetchedData.companyInfo)
+        setIsEditing(false);
+        setIsLoading(false)
+      } else {
+        alert("Error : " + fetchedData.details)
+      }
+    }
     fetchInformation()
   }, [])
 

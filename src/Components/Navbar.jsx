@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Link from "next/link";
 import styles from "../Styles/Navbar.module.css";
 import { BiChevronDown } from "react-icons/bi"

@@ -78,32 +78,32 @@ const Page = () => {
   };
 
 
-  async function fetchingAllProductsSnap() {
-    const res = await fetch(`/api/product-revenue-details`, {
-      method: "GET",
-    });
-    const result = await res.json()
-    if (result.status === 200) {
-      console.log(result.data)
-      setProductList(result.data)
-    }
-  }
 
 
-  async function existDeals() {
-    const res = await fetch(`/api/AdminFeatured/FetchFeaturedProduct`, {
-      method: "GET",
-    });
-    const result = await res.json()
-    if (result.status === 200) {
-      setSelectedProducts(result.data);
-      setTempData(result.data)
-      // console.log(result.data)
-    }
-    // SetIsLoading(false)
-  }
 
   useEffect(() => {
+    async function fetchingAllProductsSnap() {
+      const res = await fetch(`/api/product-revenue-details`, {
+        method: "GET",
+      });
+      const result = await res.json()
+      if (result.status === 200) {
+        console.log(result.data)
+        setProductList(result.data)
+      }
+    }
+    async function existDeals() {
+      const res = await fetch(`/api/AdminFeatured/FetchFeaturedProduct`, {
+        method: "GET",
+      });
+      const result = await res.json()
+      if (result.status === 200) {
+        setSelectedProducts(result.data);
+        setTempData(result.data)
+        // console.log(result.data)
+      }
+      // SetIsLoading(false)
+    }
     fetchingAllProductsSnap()
     existDeals()
   }, [])

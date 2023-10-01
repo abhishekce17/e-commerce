@@ -33,18 +33,18 @@ export default function RootLayout({ children }) {
     }
   }
 
-  const validateUserSession = async () => {
-    const sessionResponse = await fetch("/api/Authentication/ValidateSession")
-    const sessionResult = await sessionResponse.json()
-    if (sessionResult.status === 200) {
-      setIsUserLoggedIn(true);
-      fetchUserData()
-    } else if (sessionResult.status === 401) {
-      setIsLoading(false)
-    }
-  }
 
   useEffect(() => {
+    const validateUserSession = async () => {
+      const sessionResponse = await fetch("/api/Authentication/ValidateSession")
+      const sessionResult = await sessionResponse.json()
+      if (sessionResult.status === 200) {
+        setIsUserLoggedIn(true);
+        fetchUserData()
+      } else if (sessionResult.status === 401) {
+        setIsLoading(false)
+      }
+    }
     validateUserSession()
   }, [])
 

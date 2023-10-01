@@ -12,18 +12,18 @@ const Page = () => {
 
   const [ordersSnapDetails, setOrdersSnapDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(true)
-  const fetchOrders = async (query) => {
-    const resultData = await fetch(`/api/orders-snap-details`)
-    const fetchedOrdersDetails = await resultData.json()
-    if (query !== "allorders") {
-      setOrdersSnapDetails(fetchedOrdersDetails.data.filter(data => query === data.deliveryStatus.toLowerCase().replaceAll(" ", "")))
-    }
-    else {
-      setOrdersSnapDetails(fetchedOrdersDetails.data)
-    }
-    setIsLoading(false)
-  }
   useEffect(() => {
+    const fetchOrders = async (query) => {
+      const resultData = await fetch(`/api/orders-snap-details`)
+      const fetchedOrdersDetails = await resultData.json()
+      if (query !== "allorders") {
+        setOrdersSnapDetails(fetchedOrdersDetails.data.filter(data => query === data.deliveryStatus.toLowerCase().replaceAll(" ", "")))
+      }
+      else {
+        setOrdersSnapDetails(fetchedOrdersDetails.data)
+      }
+      setIsLoading(false)
+    }
     fetchOrders("allorders")
   }, [])
 

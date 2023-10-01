@@ -31,13 +31,13 @@ const Page = () => {
   }
 
 
-  async function fetchCategories() {
-    const response = await fetch("/api/AdminCategories/FetchCategories")
-    const resultData = await response.json()
-    setCategories(resultData.data)
-  }
 
   useEffect(() => {
+    async function fetchCategories() {
+      const response = await fetch("/api/AdminCategories/FetchCategories")
+      const resultData = await response.json()
+      setCategories(resultData.data)
+    }
     fetchCategories()
   }, [])
 

@@ -58,51 +58,51 @@ const Page = ({ params }) => {
         console.log(product_Id);
     };
 
-    async function fetchRevenueDetails() {
-        const res = await fetch(`/api/FetchRevenue/${product_Id}`);
-        const result = await res.json();
-        if (result.status === 200) {
-            setRevenueDetails(result.data[0]);
-        }
-    }
-
-    async function fetchDetails() {
-        const res = await fetch(`/api/product-details/${product_Id}`, {
-            method: 'GET',
-        });
-        const result = await res.json();
-        if (result.status === 200) {
-            const extractedValues = extractValues('discount', result.data.variants);
-            setProductDetails({
-                dealProduct: result.data.dealProduct,
-                productName: result.data.productName,
-                brandName: result.data.brandName,
-                moreDetails: result.data.description,
-                category: result.data.category,
-                price: result.data.price,
-                specifications: result.data.specifications,
-                variants: result.data.variants,
-                discount: result.data.discount || extractedValues,
-                imgURLs: result.data.imgURLs,
-                variantPrice: result.data.netPrice === undefined && extractValues('price', result.data.variants),
-                averageRating: result.data.averageRating,
-            });
-            console.log(result.data.brandName);
-        } else if (result.status === 404) {
-            setProductDetails(404);
-        }
-        // else if (result.status === 500) {
-        //     //server error page
-        // }
-    }
-
-    async function fetchCategories() {
-        const response = await fetch('/api/AdminCategories/FetchCategories');
-        const resultData = await response.json();
-        setCategories(resultData.data);
-    }
 
     useEffect(() => {
+        async function fetchRevenueDetails() {
+            const res = await fetch(`/api/FetchRevenue/${product_Id}`);
+            const result = await res.json();
+            if (result.status === 200) {
+                setRevenueDetails(result.data[0]);
+            }
+        }
+
+        async function fetchDetails() {
+            const res = await fetch(`/api/product-details/${product_Id}`, {
+                method: 'GET',
+            });
+            const result = await res.json();
+            if (result.status === 200) {
+                const extractedValues = extractValues('discount', result.data.variants);
+                setProductDetails({
+                    dealProduct: result.data.dealProduct,
+                    productName: result.data.productName,
+                    brandName: result.data.brandName,
+                    moreDetails: result.data.description,
+                    category: result.data.category,
+                    price: result.data.price,
+                    specifications: result.data.specifications,
+                    variants: result.data.variants,
+                    discount: result.data.discount || extractedValues,
+                    imgURLs: result.data.imgURLs,
+                    variantPrice: result.data.netPrice === undefined && extractValues('price', result.data.variants),
+                    averageRating: result.data.averageRating,
+                });
+                console.log(result.data.brandName);
+            } else if (result.status === 404) {
+                setProductDetails(404);
+            }
+            // else if (result.status === 500) {
+            //     //server error page
+            // }
+        }
+
+        async function fetchCategories() {
+            const response = await fetch('/api/AdminCategories/FetchCategories');
+            const resultData = await response.json();
+            setCategories(resultData.data);
+        }
         fetchDetails();
         fetchRevenueDetails();
         fetchCategories();

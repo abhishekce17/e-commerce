@@ -40,18 +40,18 @@ const Page = () => {
     )
   }
 
-  async function fetchingAllProductsSnap() {
-    const res = await fetch(`/api/product-revenue-details`, {
-      method: "GET",
-      // body: formDataAPI,
-    });
-    const result = await res.json()
-    if (result.status === 200) {
-      setFetchedProducts(result.data)
-    }
-  }
 
   useEffect(() => {
+    async function fetchingAllProductsSnap() {
+      const res = await fetch(`/api/product-revenue-details`, {
+        method: "GET",
+        // body: formDataAPI,
+      });
+      const result = await res.json()
+      if (result.status === 200) {
+        setFetchedProducts(result.data)
+      }
+    }
 
     fetchingAllProductsSnap()
 

@@ -3,7 +3,7 @@ import AccountSidebar from '@/Components/AccountSidebar';
 import styles from "@/Styles/Account.module.css"
 import UserAuthContext from '@/app/contextProvider';
 import Link from 'next/link';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 
 const Page = () => {
     const context = useContext(UserAuthContext)

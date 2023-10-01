@@ -74,16 +74,16 @@ const HelpAndFAQ = () => {
   };
 
 
-  const fetchFAQ = async () => {
-    const fetchResponse = await fetch("/api/FAQ/FetchFAQ")
-    const result = await fetchResponse.json()
-    if (result.status === 200) {
-      setQuestions(result.data)
-      setIsLoading(false)
-    }
-  }
 
   useEffect(() => {
+    const fetchFAQ = async () => {
+      const fetchResponse = await fetch("/api/FAQ/FetchFAQ")
+      const result = await fetchResponse.json()
+      if (result.status === 200) {
+        setQuestions(result.data)
+        setIsLoading(false)
+      }
+    }
     fetchFAQ()
   }, [])
 

@@ -20,13 +20,13 @@ const AddCategory = ({ params }) => {
   //   setNewCategory(e.target.value);
   // };
 
-  async function fetchCategory() {
-    const response = await fetch("/api/AdminCategories/QueryCategory/" + params.categoryId)
-    const result = await response.json()
-    setCategories([result.data])
-  }
 
   useEffect(() => {
+    async function fetchCategory() {
+      const response = await fetch("/api/AdminCategories/QueryCategory/" + params.categoryId)
+      const result = await response.json()
+      setCategories([result.data])
+    }
     fetchCategory()
   }, [])
 
