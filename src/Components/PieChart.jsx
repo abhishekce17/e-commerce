@@ -9,6 +9,19 @@ const PieChart = ({ categories, sales }) => {
   // const [sales, setSales] = useState();
 
   useEffect(() => {
+    const generateColors = (count) => {
+      const existingColors = chartRef.current?.__chart?.config?.data?.datasets[0]?.backgroundColor || [];
+      const availableColors = getAvailableColors(existingColors);
+      const colors = [];
+      for (let i = 0; i < count; i++) {
+        if (i < availableColors.length) {
+          colors.push(availableColors[i]);
+        } else {
+          colors.push(getRandomColor());
+        }
+      }
+      return colors;
+    };
     // Calculate total sales
     const totalSales = sales.reduce((acc, value) => acc + value, 0);
 
@@ -54,19 +67,7 @@ const PieChart = ({ categories, sales }) => {
         },
       },
     });
-    const generateColors = (count) => {
-      const existingColors = chartRef.current?.__chart?.config?.data?.datasets[0]?.backgroundColor || [];
-      const availableColors = getAvailableColors(existingColors);
-      const colors = [];
-      for (let i = 0; i < count; i++) {
-        if (i < availableColors.length) {
-          colors.push(availableColors[i]);
-        } else {
-          colors.push(getRandomColor());
-        }
-      }
-      return colors;
-    };
+
   }, [categories, sales]);
 
 
