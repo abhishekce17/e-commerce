@@ -9,7 +9,6 @@ import { doc, getDoc } from "firebase/firestore";
 export async function GET(req) {
     try {
         const authToken = req.cookies.get("authToken")
-        console.log(authToken);
         if (authToken === undefined) return NextResponse.json({ status: 401 })
         const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
         if (userData) {
