@@ -1,4 +1,3 @@
-process.noDeprecation = true;
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
@@ -8,6 +7,7 @@ const fs = require("fs")
 
 export const dynamic = "force-dynamic";
 export async function POST(req) {
+    process.noDeprecation = true;
     try {
         let imgUrl = []
         const formData = await req.formData();
