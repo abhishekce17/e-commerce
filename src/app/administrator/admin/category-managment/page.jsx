@@ -34,7 +34,7 @@ const Page = () => {
 
   useEffect(() => {
     async function fetchCategories() {
-      const response = await fetch("/api/AdminCategories/FetchCategories")
+      const response = await fetch("/api/AdminCategories/FetchCategories", { cache: "no-store" })
       const resultData = await response.json()
       setCategories(resultData.data)
     }
