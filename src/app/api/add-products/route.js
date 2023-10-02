@@ -6,6 +6,7 @@ const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
 const fs = require("fs")
 
+export const dynamic = "force-dynamic";
 export async function POST(req) {
     try {
         let imgUrl = []
