@@ -36,10 +36,6 @@ const Page = () => {
 
     }
 
-    const verifyEmail = async () => {
-
-    }
-
 
     const handleSaveClick = async () => {
         const updateInfoResponse = await fetch("/api/UserInformation/UpdateInfo", {

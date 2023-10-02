@@ -23,13 +23,13 @@ export async function PATCH(req) {
         }
 
         // const dataToUpdate = await req.json();
-        const { formData: dataToUpdate } = await req.json();
-        // console.log(dataToUpdate, updateEmail)
+        const formData = await req.json();
+        console.log(formData)
         const userInfoDocRef = doc(userDocRef, "Information", "Personal");
 
-        await updateDoc(userInfoDocRef, dataToUpdate);
+        await updateDoc(userInfoDocRef, formData);
 
-        //Add logic to update email as well in future
+        //Add logic to update email as well in future 
 
         return NextResponse.json({ status: 200 });
     } catch (e) {

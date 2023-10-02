@@ -17,7 +17,7 @@ const Page = () => {
                 <p><strong>Name:</strong> {userData.fullName} </p>
                 <p><strong>Email:</strong> {userData.contact.email} </p>
                 <p><strong>Phone:</strong> {userData.contact.phoneNo} </p>
-                <p><strong>Address:</strong> 123 Main St, City, State, ZIP</p>
+                <p><strong>Address:</strong> {`${userData.address.house_no}, ${userData.address.area}, ${userData.address.landmark}, ${userData.address.city}, ${userData.address.pincode}, ${userData.address.state}`}</p>
             </div>
         </div>
         <h3>Recent Order</h3>

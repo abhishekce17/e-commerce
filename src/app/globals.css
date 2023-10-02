@@ -5,7 +5,9 @@
   --light-bg-color: rgba(56, 250, 185, 0.66);
   --light-grey: #858585;
   --scalling: 1.02;
-  --admin-bg:#fef;
+  --admin-bg: #fef;
+  --loading-bg-light: rgb(230, 230, 230);
+  --loading-bg-dark: rgb(210, 210, 210);
 }
 
 * {

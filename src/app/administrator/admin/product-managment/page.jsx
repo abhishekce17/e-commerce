@@ -26,7 +26,7 @@ const Page = () => {
         <input type='checkbox' />
         <div>
           <Image src={data.productFirtsImgURL} width={100} height={100} alt='name' />
-          <Link href={"administrator/admin/product-managment/product-details/" + data.productId} >
+          <Link href={"product-managment/product-details/" + data.productId} >
             <p> {data.productName} </p>
           </Link>
         </div>

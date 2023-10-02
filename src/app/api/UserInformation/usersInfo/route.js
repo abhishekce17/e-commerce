@@ -7,9 +7,9 @@ import { verify } from "jsonwebtoken";
 export const dynamic = 'force-dynamic'
 export async function GET(req) {
     try {
-        console.log("from userInfo route");
+        // console.log("from userInfo route");
         const authToken = cookies().get("authToken")
-        console.log(authToken)
+        // console.log(authToken)
         if (authToken !== undefined) {
             const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
             if (userData) {
