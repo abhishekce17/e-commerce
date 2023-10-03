@@ -4,7 +4,7 @@ import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/fir
 const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
 const fs = require("fs")
-process.noDeprecation = true;
+// process.noDeprecation = true;
 
 export const dynamic = "force-dynamic";
 export async function POST(req) {
