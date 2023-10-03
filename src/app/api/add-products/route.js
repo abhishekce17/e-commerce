@@ -16,7 +16,6 @@ export async function POST(req) {
             imgFileArray.forEach(async (imgFile) => {
                 const fileBuffer = await imgFile.arrayBuffer();
                 const buffer = Buffer.from(fileBuffer);
-                console.log(buffer)
                 const stream = cloudinary.v2.uploader.upload_stream(
                     { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
                     (error, result) => {
@@ -29,8 +28,8 @@ export async function POST(req) {
                             if (imgFileArray.length === imgUrl.length) resolve()
                         }
                     }
-                );
-                streamifier.createReadStream(buffer).pipe(stream)
+                ).end(buffer);
+                // streamifier.createReadStream(buffer).pipe(stream)
             })
         })
         await urlPromise
