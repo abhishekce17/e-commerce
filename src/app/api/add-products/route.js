@@ -104,7 +104,7 @@ export async function POST(req) {
                 for (const file of formData.getAll("file")) {
                     const fileBuffer = await file.arrayBuffer();
                     const buffer = Buffer.from(fileBuffer);
-                    const result = await cloudinary.v2.uploader.upload_stream({
+                    const result = cloudinary.v2.uploader.upload_stream({
                         resource_type: 'auto', folder: "E-Commerce"
                     }, (error, result) => {
                         if (error) {
