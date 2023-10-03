@@ -34,7 +34,7 @@ export async function POST(req) {
         //         stream.end(buffer);
         //     })
         // })
-        await urlPromise
+        // await urlPromise
         body.imgURLs = imgUrl
         // const addedProduct = await addDoc(collection(db, "products"), body);
 
