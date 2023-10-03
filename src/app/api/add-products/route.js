@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // import { db } from "@/firebase-config/config";
 // import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 const cloudinary = require('cloudinary');
-import cloudinary_config from "@/cloudinary-config/config";
+// import cloudinary_config from "@/cloudinary-config/config";
 
 // export async function POST(req) {
 //     try {
@@ -86,11 +86,11 @@ import cloudinary_config from "@/cloudinary-config/config";
 import multer from 'multer';
 // import { NextApiRequest, NextApiResponse } from 'next';
 
-// cloudinary.config({
-//   cloud_name: 'YOUR_CLOUD_NAME',
-//   api_key: 'YOUR_API_KEY',
-//   api_secret: 'YOUR_API_SECRET',
-// });
+cloudinary.config({
+    cloud_name: 'dnbfy78fe',
+    api_key: '364654966965189',
+    api_secret: 'qJPZ7Yq77n852qVQ9k_A9XBjvyk'
+});
 
 const upload = multer({ storage: multer.memoryStorage() });
 
