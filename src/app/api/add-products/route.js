@@ -28,8 +28,8 @@ export async function POST(req) {
                         }
                     }
                 ).end(buffer);
-                console.log("line 31", buffer.buffer)
-                console.log("line 32", JSON.stringify(buffer))
+                console.log("line 31", JSON.stringify(buffer))
+                console.log("line 32", buffer)
                 console.log("line 33", JSON.parse(buffer))
             })
         })
