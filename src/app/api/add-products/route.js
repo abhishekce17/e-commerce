@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-const cloudinary = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 import cloudinary_config from "@/cloudinary-config/config";
 const fs = require("fs")
 
@@ -16,7 +16,7 @@ export async function POST(req) {
             imgFileArray.forEach(async (imgFile) => {
                 const fileBuffer = await imgFile.arrayBuffer();
                 const buffer = Buffer.from(fileBuffer);
-                const stream = cloudinary.v2.uploader.upload_stream(
+                const stream = cloudinary.uploader.upload_stream(
                     { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
                     (error, result) => {
                         if (error) {
