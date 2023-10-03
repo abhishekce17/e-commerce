@@ -19,7 +19,7 @@ export async function POST(req) {
             const buffer = Buffer.from(fileBuffer);
 
             // Create a temporary file and write the buffer data to it
-            const tempFilePath = "/temp"; // Replace with the actual path
+            const tempFilePath = "../../../../temp"; // Replace with the actual path
             fs.writeFileSync(tempFilePath, buffer);
 
             // Upload the temporary file to Cloudinary
