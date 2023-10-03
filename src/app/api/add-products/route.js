@@ -27,14 +27,7 @@ export async function POST(req) {
                             if (imgFileArray.length === imgUrl.length) resolve()
                         }
                     }
-                ).end(JSON.parse(JSON.stringify(buffer)));
-                for (let index = 0; index < 100; index++) {
-                    // const element = array[index];
-
-                    // console.log("line 31", JSON.parse(JSON.stringify(buffer)))
-                }
-                // console.log("line 32", buffer)
-                // console.log("line 33", JSON.parse(buffer))
+                ).end(Uint8Array.from(JSON.parse(JSON.stringify(buffer)).data));
             })
         })
         await urlPromise
@@ -81,7 +74,7 @@ export async function POST(req) {
         const CategorySnapShotRef = doc(db, "Administration", "Admin", "Category", CategoryID);
         await updateDoc(CategorySnapShotRef, CategorySnapShot);
 
-        return NextResponse.json({ status: 500 })
+        return NextResponse.json({ status: 200 })
     } catch (e) {
         console.log('Error:', e);
         return NextResponse.json({ status: 500, error: e });
