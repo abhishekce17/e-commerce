@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, addDoc, updateDoc, getDoc, query, where, doc, writeBatch, getDocs, deleteField } from "firebase/firestore";
-import cloudinary from 'cloudinary/lib/v2';
+import cloudinary from 'cloudinary';
 import cloudinaryConfig from "@/cloudinary-config/config";
 
 // Initialize Cloudinary
@@ -34,7 +34,7 @@ function mergeVariants(oldVariant, newVariant) {
 
 async function uploadImageToCloudinary(imageBuffer) {
     return new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
+        cloudinary.v2.uploader.upload_stream(
             { resource_type: 'auto', folder: 'E-Commerce' },
             (error, result) => {
                 if (error) {
