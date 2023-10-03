@@ -29,7 +29,6 @@ export async function POST(req) {
                         }
                     }
                 ).end(buffer);
-                // streamifier.createReadStream(buffer).pipe(stream)
             })
         })
         await urlPromise
