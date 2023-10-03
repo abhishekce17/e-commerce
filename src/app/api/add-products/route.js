@@ -94,6 +94,7 @@ cloudinary.config({
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+export const dynamic = "force-dynamic"
 export async function POST(req) {
     if (req.method === 'POST') {
         try {
