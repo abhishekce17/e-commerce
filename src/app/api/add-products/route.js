@@ -40,7 +40,7 @@ export async function POST(req) {
 
         let snapShot = {
             brandName: body.brandName,
-            productId: addedProduct.id,
+            // productId: addedProduct.id,
             category: body.category,
             productName: body.productName,
             productFirtsImgURL: imgUrl[0],
