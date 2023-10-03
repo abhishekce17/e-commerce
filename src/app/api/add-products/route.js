@@ -4,7 +4,6 @@ import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/fir
 const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
 const fs = require("fs")
-process.noDeprecation = true;
 
 export const dynamic = "force-dynamic";
 export async function POST(req) {
@@ -12,40 +11,34 @@ export async function POST(req) {
         let imgUrl = []
         const formData = await req.formData();
         const body = JSON.parse(formData.get("body"))
-        console.log(body)
         const imgFileArray = formData.getAll("file")
-        try {
-            const urlPromise = new Promise((resolve, reject) => {
-                imgFileArray.forEach(async (imgFile) => {
-                    const fileBuffer = await imgFile.arrayBuffer();
-                    const buffer = Buffer.from(fileBuffer);
-                    const stream = cloudinary.v2.uploader.upload_stream(
-                        { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
-                        (error, result) => {
-                            if (error) {
-                                console.error('Error uploading image:', error);
-                                NextResponse.json({ statu: 500, error })
-                                return reject(error)
-                            } else {
-                                imgUrl.push(result.url)
-                                if (imgFileArray.length === imgUrl.length) resolve()
-                            }
+        const urlPromise = new Promise((resolve, reject) => {
+            imgFileArray.forEach(async (imgFile) => {
+                const fileBuffer = await imgFile.arrayBuffer();
+                const buffer = Buffer.from(fileBuffer);
+                const stream = cloudinary.v2.uploader.upload_stream(
+                    { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
+                    (error, result) => {
+                        if (error) {
+                            console.error('Error uploading image:', error);
+                            NextResponse.json({ statu: 500, error })
+                            return reject(error)
+                        } else {
+                            imgUrl.push(result.url)
+                            if (imgFileArray.length === imgUrl.length) resolve()
                         }
-                    );
-                    stream.end(buffer);
-                })
+                    }
+                );
+                stream.end(buffer);
             })
-            await urlPromise
-
-        } catch (error) {
-            console.log(error)
-        }
+        })
+        await urlPromise
         body.imgURLs = imgUrl
-        // const addedProduct = await addDoc(collection(db, "products"), body);
+        const addedProduct = await addDoc(collection(db, "products"), body);
 
         let snapShot = {
             brandName: body.brandName,
-            // productId: addedProduct.id,
+            productId: addedProduct.id,
             category: body.category,
             productName: body.productName,
             productFirtsImgURL: imgUrl[0],
@@ -60,7 +53,7 @@ export async function POST(req) {
             averageRating: 0 //fetch from API of Reviews and Rating ,
         }
         const productSnapDetailsRef = collection(db, "ProductSnapDetails")
-        // await addDoc(productSnapDetailsRef, productSnapDetails)
+        await addDoc(productSnapDetailsRef, productSnapDetails)
 
         const filteredVariant = snapShot.variants.map(item => {
             const filteredType = item.type.filter(subItem => subItem.price !== undefined);
@@ -75,13 +68,13 @@ export async function POST(req) {
             totalRevenue: 0
         }
         const RevenueSnapDetailsRef = collection(db, "Administration", "Admin", "Revenue")
-        // await addDoc(RevenueSnapDetailsRef, RevenueSnapDetails)
+        await addDoc(RevenueSnapDetailsRef, RevenueSnapDetails)
 
         const CategoryID = formData.get("categoryId")
         const categoryDocSnapshot = await getDoc(doc(db, "Administration", "Admin", "Category", CategoryID));
         const CategorySnapShot = { ...categoryDocSnapshot.data(), productCount: categoryDocSnapshot.data().productCount + 1 }
         const CategorySnapShotRef = doc(db, "Administration", "Admin", "Category", CategoryID);
-        // await updateDoc(CategorySnapShotRef, CategorySnapShot);
+        await updateDoc(CategorySnapShotRef, CategorySnapShot);
 
         return NextResponse.json({ status: 200 })
     } catch (e) {
