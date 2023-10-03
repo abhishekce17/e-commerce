@@ -7,6 +7,7 @@ import cloudinaryConfig from "@/cloudinary-config/config";
 // Initialize Cloudinary
 cloudinary.config(cloudinaryConfig);
 
+export const dynamic = "force-dynamic"
 function mergeVariants(oldVariant, newVariant) {
     return oldVariant.map(oldItem => {
         const newItem = newVariant.find(item => item.title === oldItem.title);
