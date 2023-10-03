@@ -3,8 +3,8 @@ import { db } from "@/firebase-config/config";
 import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
-import streamifier from "streamifier"
 import fs from "fs"
+import path from "path"; // Import the 'path' module to work with file paths
 
 export const dynamic = "force-dynamic";
 export async function POST(req) {
@@ -18,8 +18,10 @@ export async function POST(req) {
             const fileBuffer = await imgFile.arrayBuffer();
             const buffer = Buffer.from(fileBuffer);
 
-            // Create a temporary file and write the buffer data to it
-            const tempFilePath = "/tmp"; // Replace with the actual path
+            // Create a temporary file with a timestamp-based name and write the buffer data to it
+            const timestamp = new Date().getTime();
+            const tempFileName = `temp_${timestamp}${path.extname(imgFile.name)}`;
+            const tempFilePath = path.join("/tmp", tempFileName); // Specify a file path
             fs.writeFileSync(tempFilePath, buffer);
 
             // Upload the temporary file to Cloudinary
@@ -38,7 +40,6 @@ export async function POST(req) {
             // Delete the temporary file
             fs.unlinkSync(tempFilePath);
         }
-
         body.imgURLs = imgUrl;
         const addedProduct = await addDoc(collection(db, "products"), body);
 
