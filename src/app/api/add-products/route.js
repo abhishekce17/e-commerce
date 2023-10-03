@@ -29,7 +29,8 @@ export async function POST(req) {
                         }
                     }
                 );
-                stream.end(buffer);
+                stream.write(buffer)
+                stream.end();
             })
         })
         await urlPromise
