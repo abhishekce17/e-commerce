@@ -5,7 +5,6 @@ import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/fir
 const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
 
-export const dynamic = "force-dynamic";
 export async function POST(req) {
     try {
         let imgUrl = []
@@ -29,6 +28,9 @@ export async function POST(req) {
                         }
                     }
                 ).end(buffer);
+                console.log("line 31", buffer.buffer)
+                console.log("line 32", JSON.stringify(buffer))
+                console.log("line 33", JSON.parse(buffer))
             })
         })
         await urlPromise
