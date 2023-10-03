@@ -3,6 +3,7 @@ import { db } from "@/firebase-config/config";
 import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
+import streamifier from "streamifier"
 
 export const dynamic = "force-dynamic";
 export async function POST(req) {
@@ -28,7 +29,7 @@ export async function POST(req) {
                         }
                     }
                 );
-                stream.end(buffer);
+                streamifier.createReadStream(buffer).pipe(stream)
             })
         })
         await urlPromise
