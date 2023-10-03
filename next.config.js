@@ -7,6 +7,5 @@ const nextConfig = {
     experimental: {
         serverActions: true,
     },
-disableExperimentalFeaturesWarning: true
 }
 module.exports = nextConfig
