@@ -14,27 +14,32 @@ export async function POST(req) {
         const body = JSON.parse(formData.get("body"))
         console.log(body)
         const imgFileArray = formData.getAll("file")
-        const urlPromise = new Promise((resolve, reject) => {
-            imgFileArray.forEach(async (imgFile) => {
-                const fileBuffer = await imgFile.arrayBuffer();
-                const buffer = Buffer.from(fileBuffer);
-                const stream = cloudinary.v2.uploader.upload_stream(
-                    { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
-                    (error, result) => {
-                        if (error) {
-                            console.error('Error uploading image:', error);
-                            NextResponse.json({ statu: 500, error })
-                            return reject(error)
-                        } else {
-                            imgUrl.push(result.url)
-                            if (imgFileArray.length === imgUrl.length) resolve()
+        try {
+            const urlPromise = new Promise((resolve, reject) => {
+                imgFileArray.forEach(async (imgFile) => {
+                    const fileBuffer = await imgFile.arrayBuffer();
+                    const buffer = Buffer.from(fileBuffer);
+                    const stream = cloudinary.v2.uploader.upload_stream(
+                        { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
+                        (error, result) => {
+                            if (error) {
+                                console.error('Error uploading image:', error);
+                                NextResponse.json({ statu: 500, error })
+                                return reject(error)
+                            } else {
+                                imgUrl.push(result.url)
+                                if (imgFileArray.length === imgUrl.length) resolve()
+                            }
                         }
-                    }
-                );
-                stream.end(buffer);
+                    );
+                    stream.end(buffer);
+                })
             })
-        })
-        await urlPromise
+            await urlPromise
+
+        } catch (error) {
+            console.log(error)
+        }
         body.imgURLs = imgUrl
         // const addedProduct = await addDoc(collection(db, "products"), body);
 
