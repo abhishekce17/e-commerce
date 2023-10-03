@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, query, where, getDocs, updateDoc, doc, deleteDoc, getDoc, deleteField } from "firebase/firestore";
-import cloudinary from 'cloudinary/lib/v2';
+import cloudinary from 'cloudinary';
 import cloudinary_config from "@/cloudinary-config/config";
 
 export async function DELETE(req, { params }) {
@@ -74,7 +74,7 @@ export async function DELETE(req, { params }) {
                 const lastIndex = url.lastIndexOf('/');
                 return `E-Commerce/${url.slice(lastIndex + 1).split(".")[0]}`;
             });
-            cloudinary.api.delete_resources(imgURI,
+            cloudinary.v2.api.delete_resources(imgURI,
                 { type: 'upload', resource_type: 'image' })
 
             // Delete banner product document
