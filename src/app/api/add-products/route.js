@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
-const fs = require("fs")
 
 export const dynamic = "force-dynamic";
 export async function POST(req) {
@@ -16,7 +15,7 @@ export async function POST(req) {
             imgFileArray.forEach(async (imgFile) => {
                 const fileBuffer = await imgFile.arrayBuffer();
                 const buffer = Buffer.from(fileBuffer);
-                const stream = cloudinary.uploader.upload_stream(
+                const stream = cloudinary.v2.uploader.upload_stream(
                     { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
                     (error, result) => {
                         if (error) {
@@ -29,8 +28,7 @@ export async function POST(req) {
                         }
                     }
                 );
-                stream.write(buffer)
-                stream.end();
+                stream.end(buffer);
             })
         })
         await urlPromise
