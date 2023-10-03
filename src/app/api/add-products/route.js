@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req) {
     try {
         let imgUrl = []
-        // const formData = await req.formData();
+        const formData = await req.formData();
         const body = JSON.parse(formData.get("body"))
         console.log(body)
         // const imgFileArray = formData.getAll("file")
