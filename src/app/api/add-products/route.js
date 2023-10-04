@@ -10,28 +10,31 @@ export async function POST(req) {
         let imgUrl = []
         const formData = await req.formData();
         const body = JSON.parse(formData.get("body"))
-        const imgFileArray = formData.getAll("file")
-        const urlPromise = new Promise((resolve, reject) => {
-            imgFileArray.forEach(async (imgFile) => {
-                const fileBuffer = await imgFile.arrayBuffer();
-                const buffer = Buffer.from(fileBuffer);
-                const stream = cloudinary.v2.uploader.upload_stream(
-                    { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
-                    (error, result) => {
-                        if (error) {
-                            console.error('Error uploading image:', error);
-                            NextResponse.json({ statu: 500, error })
-                            return reject(error)
-                        } else {
-                            imgUrl.push(result.url)
-                            if (imgFileArray.length === imgUrl.length) resolve()
-                        }
-                    }
-                ).end(Uint8Array.from(JSON.parse(JSON.stringify(buffer)).data));
-            })
-        })
-        await urlPromise
-        body.imgURLs = imgUrl
+        // const imgFileArray = formData.getAll("file")
+        // const urlPromise = new Promise((resolve, reject) => {
+        //     imgFileArray.forEach(async (imgFile) => {
+        //         const fileBuffer = await imgFile.arrayBuffer();
+        //         const buffer = Buffer.from(fileBuffer);
+        //         const stream = cloudinary.v2.uploader.upload_stream(
+        //             { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
+        //             (error, result) => {
+        //                 if (error) {
+        //                     console.error('Error uploading image:', error);
+        //                     NextResponse.json({ statu: 500, error })
+        //                     return reject(error)
+        //                 } else {
+        //                     imgUrl.push(result.url)
+        //                     if (imgFileArray.length === imgUrl.length) resolve()
+        //                 }
+        //             }
+        //         ).end(Uint8Array.from(JSON.parse(JSON.stringify(buffer)).data));
+        //     })
+        // })
+        // await urlPromise
+
+        // instead of uploading imgae from server uisng buffer stream of file, i am using direct upload method i.e image file from client side
+
+        body.imgURLs = JSON.parse(formData.get("imgUrls"));
         const addedProduct = await addDoc(collection(db, "products"), body);
 
         let snapShot = {

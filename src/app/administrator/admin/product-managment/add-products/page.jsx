@@ -3,6 +3,7 @@ import AdminProdcutActionPage from '@/Components/AdminProductAction'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import Loading from '../../loading';
+import uploadImages from './uploadImages';
 
 
 const Page = () => {
@@ -10,26 +11,31 @@ const Page = () => {
   const [categories, setCategories] = useState(null)
 
   async function handleAddProduct(formDataAPI) {
-    // const res = await fetch(`/api/add-products`, {
-    //   method: "POST",
-    //   body: formDataAPI,
-    // });
-    // const result = await res.json()
-    // if (result.status === 200) {
-    //   router.replace("/administrator/admin/product-managment")
-    // }
     try {
-      console.log("calling")
-      formDataAPI.append("upload_preset", "img3q8gt")
-      // formDataAPI.append("multiple", "true")
-      const response = await fetch(`https://api.cloudinary.com/v1_1/dnbfy78fe/upload`, {
-        method: "POST",
-        body: formDataAPI
+      const imgArray = formDataAPI.getAll("file");
+      const imgUrlArray = []
+      const imgUploadPromise = new Promise((resolve, reject) => {
+        imgArray.forEach((file) => {
+          const result = uploadImages(file);
+          result.then((value) => {
+            if (value.status === 500) reject();
+            imgUrlArray.push(value.imgUrl)
+            if (imgUrlArray.length === imgArray.length) resolve()
+          })
+        })
       })
-      const result = await response.json()
-      console.log(result)
+      await imgUploadPromise;
+      formDataAPI.append("imgUrls", JSON.stringify(imgUrlArray));
+      const res = await fetch(`/api/add-products`, {
+        method: "POST",
+        body: formDataAPI,
+      });
+      const result = await res.json()
+      if (result.status === 200) {
+        router.replace("/administrator/admin/product-managment")
+      }
     } catch (error) {
-      console.log(error)
+      alert("Error : ", error);
     }
 
   };
