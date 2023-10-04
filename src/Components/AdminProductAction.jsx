@@ -275,19 +275,19 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
             return variant
         })
 
-        formDataAPI.append("body", JSON.stringify({
-            productName: productName,
-            brandName: brandName,
-            description: moreDetails,
-            category: category,
-            price: Number(price),
-            specifications: specifications,
-            variants: updatedVariants,
-            discount: Number(discount),
-            imgURLs: FetchedProductDetails?.imgURLs || [],
-            averageRating: FetchedProductDetails?.averageRating || 0
-        }))
-        formDataAPI.append("categoryId", categories.filter(element => element.category === category)[0].categoryId)
+        // formDataAPI.append("body", JSON.stringify({
+        //     productName: productName,
+        //     brandName: brandName,
+        //     description: moreDetails,
+        //     category: category,
+        //     price: Number(price),
+        //     specifications: specifications,
+        //     variants: updatedVariants,
+        //     discount: Number(discount),
+        //     imgURLs: FetchedProductDetails?.imgURLs || [],
+        //     averageRating: FetchedProductDetails?.averageRating || 0
+        // }))
+        // formDataAPI.append("categoryId", categories.filter(element => element.category === category)[0].categoryId)
         if (typeof editMode === "undefined" && typeof handleUpdateProduct === "undefined" && typeof handleAddProduct === "function") {
             handleAddProduct(formDataAPI)
         }
