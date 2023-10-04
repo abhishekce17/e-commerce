@@ -7,7 +7,7 @@ import cloudinary_config from "@/cloudinary-config/config";
 
 export async function POST(req) {
     try {
-        let imgUrl = []
+        // let imgUrl = []
         const formData = await req.formData();
         const body = JSON.parse(formData.get("body"))
         // const imgFileArray = formData.getAll("file")
@@ -35,6 +35,7 @@ export async function POST(req) {
         // instead of uploading imgae from server uisng buffer stream of file, i am using direct upload method i.e image file from client side
 
         body.imgURLs = JSON.parse(formData.get("imgUrls"));
+        console.log(body.imgURLs)
         const addedProduct = await addDoc(collection(db, "products"), body);
 
         let snapShot = {
@@ -42,7 +43,7 @@ export async function POST(req) {
             productId: addedProduct.id,
             category: body.category,
             productName: body.productName,
-            productFirtsImgURL: imgUrl[0],
+            productFirtsImgURL: body.imgURLs[0],
             discount: body.discount || "",
             price: body.price || "",
             variants: body.variants || "",
