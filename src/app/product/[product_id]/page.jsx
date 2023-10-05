@@ -21,8 +21,8 @@ const Page = ({ params }) => {
   const [selectedImage, setSelectedImgUrl] = useState(null)
   const { product_id } = params;
   // let selectedVariant = { color: "red", storage: "4GB + 64GB" }
-  let color_variants = ["red", "#bff", "yellow", "blue"];
-  let storage_type = ["4GB + 64GB", "6GB + 128GB", "8GB + 256GB", "12GB + 512GB"]
+  // let color_variants = ["red", "#bff", "yellow", "blue"];
+  // let storage_type = ["4GB + 64GB", "6GB + 128GB", "8GB + 256GB", "12GB + 512GB"]
 
 
   const [number, setNumber] = useState(1);
@@ -38,39 +38,45 @@ const Page = ({ params }) => {
 
 
 
+
+  function handlePrice(details, selectedVariant) {
+    let obj;
+    if (details.price !== undefined && details.price !== "" && details.price !== null && details.price !== 0) {
+      setPriceDiscount({ price: details.price, discount: details.discount })
+    } else {
+      for (const key in selectedVariant) {
+        const priceObj = details.variants.filter(x => x.type.some((val) => "price" in val))[0].type.filter(x => x.variant === selectedVariant[key])[0]
+        if (priceObj !== undefined) {
+          console.log(priceObj)
+          obj = priceObj
+        }
+      }
+    }
+    setPriceDiscount({ price: obj?.price, discount: obj?.discount })
+  }
+
+
   function handleSelection(property, title, variant) {
+    // searchParams.forEach(x => console.log(x))
     if (property === "variant") {
       setSelectedVariant({ ...selectedVariant, [title]: variant })
     } else if (property === "image") {
       setSelectedImgUrl(title) // title will act as url in the case of image selection
     }
+    handlePrice(productDetails, { ...setVar, [title]: variant })
   }
-
-
 
   useEffect(() => {
     try {
-      function handlePrice(details) {
-        let obj = [];
-        if (details.price !== undefined && details.price !== "" && details.price !== null) {
-          setPriceDiscount({ price: details.price, discount: details.discount })
-          // console.log(details)
-        } else {
-          for (const key in selectedVariant) {
-            obj = details.variants.filter(x => x.type.some((val) => "price" in val))[0].type.filter(x => x.variant === selectedVariant[key])[0]
-          }
-        }
-        setPriceDiscount({ price: obj.price, discount: obj.discount })
-      }
       const fetchDetails = async () => {
         const res = await fetch(`/api/product-details/${product_id}`, {
           method: 'GET',
         });
         const result = await res.json();
         if (result.status === 200) {
-          setProductDetails(result.data)
-          handlePrice(result.data)
           setSelectedImgUrl(result.data.imgURLs[0])
+          handlePrice(result.data, setVar)
+          setProductDetails(result.data)
         } else if (result.status === 500) {
           alert("Product Not Found")
           router.back()
@@ -80,7 +86,7 @@ const Page = ({ params }) => {
     } catch (e) {
       alert("server not respondig please try again later");
     }
-  }, [product_id])
+  }, [pathname])
 
 
   return (
@@ -127,7 +133,7 @@ const Page = ({ params }) => {
                             {
                               each.type.map((keys, index) => {
                                 return (
-                                  <Link key={index} href={{ pathname: pathname, query: { ...selectedVariant, [each.title]: keys.variant } }} data-selected={selectedVariant[each.title] === keys.variant && "true"} onClick={() => { handleSelection("variant", each.title, keys.variant) }} >{keys.variant}</Link>
+                                  <Link key={index} href={{ pathname: pathname, query: { ...selectedVariant, [each.title]: keys.variant } }} data-selected={selectedVariant[each.title] === keys.variant && "true"} onClick={() => { handleSelection("variant", each.title, keys.variant) }} replace>{keys.variant}</Link>
                                 )
                               })
                             }
@@ -173,7 +179,7 @@ const Page = ({ params }) => {
                 </ul>
               </div>}
             <div className={styles.captions} >
-              <p>More about this items</p>
+              <p>More details</p>
               <p>
                 {
                   productDetails.description

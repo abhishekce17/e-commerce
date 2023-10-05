@@ -47,7 +47,7 @@ export default function RootLayout({ children }) {
       }
     }
     validateUserSession();
-  }, [])
+  }, [isUserLoggedIn])
 
 
   return (

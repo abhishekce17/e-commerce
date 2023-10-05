@@ -10,7 +10,7 @@ const Featured = ({ products }) => {
         }
 
         let minNetValue = Number.MAX_VALUE;
-
+        let obj = {}
         variants.forEach(variant => {
             if (Array.isArray(variant.type)) {
                 variant.type.forEach(type => {
@@ -18,16 +18,17 @@ const Featured = ({ products }) => {
                         const netValue = parseInt((type.price - (type.price * (type.discount / 100))));
                         if (netValue < minNetValue) {
                             minNetValue = netValue;
+                            obj = { [variant.title]: type.variant }
                         }
                     }
+                    obj = { [variant.title]: variant.type[0].variant, ...obj }
                 });
             }
         });
-
         if (minNetValue === Number.MAX_VALUE) {
             return null; // No valid netValues found
         }
-        return minNetValue;
+        return { minNetValue, obj };
     }
 
     return (
@@ -39,7 +40,7 @@ const Featured = ({ products }) => {
             <ul>
                 {products.map((prop) => {
                     return (
-                        <li key={prop.FeaturedId} > <Link href={`/product/${prop.productId}`} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants)}</p> </div> </Link> </li>
+                        <li key={prop.FeaturedId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants).obj } }} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants).minNetValue}</p> </div> </Link> </li>
                     )
                 })}
 
