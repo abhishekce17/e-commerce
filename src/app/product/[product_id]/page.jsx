@@ -46,24 +46,23 @@ const Page = ({ params }) => {
     }
   }
 
-  function handlePrice(details) {
-    let obj = [];
-    if (details.price !== undefined && details.price !== "" && details.price !== null) {
-      setPriceDiscount({ price: details.price, discount: details.discount })
-      // console.log(details)
-    } else {
-      for (const key in selectedVariant) {
-        obj = details.variants.filter(x => x.type.some((val) => "price" in val))[0].type.filter(x => x.variant === selectedVariant[key])[0]
-        console.log(obj)
-      }
-    }
-    setPriceDiscount({ price: obj.price, discount: obj.discount })
-  }
 
 
   useEffect(() => {
     try {
-
+      function handlePrice(details) {
+        let obj = [];
+        if (details.price !== undefined && details.price !== "" && details.price !== null) {
+          setPriceDiscount({ price: details.price, discount: details.discount })
+          // console.log(details)
+        } else {
+          for (const key in selectedVariant) {
+            obj = details.variants.filter(x => x.type.some((val) => "price" in val))[0].type.filter(x => x.variant === selectedVariant[key])[0]
+            console.log(obj)
+          }
+        }
+        setPriceDiscount({ price: obj.price, discount: obj.discount })
+      }
       const fetchDetails = async () => {
         const res = await fetch(`/api/product-details/${product_id}`, {
           method: 'GET',
@@ -82,7 +81,7 @@ const Page = ({ params }) => {
     } catch (e) {
       alert("server not respondig please try again later");
     }
-  }, [])
+  }, [product_id])
 
 
   return (
