@@ -70,7 +70,7 @@ const SpecialDeals = () => {
       })
       const result = await response.json()
       if (result?.status == 200) {
-        window.alert("Deal Remove Successfully")
+        window.alert("Deal Removed Successfully")
         router.replace("/administrator/admin/special-deals")
       }
     }
@@ -206,6 +206,21 @@ const SpecialDeals = () => {
       (product.mobileImage !== undefined && product.mobileImage !== null) && formDataAPI.append(`${product.product.productId} mobileView`, product.mobileImage);
       (product.pcImage !== undefined && product.pcImage !== null) && formDataAPI.append(`${product.product.productId} pcView`, product.pcImage);
     })
+
+    const imgArray = [{ key: "mobileView", file: product.mobileImage }, { key: "pcView", file: product.pcImage }];
+    const imgUrlArray = []
+    const imgUploadPromise = new Promise((resolve, reject) => {
+      imgArray.forEach((obj) => {
+        const result = uploadImages(obj.file);
+        result.then((value) => {
+          if (value.status === 500) reject();
+          imgUrlArray.push({ [obj.key]: value.imgUrl });
+          if (imgUrlArray.length === imgArray.length) resolve()
+        })
+      })
+    })
+    await imgUploadPromise;
+    formDataAPI.append("imgUrls", JSON.stringify(imgUrlArray));
     formDataAPI.append("body", JSON.stringify({ bannerProduct: bannerImages, selectedProducts: selectedProducts }))
 
     if (selectedProducts.some(x => x.dealId === undefined) || bannerImages.some(y => y.product.productId !== undefined)) {

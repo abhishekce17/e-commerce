@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
 import Loading from '../../../loading';
 import AdminProdcutActionPage from '@/Components/AdminProductAction';
+import uploadImages from '../../uploadImages';
 
 const Page = ({ params }) => {
 
@@ -33,6 +34,20 @@ const Page = ({ params }) => {
 
     async function updateProduct(formDataAPI) {
         if (!editMode) {
+            const imgArray = formDataAPI.getAll("file");
+            const imgUrlArray = []
+            const imgUploadPromise = new Promise((resolve, reject) => {
+                imgArray.forEach((file) => {
+                    const result = uploadImages(file);
+                    result.then((value) => {
+                        if (value.status === 500) reject();
+                        imgUrlArray.push(value.imgUrl)
+                        if (imgUrlArray.length === imgArray.length) resolve()
+                    })
+                })
+            })
+            await imgUploadPromise;
+            formDataAPI.append("imgUrls", JSON.stringify(imgUrlArray));
             formDataAPI.append('productId', product_Id);
             const res = await fetch(`/api/update-products`, {
                 method: 'POST',
@@ -55,7 +70,7 @@ const Page = ({ params }) => {
     };
 
     const handleDeleteProduct = async () => {
-        console.log(product_Id);
+
     };
 
 

@@ -3,7 +3,7 @@ import AdminProdcutActionPage from '@/Components/AdminProductAction'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import Loading from '../../loading';
-import uploadImages from './uploadImages';
+import uploadImages from '../uploadImages';
 
 
 const Page = () => {

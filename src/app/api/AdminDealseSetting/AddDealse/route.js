@@ -32,21 +32,21 @@ function mergeVariants(oldVariant, newVariant) {
     });
 }
 
-async function uploadImageToCloudinary(imageBuffer) {
-    return new Promise((resolve, reject) => {
-        cloudinary.v2.uploader.upload_stream(
-            { resource_type: 'auto', folder: 'E-Commerce' },
-            (error, result) => {
-                if (error) {
-                    console.error('Error uploading image:', error);
-                    reject(error);
-                } else {
-                    resolve(result.url || '');
-                }
-            }
-        ).end(Buffer.from(imageBuffer));
-    });
-}
+// async function uploadImageToCloudinary(imageBuffer) {
+//     return new Promise((resolve, reject) => {
+//         cloudinary.v2.uploader.upload_stream(
+//             { resource_type: 'auto', folder: 'E-Commerce' },
+//             (error, result) => {
+//                 if (error) {
+//                     console.error('Error uploading image:', error);
+//                     reject(error);
+//                 } else {
+//                     resolve(result.url || '');
+//                 }
+//             }
+//         ).end(Buffer.from(imageBuffer));
+//     });
+// }
 
 async function updateDocumentsInBatch(collectionPath, queryField, queryValue, updateDetails, merge) {
     const querySnapshotQuery = query(collection(db, collectionPath), where(queryField, "==", queryValue));
@@ -71,46 +71,47 @@ export async function POST(req) {
         const formData = await req.formData();
         const body = JSON.parse(formData.get("body"));
 
-        const imgUrlPromises = [];
+        // const imgUrlPromises = [];
         const updatePromises = [];
         // console.log(body.bannerProduct)
 
-        const imgUrlsMap = imgUrlPromises.reduce((acc, imgUrl) => {
-            acc[imgUrl.productId] = {
-                mobileImageUrl: imgUrl.mobileViewURL || '',
-                pcImageUrl: imgUrl.pcViewURL || '',
-            };
-            return acc;
-        }, {});
+        // const imgUrlsMap = imgUrlPromises.reduce((acc, imgUrl) => {
+        //     acc[imgUrl.productId] = {
+        //         mobileImageUrl: imgUrl.mobileViewURL || '',
+        //         pcImageUrl: imgUrl.pcViewURL || '',
+        //     };
+        //     return acc;
+        // }, {});
 
         const bannerProduct = body.bannerProduct.map(({ product, ...obj }) => {
-            return { ...obj, ...product, ...imgUrlsMap[product.productId] }
+            // return { ...obj, ...product, ...imgUrlsMap[product.productId] }
+            return { ...obj, ...product }
         });
 
 
         for (const element of bannerProduct) {
-            // console.log("line 61", element)
-            // console.log(element.dealId)
             if (element.dealId === undefined) {
-                const mobileViewImg = formData.get(`${element.productId} mobileView`);
-                const pcViewImg = formData.get(`${element.productId} pcView`);
+                const mobileViewImg = JSON.parse(formData.get("imgUrls")).mobileView;
+                const pcViewImg = JSON.parse(formData.get("imgUrls")).pcView;
+                // const mobileViewImg = formData.get(`${element.productId} mobileView`);
+                // const pcViewImg = formData.get(`${element.productId} pcView`);
                 // console.log(mobileViewImg, pcViewImg)
                 if (mobileViewImg !== null && pcViewImg !== null) {
 
-                    const [mobileFileBuffer, pcFileBuffer] = await Promise.all([
-                        mobileViewImg.arrayBuffer(),
-                        pcViewImg.arrayBuffer(),
-                    ]);
+                    // const [mobileFileBuffer, pcFileBuffer] = await Promise.all([
+                    //     mobileViewImg.arrayBuffer(),
+                    //     pcViewImg.arrayBuffer(),
+                    // ]);
 
-                    const [mobileViewURL, pcViewURL] = await Promise.all([
-                        uploadImageToCloudinary(mobileFileBuffer),
-                        uploadImageToCloudinary(pcFileBuffer),
-                    ]);
+                    // const [mobileViewURL, pcViewURL] = await Promise.all([
+                    //     uploadImageToCloudinary(mobileFileBuffer),
+                    //     uploadImageToCloudinary(pcFileBuffer),
+                    // ]);
 
                     imgUrlPromises.push({
                         productId: element.productId,
-                        mobileViewURL,
-                        pcViewURL,
+                        mobileViewURL: mobileViewImg,
+                        pcViewURL: pcViewImg,
                     });
                 }
             }
