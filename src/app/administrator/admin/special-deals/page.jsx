@@ -7,6 +7,7 @@ import Link from 'next/link';
 import styles from '@/Styles/SpecialDealsManagment.module.css';
 import Loading from '../loading';
 import { useRouter } from 'next/navigation';
+import uploadImages from '../product-managment/uploadImages';
 
 
 const SpecialDeals = () => {
@@ -101,6 +102,7 @@ const SpecialDeals = () => {
             ...prevRemovableProducts,
             dealIdToRemove
           ]);
+
         }
       }
     }
@@ -201,21 +203,21 @@ const SpecialDeals = () => {
     console.log(removableSelectedProducts)
     event.preventDefault();
     const formDataAPI = new FormData()
-
+    let imgArray = []
     bannerImages.map((product) => {
-      (product.mobileImage !== undefined && product.mobileImage !== null) && formDataAPI.append(`${product.product.productId} mobileView`, product.mobileImage);
-      (product.pcImage !== undefined && product.pcImage !== null) && formDataAPI.append(`${product.product.productId} pcView`, product.pcImage);
+      (product.mobileImage !== undefined && product.mobileImage !== null) && (imgArray = [{ key: "mobileView", file: product.mobileImage }]);
+      (product.pcImage !== undefined && product.pcImage !== null) && (imgArray = [...imgArray, { key: "pcView", file: product.pcImage }]);
     })
 
-    const imgArray = [{ key: "mobileView", file: product.mobileImage }, { key: "pcView", file: product.pcImage }];
-    const imgUrlArray = []
+    let imgUrlArray = {}
     const imgUploadPromise = new Promise((resolve, reject) => {
+      if (!imgArray.length) resolve();
       imgArray.forEach((obj) => {
         const result = uploadImages(obj.file);
         result.then((value) => {
           if (value.status === 500) reject();
-          imgUrlArray.push({ [obj.key]: value.imgUrl });
-          if (imgUrlArray.length === imgArray.length) resolve()
+          imgUrlArray = { ...imgUrlArray, [obj.key]: value.imgUrl };
+          if (Object.keys(imgUrlArray).length === imgArray.length) resolve()
         })
       })
     })
@@ -231,7 +233,7 @@ const SpecialDeals = () => {
 
       const result = await response.json()
       if (result.status === 200) {
-        window.alert('successfully added')
+        window.alert('Changes Saved')
         // router.replace("/administrator/admin/special-deals")
       }
       else if (result.status === 500) {

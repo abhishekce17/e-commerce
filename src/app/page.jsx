@@ -78,7 +78,7 @@ export default function Home() {
             banner_img="/banner_img.jpg"
             banner_text="Nothing Phone 2 8 GEN+ 2 launching on 2nd July, 120 Hz smoothness"
           />}
-          {dealProducts.length && <Deals products={dealProducts} />}
+          {dealProducts.length ? <Deals products={dealProducts} /> : undefined}
           {featuredProducts.length && <Featured products={featuredProducts} />}
           <NewArrivals products={allProductSnapDetails} />
           <TopCategory />

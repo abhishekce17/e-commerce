@@ -15,7 +15,7 @@ export async function DELETE(req, { params }) {
         if (bannerProductDocSnapshot.exists()) {
             const bannerProductData = bannerProductDocSnapshot.data();
             const productId = bannerProductData.productId;
-            const initialDiscount = bannerProductData.initialDiscount !== undefined ? bannerProductData.initialDiscount : null;
+            const initialDiscount = bannerProductData.initialDiscount || bannerProductData.discount;
 
             // Update the actual product document
             const productDocRef = doc(db, "products", productId);
@@ -36,9 +36,11 @@ export async function DELETE(req, { params }) {
                     productData.variants.map(variant => {
                         if (variant.type && Array.isArray(variant.type)) {
                             variant.type.map(subVariant => {
-                                subVariant.discount = subVariant.initialDiscount !== undefined ? subVariant.initialDiscount : subVariant.discount;
-                                delete subVariant.initialDiscount;
-                                delete subVariant.netValue;
+                                if (subVariant.discount !== undefined) {
+                                    subVariant.discount = subVariant.initialDiscount || subVariant.discount;
+                                    delete subVariant.initialDiscount;
+                                    delete subVariant.netValue;
+                                }
                             });
                         }
                     });
@@ -58,7 +60,7 @@ export async function DELETE(req, { params }) {
                         const docRef = doc.ref;
                         await updateDoc(docRef, {
                             discount: initialDiscount,
-                            variants: productData.variants,
+                            variants: productData.variants.filter((x) => x.type.some((val) => "price" in val)),
                             initialDiscount: deleteField(),
                             dealProduct: deleteField()
                         });

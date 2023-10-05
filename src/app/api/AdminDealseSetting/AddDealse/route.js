@@ -71,7 +71,7 @@ export async function POST(req) {
         const formData = await req.formData();
         const body = JSON.parse(formData.get("body"));
 
-        // const imgUrlPromises = [];
+        const imgUrlPromises = [];
         const updatePromises = [];
         // console.log(body.bannerProduct)
 
@@ -107,7 +107,7 @@ export async function POST(req) {
                     //     uploadImageToCloudinary(mobileFileBuffer),
                     //     uploadImageToCloudinary(pcFileBuffer),
                     // ]);
-
+                    console.log(mobileViewImg, pcViewImg, JSON.parse(formData.get("imgUrls")))
                     imgUrlPromises.push({
                         productId: element.productId,
                         mobileViewURL: mobileViewImg,

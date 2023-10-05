@@ -17,7 +17,7 @@ export async function DELETE(req, { params }) {
             if (selectedProductDocSnapshot.exists()) {
                 const selectedProductData = selectedProductDocSnapshot.data();
                 const productId = selectedProductData.productId;
-                const initialDiscount = selectedProductData.initialDiscount;
+                const initialDiscount = selectedProductData.initialDiscount || selectedProductData.discount;
 
                 const relatedCollections = ["Administration/Admin/Revenue", "ProductSnapDetails"];
 
@@ -35,13 +35,13 @@ export async function DELETE(req, { params }) {
                                 if (variant.type && Array.isArray(variant.type)) {
                                     variant.type.map(subVariant => {
                                         if (subVariant.price !== undefined && subVariant.price !== null) {
-                                            subVariant.discount = subVariant.initialDiscount;
+                                            subVariant.discount = subVariant.initialDiscount || subVariant.discount;
                                             delete subVariant.initialDiscount;
                                         }
                                     });
                                 }
                             });
-
+                            // console.log(variantData[0].type)
                             await updateDoc(docRef, {
                                 variants: variantData,
                                 initialDiscount: deleteField(),
@@ -77,7 +77,7 @@ export async function DELETE(req, { params }) {
                             if (variant.type && Array.isArray(variant.type)) {
                                 variant.type.map(subVariant => {
                                     if (subVariant.price !== undefined && subVariant.price !== null) {
-                                        subVariant.discount = subVariant.initialDiscount;
+                                        subVariant.discount = subVariant.initialDiscount || subVariant.discount;
                                         delete subVariant.initialDiscount;
                                     }
                                 });
@@ -86,7 +86,7 @@ export async function DELETE(req, { params }) {
 
                         dataToUpdate = { ...dataToUpdate, variants: variantData, discount: null };
                     }
-
+                    console.log(dataToUpdate)
                     await updateDoc(productDocRef, dataToUpdate);
                     await deleteDoc(selectedProductDocRef);
                 }
