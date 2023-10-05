@@ -58,7 +58,6 @@ const Page = ({ params }) => {
         } else {
           for (const key in selectedVariant) {
             obj = details.variants.filter(x => x.type.some((val) => "price" in val))[0].type.filter(x => x.variant === selectedVariant[key])[0]
-            console.log(obj)
           }
         }
         setPriceDiscount({ price: obj.price, discount: obj.discount })
@@ -121,7 +120,7 @@ const Page = ({ params }) => {
                     productDetails.variants.map((each, index) => {
                       return (
 
-                        <div className={styles.storage_variant} >
+                        <div key={index} className={styles.storage_variant} >
                           <p>{each.title}</p>
                           <div key={index} className={styles.storage_options} >
 
