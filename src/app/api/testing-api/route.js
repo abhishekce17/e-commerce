@@ -76,10 +76,11 @@ export async function POST(req) {
 
     //     // Commit the batched write to update all documents
     //     await batch.commit();
-    const docRed = await getDoc(doc(db, "Administration/Admin/Revenue/mUDqlPyARj0wdCSTDOr9"))
+    const docRed = await getDoc(doc(db, "ProductSnapDetails/0pmWha5ihMqHmd1I8xpf"))
+    // console.log(docRed.ref)
     await updateDoc(docRed.ref, {
         variants: [{
-            title: "storage",
+            title: "Storage",
             type: [
                 {
                     price: 59999,
@@ -93,8 +94,14 @@ export async function POST(req) {
                     price: 65999,
                     variant: '8GB + 256GB'
                 },]
+        },
+        {
+            title: "Color",
+            type: [{ variant: 'White' },
+            { variant: 'Graphite' }
+            ]
         }]
     })
-    console.log("variant added")
-    return NextResponse.json({ status: "doc added succssefully" })
+    // console.log("variant added")
+    return NextResponse.json({ status: docRed.ref.path.includes("Revenue") })
 }

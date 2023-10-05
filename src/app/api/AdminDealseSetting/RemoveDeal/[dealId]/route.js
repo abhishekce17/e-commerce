@@ -60,7 +60,7 @@ export async function DELETE(req, { params }) {
                         const docRef = doc.ref;
                         await updateDoc(docRef, {
                             discount: initialDiscount,
-                            variants: productData.variants.filter((x) => x.type.some((val) => "price" in val)),
+                            variants: doc.ref.path.includes("Revenue") ? productData.variants.filter((x) => x.type.some((val) => "price" in val)) : productData.variants,
                             initialDiscount: deleteField(),
                             dealProduct: deleteField()
                         });

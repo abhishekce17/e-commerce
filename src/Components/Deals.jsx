@@ -40,7 +40,7 @@ const Deals = ({ products }) => {
             <ul>
                 {products.map((prop) => {
                     return (
-                        <li key={prop.productId} > <Link href={`/${prop.productId}`} > <Image width={500} height={500} src={`${prop.productFirtsImgURL}`} alt={`${prop.productFirtsImgURL}`} /> <div><p>{prop.productName}</p> <p>From 	&#8377;{extractMinimumNetValue(prop.variants)}</p> </div> </Link> </li>
+                        <li key={prop.productId} > <Link href={`/product/${prop.productId}`} > <Image width={500} height={500} src={`${prop.productFirtsImgURL}`} alt={`${prop.productFirtsImgURL}`} /> <div><p>{prop.productName}</p> <p>From 	&#8377;{extractMinimumNetValue(prop.variants)}</p> </div> </Link> </li>
                     )
                 })
                 }

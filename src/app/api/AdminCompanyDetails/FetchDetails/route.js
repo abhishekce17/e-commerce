@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { getDoc, doc } from "firebase/firestore";
 
-
+export const dynamic = "force-dynamic"
 export async function GET() {
     try {
         const faqRef = doc(db, 'Information', 'Company Details');

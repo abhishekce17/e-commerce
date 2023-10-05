@@ -10,7 +10,7 @@ export async function GET() {
             const querySnapshot = await getDocs(collection(db, "ProductSnapDetails"));
             querySnapshot.forEach((doc) => {
                 // console.log(doc.data())
-                fetchData.push({ ...doc.data(), productId: doc.id })
+                fetchData.push({ ...doc.data(), productId: doc.data().productId })
             });
             if (querySnapshot.size === fetchData.length) resolve()
         })

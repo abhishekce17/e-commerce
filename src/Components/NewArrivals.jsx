@@ -38,7 +38,7 @@ const NewArrivals = ({ products }) => {
             <ul>
                 {products.map((prop) => {
                     return (
-                        <li key={prop.productId} > <Link href={`/${prop.productId}`} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants)}</p> </div> </Link> </li>
+                        <li key={prop.productId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { Color: "White", Storage: "8GB + 128GB" } }} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants)}</p> </div> </Link> </li>
                     )
                 })}
 

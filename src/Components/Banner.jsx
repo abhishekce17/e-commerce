@@ -44,7 +44,7 @@ const Banner = ({ buy_link, banner_img, banner_text, products }) => {
               <Image width={1000} height={1000} src={prop.pcViewURL} alt={prop.mobileViewURL} />
               <div className={styles.banner_utils_container} >
                 {/* <h2>{prop?.productName}</h2> */}
-                <Link style={{ height: "max-content" }} href={`/${prop.productId}`}> Buy Now</Link>
+                <Link style={{ height: "max-content" }} href={`/product/${prop.productId}`}> Buy Now</Link>
               </div>
             </div>
           })}

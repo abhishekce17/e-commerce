@@ -3,8 +3,8 @@ import { db } from "@/firebase-config/config";
 import { collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
-const fs = require("fs")
 
+export const dynamic = "force-dynamic"
 function updateVariantType(oldVariant, newVariant) {
     const updatedDataVariant = [];
 

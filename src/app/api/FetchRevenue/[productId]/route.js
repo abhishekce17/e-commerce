@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
+export const dynamic = "force-dynamic"
 export async function GET(req, { params }) {
     try {
         const fetchData = [];

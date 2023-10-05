@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
 import { doc, getDoc } from "firebase/firestore";
 
+export const dynamic = "force-dynamic"
 export async function GET(req, { params }) {
     try {
         const queryProductID = params.productId

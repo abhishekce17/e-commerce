@@ -9,6 +9,8 @@ import {
     getDoc,
 } from "firebase/firestore";
 
+
+export const dynamic = "force-dynamic"
 export async function GET() {
     try {
         const currentYear = new Date().getFullYear();
