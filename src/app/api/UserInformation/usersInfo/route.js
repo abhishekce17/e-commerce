@@ -16,13 +16,21 @@ export async function GET(req) {
                 const userExistance = await getDoc(doc(db, "User", userData.uid))
                 if (userExistance.exists()) {
                     let fetchedUserData = {}
+                    let cart = []
                     const userInfoSnap = await getDocs(collection(db, "User", userData.uid, "Information"))
                     const fetchPromise = new Promise((resolve, reject) => {
                         userInfoSnap.forEach(doc => { fetchedUserData = { ...fetchedUserData, [doc.id]: doc.data() } })
                         if (userInfoSnap.size === Object.keys(fetchedUserData).length) resolve();
                     })
-                    await fetchPromise
-                    return NextResponse.json({ status: 200, userData: fetchedUserData })
+                    const cartInfoSnap = await getDocs(collection(db, "User", userData.uid, "Information", "InterestedProducts", "Cart"))
+                    const CartPromise = new Promise((resolve, reject) => {
+                        cartInfoSnap.forEach(doc => cart.push(doc.data()))
+                        if (cartInfoSnap.size === cart.length) resolve();
+                    })
+
+                    await fetchPromise;
+                    await CartPromise;
+                    return NextResponse.json({ status: 200, userData: { ...fetchedUserData, Cart: cart } })
                 }
             }
         }

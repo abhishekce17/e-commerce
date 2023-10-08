@@ -77,23 +77,6 @@ const Page = () => {
 
   const estimatedDeliveryDate = 'June 30, 2023';
 
-  const increaseQuantity = (index) => {
-    setProductSummary((prevProductSummary) => {
-      const updatedProductSummary = [...prevProductSummary];
-      updatedProductSummary[index].quantity += 1;
-      return updatedProductSummary;
-    });
-  };
-
-  const decreaseQuantity = (index) => {
-    setProductSummary((prevProductSummary) => {
-      const updatedProductSummary = [...prevProductSummary];
-      if (updatedProductSummary[index].quantity > 1) {
-        updatedProductSummary[index].quantity -= 1;
-      }
-      return updatedProductSummary;
-    });
-  };
 
   return (
     <div className={styles.order_summary}>
@@ -198,15 +181,6 @@ const Page = () => {
                   <p>{product.name}</p>
                   <p>{product.variant}</p>
                   <p>${product.price}</p>
-                  <div className={styles.quantity}>
-                    <button type="button" className={styles.increase_quantity} onClick={() => decreaseQuantity(index)}>
-                      -
-                    </button>
-                    <p style={{textAlign:"center", width:"50px"}} >{product.quantity}</p>
-                    <button className={styles.decrease_quantity} type="button" onClick={() => increaseQuantity(index)}>
-                      +
-                    </button>
-                  </div>
                 </div>
               </div>
             ))}

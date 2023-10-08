@@ -19,6 +19,7 @@ export default function RootLayout({ children }) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState({});
+  const [refresh, setRefresh] = useState(false)
 
 
   let pathname = usePathname()
@@ -34,11 +35,32 @@ export default function RootLayout({ children }) {
     }
   }
 
+  const addToCart = async (productId, variant) => {
+    try {
+
+      const fetchResponse = await fetch("/api/UserInformation/UserCartInfo/AddToCart", {
+        method: "POST",
+        body: JSON.stringify({ productId, variant })
+      })
+      const responseResult = await fetchResponse.json();
+      if (responseResult.status === 200) {
+        alert("Product is added to the Cart")
+        setUserData({ ...userData, Cart: [...userData.Cart, { productId, variant }] })
+      } else if (responseResult.status === 401) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        localStorage.setItem("cart", (cart !== null) ? JSON.stringify([...cart, { productId, variant }]) : JSON.stringify([{ productId, variant }]))
+      }
+    } catch (error) {
+      console.log(error)
+      alert("Server is not responding for your Cart information")
+    }
+  }
 
   useEffect(() => {
     const validateUserSession = async () => {
       const sessionResponse = await fetch("/api/Authentication/ValidateSession")
       const sessionResult = await sessionResponse.json()
+      console.log("Session result : ", sessionResult.status)
       if (sessionResult.status === 200) {
         setIsUserLoggedIn(true);
         fetchUserData()
@@ -47,12 +69,12 @@ export default function RootLayout({ children }) {
       }
     }
     validateUserSession();
-  }, [isUserLoggedIn])
+  }, [isUserLoggedIn, refresh])
 
 
   return (
     <html lang="en">
-      <UserAuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn, userData, fetchUserData, setUserData }}  >
+      <UserAuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn, userData, fetchUserData, setUserData, addToCart, refresh, setRefresh }}  >
         <body className={inter.className}>
           {
             isLoading ? Loading() :

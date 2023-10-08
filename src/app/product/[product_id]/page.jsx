@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import styles from "@/Styles/productDetail.module.css"
 import Image from 'next/image'
 import Link from 'next/link'
@@ -7,37 +7,23 @@ import { AiFillHeart, AiOutlineHeart, AiOutlineShareAlt, AiOutlinePlus, AiOutlin
 import { RiAccountCircleFill } from "react-icons/ri"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import Loading from '@/app/administrator/admin/loading'
+import UserAuthContext from '@/app/contextProvider'
+import _ from "lodash"
 
 
 const Page = ({ params }) => {
+  const { product_id } = params;
   const searchParams = useSearchParams();
   const pathname = usePathname()
   const router = useRouter()
+  const context = useContext(UserAuthContext)
   let setVar = {}
   searchParams.forEach((v, k) => setVar = { ...setVar, [k]: v })
   const [selectedVariant, setSelectedVariant] = useState(setVar)
   const [productDetails, setProductDetails] = useState(null)
   const [priceDiscount, setPriceDiscount] = useState({ price: null, discount: null })
   const [selectedImage, setSelectedImgUrl] = useState(null)
-  const { product_id } = params;
-  // let selectedVariant = { color: "red", storage: "4GB + 64GB" }
-  // let color_variants = ["red", "#bff", "yellow", "blue"];
-  // let storage_type = ["4GB + 64GB", "6GB + 128GB", "8GB + 256GB", "12GB + 512GB"]
-
-
-  const [number, setNumber] = useState(1);
-
-  const decreaseNumber = () => {
-    setNumber((prevNumber) => prevNumber - 1);
-  };
-
-  const increaseNumber = () => {
-    setNumber((prevNumber) => prevNumber + 1);
-  };
-
-
-
-
+  const [insideCart, setInsideCart] = useState(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))))
 
   function handlePrice(details, selectedVariant) {
     let obj;
@@ -47,7 +33,6 @@ const Page = ({ params }) => {
       for (const key in selectedVariant) {
         const priceObj = details.variants.filter(x => x.type.some((val) => "price" in val))[0].type.filter(x => x.variant === selectedVariant[key])[0]
         if (priceObj !== undefined) {
-          console.log(priceObj)
           obj = priceObj
         }
       }
@@ -63,30 +48,33 @@ const Page = ({ params }) => {
     } else if (property === "image") {
       setSelectedImgUrl(title) // title will act as url in the case of image selection
     }
+    setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, { ...selectedVariant, [title]: variant }))))
     handlePrice(productDetails, { ...setVar, [title]: variant })
   }
 
+  const fetchDetails = useCallback(async () => {
+    const res = await fetch(`/api/product-details/${product_id}`, {
+      method: 'GET',
+    });
+    const result = await res.json();
+    if (result.status === 200) {
+      setSelectedImgUrl(result.data.imgURLs[0])
+      handlePrice(result.data, setVar)
+      setProductDetails(result.data)
+    } else if (result.status === 500) {
+      alert("Product Not Found")
+      router.back()
+    }
+  }, [pathname])
+
   useEffect(() => {
     try {
-      const fetchDetails = async () => {
-        const res = await fetch(`/api/product-details/${product_id}`, {
-          method: 'GET',
-        });
-        const result = await res.json();
-        if (result.status === 200) {
-          setSelectedImgUrl(result.data.imgURLs[0])
-          handlePrice(result.data, setVar)
-          setProductDetails(result.data)
-        } else if (result.status === 500) {
-          alert("Product Not Found")
-          router.back()
-        }
-      }
+      setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))))
       fetchDetails()
     } catch (e) {
       alert("server not respondig please try again later");
     }
-  }, [pathname])
+  }, [fetchDetails, context.userData.Cart])
 
 
   return (
@@ -146,11 +134,6 @@ const Page = ({ params }) => {
                 </div>
               </div>
               <div className={styles.utils_container} >
-                <div className={styles.quantity}>
-                  <AiOutlineMinus onClick={number > 1 ? decreaseNumber : undefined} />
-                  <span>{number}</span>
-                  <AiOutlinePlus onClick={number < 9 ? increaseNumber : undefined} />
-                </div>
                 <div className={styles.pincode_check} >
                   <p>Check delivery option</p>
                   <input type="text" maxLength={6} placeholder="pincode" />
@@ -162,8 +145,11 @@ const Page = ({ params }) => {
             </div>
             <div className={styles.action_buttons}>
               <button className={styles.buy_now} >Buy Now</button>
-              <button className={styles.add_to_cart} >Add to cart</button>
-            </div>
+              {!insideCart ?
+                <button onClick={() => { context.addToCart(product_id, selectedVariant) }} className={styles.add_to_cart} >Add to cart</button>
+                :
+                <Link href={"/cart"} className={styles.add_to_cart} >Go to cart</Link>
+              }            </div>
           </div>
           <div className={styles.description} >
             {productDetails.specifications.length &&
