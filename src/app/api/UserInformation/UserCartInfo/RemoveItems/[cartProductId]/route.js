@@ -8,6 +8,7 @@ import {
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 
+export const dynamic = 'force-dynamic'
 export async function GET(req, { params }) {
     try {
         const authToken = cookies().get("authToken");

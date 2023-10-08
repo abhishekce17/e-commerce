@@ -11,7 +11,7 @@ import {
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 
-
+export const dynamic = 'force-dynamic'
 const getPrice = (variants, selectedVariant) => {
     const variant = selectedVariant.variant
     const otp = variants.filter((ele) => {
