@@ -23,7 +23,7 @@ const Page = ({ params }) => {
   const [productDetails, setProductDetails] = useState(null)
   const [priceDiscount, setPriceDiscount] = useState({ price: null, discount: null })
   const [selectedImage, setSelectedImgUrl] = useState(null)
-  const [insideCart, setInsideCart] = useState(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))))
+  const [insideCart, setInsideCart] = useState(context.userData !== null ? context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))) : undefined)
 
   function handlePrice(details, selectedVariant) {
     let obj;
@@ -48,7 +48,7 @@ const Page = ({ params }) => {
     } else if (property === "image") {
       setSelectedImgUrl(title) // title will act as url in the case of image selection
     }
-    setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, { ...selectedVariant, [title]: variant }))))
+    if (context.userData !== null) { setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, { ...selectedVariant, [title]: variant })))) }
     handlePrice(productDetails, { ...setVar, [title]: variant })
   }
 
@@ -69,7 +69,9 @@ const Page = ({ params }) => {
 
   useEffect(() => {
     try {
-      setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))))
+      if (context.userData !== null) {
+        setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))))
+      }
       fetchDetails()
     } catch (e) {
       alert("server not respondig please try again later");

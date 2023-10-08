@@ -18,7 +18,7 @@ const inter = Inter({ subsets: ['latin'] })
 export default function RootLayout({ children }) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState(null);
   const [refresh, setRefresh] = useState(false)
 
 
