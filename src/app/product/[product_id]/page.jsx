@@ -76,7 +76,7 @@ const Page = ({ params }) => {
     } catch (e) {
       alert("server not respondig please try again later");
     }
-  }, [fetchDetails, context.userData.Cart])
+  }, [fetchDetails, context.userData?.Cart])
 
 
   return (
