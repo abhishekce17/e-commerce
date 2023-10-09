@@ -14,6 +14,7 @@ export async function POST(req) {
                 return NextResponse.json({ status: 429 });
             }
         } catch (error) {
+            console.log(error)
             if (error.code === 'auth/invalid-email' || error.code === 'auth/wrong-password') {
                 return NextResponse.json({ status: 200 })
             } else if (error.code === 'auth/user-not-found') {

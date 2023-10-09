@@ -31,25 +31,29 @@ export async function POST(req) {
 
         await sendEmailVerification(response.user);
 
-        const verificationPromise = new Promise((resolve, reject) => {
-            const verificationInterval = setInterval(async () => {
-                console.log("Waiting for verification");
-                const verifiedUser = await signInWithEmailAndPassword(auth, email, password);
+        try {
+            const verificationPromise = new Promise((resolve, reject) => {
+                const verificationInterval = setInterval(async () => {
+                    console.log("Waiting for verification");
+                    const verifiedUser = await signInWithEmailAndPassword(auth, email, password);
 
-                if (verifiedUser.user.emailVerified) {
-                    resolve();
-                    isEmailVerified = true;
+                    if (verifiedUser.user.emailVerified) {
+                        isEmailVerified = true;
+                        clearInterval(verificationInterval);
+                        resolve();
+                    }
+                }, VERIFICATION_INTERVAL);
+
+                setTimeout(() => {
                     clearInterval(verificationInterval);
-                }
-            }, VERIFICATION_INTERVAL);
+                    resolve();
+                }, VERIFICATION_TIMEOUT);
+            });
+            await verificationPromise;
+        } catch (error) {
+            console.log(error)
+        }
 
-            setTimeout(() => {
-                clearInterval(verificationInterval);
-                resolve();
-            }, VERIFICATION_TIMEOUT);
-        });
-
-        await verificationPromise;
 
         if (isEmailVerified) {
             // User creation and data setup
@@ -81,6 +85,7 @@ export async function POST(req) {
 
             return NextResponse.json({ status: 201 });
         } else {
+            console.log(response.user)
             await deleteUser(response.user);
             return NextResponse.json({ status: 500, error: "Email not Verified" });
         }
