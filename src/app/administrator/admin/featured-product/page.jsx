@@ -140,8 +140,8 @@ const Page = () => {
                       {
                         product.variants.length ?
                           <>
-                            <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => `${ele2.variant} - ${ele2.stock}\n`))}</div>
-                            <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => `${ele2.variant} - ${ele2.price - (ele2.price / 100) * ele2.discount}\n`))}</div>
+                            <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => ele2.price !== undefined && `${ele2.variant} - ${ele2.stock}\n`))}</div>
+                            <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => ele2.price !== undefined && `${ele2.variant} - ${ele2.price - (ele2.price / 100) * ele2.discount}\n`))}</div>
                           </> :
                           <>
                             <div>{product.stock}</div>

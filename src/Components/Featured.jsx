@@ -28,14 +28,14 @@ const Featured = ({ products }) => {
         if (minNetValue === Number.MAX_VALUE) {
             return null; // No valid netValues found
         }
-        return { minNetValue, obj };
+        return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
     }
 
     return (
         <div className={styles.featured_cards} >
             <div className={styles.featured_redirect} >
                 <h2 style={{ marginBottom: "20px", fontWeight: "500" }} >Featured Products</h2>
-                <Link href={"/offer-list/featured-products"} >see all <BiChevronRight style={{ position: "relative", top: "3px" }} /> </Link>
+                <Link href={"/product-list/featured-products"} >see all <BiChevronRight style={{ position: "relative", top: "3px" }} /> </Link>
             </div>
             <ul>
                 {products.map((prop) => {

@@ -29,7 +29,7 @@ const Deals = ({ products }) => {
         if (minNetValue === Number.MAX_VALUE) {
             return null; // No valid netValues found
         }
-        return { minNetValue, obj };
+        return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
     }
 
     return (

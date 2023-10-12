@@ -47,8 +47,9 @@ export default function RootLayout({ children }) {
         alert("Product is added to the Cart")
         setUserData({ ...userData, Cart: [...userData.Cart, { productId, variant }] })
       } else if (responseResult.status === 401) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        localStorage.setItem("cart", (cart !== null) ? JSON.stringify([...cart, { productId, variant }]) : JSON.stringify([{ productId, variant }]))
+        alert("Please sign in to add product in your cart")
+        // let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        // localStorage.setItem("cart", (cart !== null) ? JSON.stringify([...cart, { productId, variant }]) : JSON.stringify([{ productId, variant }]))
       }
     } catch (error) {
       console.log(error)

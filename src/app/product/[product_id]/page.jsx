@@ -108,7 +108,7 @@ const Page = ({ params }) => {
                 <span>625 ratings</span>|
                 <span>125 reviews</span>
               </p>
-              <p className={styles.price_discount} >M.R.P.<s>{priceDiscount.price}</s> <strong>₹{parseInt(Number(priceDiscount.price) - Number(priceDiscount.price) * (priceDiscount.discount / 100))}</strong> </p>
+              <p className={styles.price_discount} >M.R.P. <strong>₹{parseInt(Number(priceDiscount.price) - Number(priceDiscount.price) * (priceDiscount.discount / 100)).toLocaleString("en-IN", { useGrouping: true })}</strong> <s>₹{priceDiscount.price.toLocaleString("en-IN", { useGrouping: true })}</s> <sup>{parseInt(priceDiscount.discount)}% off</sup> </p>
               <div className={styles.variants_container} >
                 <p>variants</p>
                 <div>

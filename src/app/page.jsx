@@ -73,11 +73,7 @@ export default function Home() {
       productLoading ? <LoadingAnimation1 /> :
         <main>
           {bannerProducts.length && <Banner
-            products={bannerProducts}
-            buy_link=""
-            banner_img="/banner_img.jpg"
-            banner_text="Nothing Phone 2 8 GEN+ 2 launching on 2nd July, 120 Hz smoothness"
-          />}
+            products={bannerProducts} />}
           {dealProducts.length ? <Deals products={dealProducts} /> : undefined}
           {featuredProducts.length && <Featured products={featuredProducts} />}
           <NewArrivals products={allProductSnapDetails} />

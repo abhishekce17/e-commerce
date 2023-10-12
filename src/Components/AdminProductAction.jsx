@@ -100,19 +100,19 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
     };
 
     const handleDiscountChange = (event) => {
-        const numericValue = event.target.value.replace(/[^0-9]/g, ''); // Filter out non-numeric characters
+        const numericValue = event.target.value; // Filter out non-numeric characters
         setDiscount(numericValue);
         // const calculatedNetValue = price - (price * (numericValue / 100)); // Calculate net value
         // setNetValue(calculatedNetValue.toFixed(2)); // Set net value with 2 decimal places
     };
 
     const handleVariantDiscountChange = (event) => {
-        const { name } = event.target;
-        const numericValue = event.target.value.replace(/[^0-9]/g, ''); // Filter out non-numeric characters
+        const { name, value } = event.target;
+        // const numericValue = event.target.value.replace(/[^0-9]/g, ''); // Filter out non-numeric characters
 
         if (typeof discount === 'object') {
             setDiscount((prev) => {
-                return { ...prev, [name]: numericValue };
+                return { ...prev, [name]: value };
             });
 
             // const calculatedNetValue = Object.values(variantPrice).map((price) => {
@@ -292,6 +292,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
             handleAddProduct(formDataAPI)
         }
         else {
+            console.log("Updating")
             handleUpdateProduct(formDataAPI)
         }
         // const res = await fetch("http://localhost:3000/api/add-products", {
@@ -506,7 +507,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                                 </label>
                                 <label className={styles.product_discount}>
                                     <p>Discount (%)</p>
-                                    <input disabled={editMode} type="text" value={discount} onChange={handleDiscountChange} inputMode="numeric" pattern="[0-9]*" />
+                                    <input disabled={editMode} max={100} min={0} step="0.001" type="number" value={discount} onChange={handleDiscountChange} inputMode="numeric" pattern="[0-9]*" />
 
                                 </label>
                                 <label className={styles.product_discount}>
@@ -527,7 +528,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                                                 </label>
                                                 <label className={styles.product_discount}>
                                                     <p>Discount (%)</p>
-                                                    <input disabled={editMode} type="text" name={key} value={discount[key] || ""} onChange={handleVariantDiscountChange} inputMode="numeric" pattern="[0-9]*" />
+                                                    <input disabled={editMode} type="number" max={100} min={0} step="0.001" name={key} value={discount[key] || ""} onChange={handleVariantDiscountChange} inputMode="numeric" pattern="[0-9]*" />
                                                 </label>
                                                 <label className={styles.product_discount}>
                                                     <p>Net Value (₹) </p>

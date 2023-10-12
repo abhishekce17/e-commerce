@@ -37,6 +37,8 @@ const Page = ({ params }) => {
             const imgArray = formDataAPI.getAll("file");
             const imgUrlArray = []
             const imgUploadPromise = new Promise((resolve, reject) => {
+                console.log("stuck in promise")
+                if (imgArray.length === 0) resolve();
                 imgArray.forEach((file) => {
                     const result = uploadImages(file);
                     result.then((value) => {
@@ -47,6 +49,7 @@ const Page = ({ params }) => {
                 })
             })
             await imgUploadPromise;
+            console.log("outside the promise")
             formDataAPI.append("imgUrls", JSON.stringify(imgUrlArray));
             formDataAPI.append('productId', product_Id);
             const res = await fetch(`/api/update-products`, {

@@ -17,7 +17,7 @@ const Page = () => {
   }
 
   function calulateNetValue(price, discount) {
-    return price - (price * (discount / 100))
+    return parseInt(price - (price * (discount / 100)))
   }
 
   function renderProductinfo(data, type, index) {

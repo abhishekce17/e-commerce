@@ -34,9 +34,6 @@ const Page = () => {
           })
         })
         setLoading(false)
-      } else if (responseResult.status === 401) {
-        setCartItems(JSON.parse(localStorage.getItem("cart")) || [])
-        setLoading(false)
       }
     } catch (error) {
       console.log(error)
@@ -108,7 +105,7 @@ const Page = () => {
             <p>Effective Price: ₹{parseInt(item.subInfo.price - item.subInfo.price * item.subInfo.discount / 100).toLocaleString("en-IN", { useGrouping: true })} </p>
             <p>Quantity: {item.selectedVariant.quantity}</p>
             <div className={styles.quantity}>
-              <button type="button" className={styles.increase_quantity} onClick={() => UpdateQuantity(item.cartProductId, "DecreaseQuantity")}>
+              <button type="button" className={styles.increase_quantity} onClick={() => item.selectedVariant.quantity > 1 && UpdateQuantity(item.cartProductId, "DecreaseQuantity")}>
                 -
               </button>
               <button className={styles.decrease_quantity} type="button" onClick={() => UpdateQuantity(item.cartProductId, "IncreaseQunatity")}>
@@ -147,36 +144,42 @@ const Page = () => {
 
 
 
-  return (
-    <div className={styles.cart} >
-      <h2>Shopping Cart</h2>
-      {
-        loading ? Loading() :
-          <div className={styles.cart_container}>
-            <div>
-              <div className={styles.cart_items} >
-                <h3>Cart Items:</h3>
-                {cartItems.length > 0 ? (
-                  renderCartItems()
-                ) : (
-                  <p>Your cart is empty. Continue shopping!</p>
-                )}
-              </div>
-              {savedItems.length > 0 && (
-                <div className={styles.save_for_later} >
-                  <h3>Save for Later:</h3>
-                  {renderSavedItems()}
+  return (<>
+    {
+      context.isUserLoggedIn ?
+        <div className={styles.cart} >
+          <h2>Shopping Cart</h2>
+          {
+            loading ? Loading() :
+              <div className={styles.cart_container}>
+                <div>
+                  <div className={styles.cart_items} >
+                    <h3>Cart Items:</h3>
+                    {cartItems.length > 0 ? (
+                      renderCartItems()
+                    ) : (
+                      <p>Your cart is empty. Continue shopping!</p>
+                    )}
+                  </div>
+                  {savedItems.length > 0 && (
+                    <div className={styles.save_for_later} >
+                      <h3>Save for Later:</h3>
+                      {renderSavedItems()}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            {cartItems.length ? <div className={styles.subtotal_total} >
-              <p>Subtotal <span>({subTotal.totalItems} items)</span> : ₹{subTotal.totalAmount.toLocaleString("en-IN", { useGrouping: true })}</p>
-              <button className={styles.action_proceed} onClick={handleProceedToCheckout}>Proceed to Checkout</button>
-              <button className={styles.action} onClick={handleContinueShopping}>Continue Shopping</button>
-            </div> : undefined}
-          </div>
-      }
-    </div>
+                {cartItems.length ? <div className={styles.subtotal_total} >
+                  <p>Subtotal <span>({subTotal.totalItems} items)</span> : ₹{subTotal.totalAmount.toLocaleString("en-IN", { useGrouping: true })}</p>
+                  <button className={styles.action_proceed} onClick={handleProceedToCheckout}>Proceed to Checkout</button>
+                  <button className={styles.action} onClick={handleContinueShopping}>Continue Shopping</button>
+                </div> : undefined}
+              </div>
+          }
+        </div>
+        :
+        router.push("/authentication/sign-in")
+    }
+  </>
   );
 };
 
