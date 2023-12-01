@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md"
 
-const page = () => {
+const Page = () => {
     // Dummy order data
     const [wishlistProducts, setWishlistProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
@@ -97,4 +97,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

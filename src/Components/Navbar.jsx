@@ -43,7 +43,7 @@ const Navbar = () => {
           <ul className={styles.dropdownMenu}>
             {
               categories.map((ctg, index) => <li>
-                <Link href={`/category/${ctg}`}>{ctg.charAt(0).toUpperCase() + ctg.slice(1)}</Link>
+                <Link key={ctg + index} href={`/category/${ctg}`}>{ctg.charAt(0).toUpperCase() + ctg.slice(1)}</Link>
               </li>)
             }
             {/* Add more category options here */}

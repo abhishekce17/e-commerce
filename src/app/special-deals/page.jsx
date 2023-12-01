@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Loading from '../administrator/admin/loading'
 
-const page = () => {
+const Page = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [bannerDeals, setBannerDeals] = useState([]);
     const [selectedDeals, setSelectedDeals] = useState([]);
@@ -113,4 +113,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page

@@ -9,7 +9,7 @@ import UserAuthContext from "@/app/contextProvider"
 
 
 
-const page = () => {
+const Page = () => {
     const [newProducts, setNewProducts] = useState([])
     const [isLoading, setIsLoading] = useState(true);
     const context = useContext(UserAuthContext)
@@ -116,4 +116,4 @@ const page = () => {
     )
 }
 
-export default page
+export default Page
