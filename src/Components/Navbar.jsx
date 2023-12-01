@@ -42,8 +42,8 @@ const Navbar = () => {
           <span>Categories <BiChevronDown className={styles.down_arrow} /> </span>
           <ul className={styles.dropdownMenu}>
             {
-              categories.map((ctg, index) => <li>
-                <Link key={ctg + index} href={`/category/${ctg}`}>{ctg.charAt(0).toUpperCase() + ctg.slice(1)}</Link>
+              categories.map((ctg, index) => <li key={ctg + index} >
+                <Link href={`/category/${ctg}`}>{ctg.charAt(0).toUpperCase() + ctg.slice(1)}</Link>
               </li>)
             }
             {/* Add more category options here */}
