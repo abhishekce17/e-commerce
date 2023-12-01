@@ -41,7 +41,7 @@ const Deals = ({ products }) => {
             <ul>
                 {products.map((prop) => {
                     return (
-                        <li key={prop.productId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants).obj } }} >  <Image width={500} height={500} src={`${prop.productFirtsImgURL}`} alt={`${prop.productFirtsImgURL}`} /> <div><p>{prop.productName}</p> <p>From 	&#8377;{extractMinimumNetValue(prop.variants).minNetValue}</p> </div> </Link> </li>
+                        <li key={prop.productId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants)?.obj } }} >  <Image width={500} height={500} src={`${prop.productFirtsImgURL}`} alt={`${prop.productFirtsImgURL}`} /> <div><p>{prop.productName}</p> <p>From 	&#8377;{extractMinimumNetValue(prop.variants)?.minNetValue || parseInt((prop.price - (prop.price * (prop.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</p> </div> </Link> </li>
                     )
                 })
                 }

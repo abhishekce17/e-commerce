@@ -40,6 +40,7 @@
 }
 
 .extra_images img {
+  aspect-ratio: 1;
   width: 7vw;
   height: auto;
 }
@@ -274,7 +275,7 @@
 
 .similar_items ul {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, 200px);
   gap: 30px;
 }
 .similar_items ul > li {
@@ -289,6 +290,7 @@
 .similar_items ul > li > a > img {
   border-radius: 7px;
   box-shadow: 1px 1px 5px 3px rgba(0, 0, 0, 0.1);
+  aspect-ratio: 1;
   width: 100%;
   height: 100%;
 }
@@ -298,12 +300,9 @@
   align-items: center;
 }
 .similar_items ul > li > a > div {
-  font-size: 1vw;
-  /* height: 50px; */
+  font-size: 0.95vw;
   padding: 0 7px;
-  margin: 7px 0;
-  display: grid;
-  grid-template-columns: 1fr max-content;
+  margin: 5px 0;
   font-weight: 500;
 }
 .similar_items ul > li > a > div p:last-child {
@@ -337,12 +336,13 @@
 }
 
 .each_review .profile div:first-child {
-  font-size: 2vw;
+  font-size: 1.5vw;
+  position: relative;
   color: var(--light-grey);
   margin-right: 5px;
 }
 
-.each_review .rating_details p:nth-child(2) {
+.each_review .rating_details p:nth-child(1) {
   font-size: 0.9vw;
   color: var(--light-grey);
 }

@@ -23,10 +23,11 @@ const NewArrivals = ({ products }) => {
                     }
                     obj = { [variant.title]: variant.type[0].variant, ...obj }
                 });
+
             }
         });
         if (minNetValue === Number.MAX_VALUE) {
-            return null; // No valid netValues found
+            return { minNetValue: null, obj }; // No valid netValues found
         }
         return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
     }
@@ -34,12 +35,12 @@ const NewArrivals = ({ products }) => {
         <div className={styles.newArrivals_cards} >
             <div className={styles.newArrivals_redirect} >
                 <h2 style={{ marginBottom: "20px", fontWeight: "500" }} >New Products landed on the store</h2>
-                <Link href={"/product-list/new-products"} >see all <BiChevronRight style={{ position: "relative", top: "3px" }} /> </Link>
+                <Link href={"/product-list/all-products"} >see all <BiChevronRight style={{ position: "relative", top: "3px" }} /> </Link>
             </div>
             <ul>
                 {products.map((prop) => {
                     return (
-                        <li key={prop.productId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants)?.obj || "" } }} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants).minNetValue}</p> </div> </Link> </li>
+                        <li key={prop.productId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants)?.obj || "" } }} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants)?.minNetValue || parseInt((prop.price - (prop.price * (prop.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</p> </div> </Link> </li>
                     )
                 })}
             </ul>

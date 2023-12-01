@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   /* flex-wrap: wrap; */
-  gap: 30px;
+  gap: 50px;
 }
 .newArrivals_cards ul > li {
   height: max-content;
@@ -19,6 +19,7 @@
 .newArrivals_cards ul > li > a > img {
   border-radius: 7px;
   box-shadow: 1px 1px 5px 3px rgba(0, 0, 0, 0.1);
+  aspect-ratio: 1;
   width: 100%;
   height: 100%;
 }
@@ -32,8 +33,6 @@
   /* height: 50px; */
   padding: 0 7px;
   margin: 7px 0;
-  display: grid;
-  grid-template-columns: 1fr max-content;
   font-weight: 500;
 }
 .newArrivals_cards ul > li > a > div p:last-child {

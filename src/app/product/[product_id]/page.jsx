@@ -24,6 +24,11 @@ const Page = ({ params }) => {
   const [priceDiscount, setPriceDiscount] = useState({ price: null, discount: null })
   const [selectedImage, setSelectedImgUrl] = useState(null)
   const [insideCart, setInsideCart] = useState(context.userData !== null ? context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))) : undefined)
+  const [wishlist, setWishlist] = useState(context.userData?.Personal.wishlist.some(x => x.productId === product_id));
+  const [orderedProduct, setOrderedProduct] = useState(false);
+  const [reviewRating, setReviewRating] = useState({ Rating: -1, Review: "" })
+  const [ReviewRatingArray, setReviewRatingArray] = useState([]);
+  const [similarProducts, setSimilarProducts] = useState([]);
 
   function handlePrice(details, selectedVariant) {
     let obj;
@@ -36,10 +41,58 @@ const Page = ({ params }) => {
           obj = priceObj
         }
       }
+      setPriceDiscount({ price: obj?.price, discount: obj?.discount })
     }
-    setPriceDiscount({ price: obj?.price, discount: obj?.discount })
   }
 
+  function extractMinimumNetValue(variants) {
+    if (!Array.isArray(variants) || variants.length === 0) {
+      return null; // Handle invalid input
+    }
+
+    let minNetValue = Number.MAX_VALUE;
+    let obj = {}
+    variants.forEach(variant => {
+      if (Array.isArray(variant.type)) {
+        variant.type.forEach(type => {
+          if (type.price && !isNaN(Number(type.price))) {
+            const netValue = parseInt((type.price - (type.price * (type.discount / 100))));
+            if (netValue < minNetValue) {
+              minNetValue = netValue;
+              obj = { [variant.title]: type.variant }
+            }
+          }
+          obj = { [variant.title]: variant.type[0].variant, ...obj }
+        });
+
+      }
+    });
+    if (minNetValue === Number.MAX_VALUE) {
+      return { minNetValue: null, obj }; // No valid netValues found
+    }
+    return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
+  }
+
+  const addToWishlist = async () => {
+    const response = await fetch(`/api/UserInformation/UpdateWishlist/addToWishlist/${product_id}`)
+    const result = await response.json();
+    if (result.status === 200) {
+      alert("Product is added to wishlist")
+      setWishlist(true)
+    } else {
+      alert('Something went wrong')
+    }
+  }
+  const removeFromWishlist = async () => {
+    const response = await fetch(`/api/UserInformation/UpdateWishlist/removeFromWishlist/${product_id}`)
+    const result = await response.json();
+    if (result.status === 200) {
+      alert("Product is removed from wishlist")
+      setWishlist(false)
+    } else {
+      alert('Something went wrong')
+    }
+  }
 
   function handleSelection(property, title, variant) {
     // searchParams.forEach(x => console.log(x))
@@ -52,20 +105,57 @@ const Page = ({ params }) => {
     handlePrice(productDetails, { ...setVar, [title]: variant })
   }
 
+
+  const checkEligibility = async () => {
+    if (context.userData.OrderDetails.some(x => x.productId === product_id)) {
+      setOrderedProduct(true);
+    } else {
+      alert("You haven't experienced this product, please first buy this product");
+    }
+  }
+
+  const submitReview = async () => {
+    const response = await fetch(`/api/ReviewRating/addReview/${product_id}`, {
+      method: "POST",
+      body: JSON.stringify({ Rating: reviewRating.Rating, Review: reviewRating.Review, userName: context.userData.Personal.fullName })
+    });
+    const result = await response.json();
+    if (result.status === 200) {
+      window.location.reload()
+    }
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setReviewRating(prev => { return { ...prev, [name]: value } })
+  }
+
   const fetchDetails = useCallback(async () => {
     const res = await fetch(`/api/product-details/${product_id}`, {
       method: 'GET',
     });
     const result = await res.json();
     if (result.status === 200) {
-      setSelectedImgUrl(result.data.imgURLs[0])
-      handlePrice(result.data, setVar)
-      setProductDetails(result.data)
+      setSelectedImgUrl(result.data.imgURLs[0]);
+      handlePrice(result.data, setVar);
+      setProductDetails(result.data);
+      setReviewRatingArray(result.data.ReviewRatingArray);
+      fetchSimilarProducts(result.data.category)
     } else if (result.status === 500) {
-      alert("Product Not Found")
+      alert("Product Not Found");
       router.back()
     }
   }, [pathname])
+  const fetchSimilarProducts = async (category) => {
+    const response = await fetch(`/api/FetchCategoryProducts/${category}`);
+    const result = await response.json();
+    if (result.status === 200) {
+      console.log(result.data);
+      setSimilarProducts(result.data)
+    } else {
+      alert("Something went wrong please try again later");
+    }
+  }
 
   useEffect(() => {
     try {
@@ -98,9 +188,16 @@ const Page = ({ params }) => {
             </div>
             <div className={styles.details} >
               <div className={styles.extra}  >
-                <AiFillHeart />
-                <AiOutlineHeart />
-                <AiOutlineShareAlt />
+                {context.isUserLoggedIn && <>
+
+                  {
+                    wishlist ?
+                      <AiFillHeart style={{ cursor: "pointer" }} onClick={removeFromWishlist} />
+                      :
+                      <AiOutlineHeart style={{ cursor: "pointer" }} onClick={addToWishlist} />
+                  }
+                </>}
+                <AiOutlineShareAlt style={{ cursor: "pointer" }} onClick={() => { navigator.share({ title: productDetails.productName, url: pathname }) }} />
               </div>
               <h1> {productDetails.productName} </h1>
               <p className={styles.ratings_review} >★★★★☆
@@ -108,8 +205,8 @@ const Page = ({ params }) => {
                 <span>625 ratings</span>|
                 <span>125 reviews</span>
               </p>
-              <p className={styles.price_discount} >M.R.P. <strong>₹{parseInt(Number(priceDiscount.price) - Number(priceDiscount.price) * (priceDiscount.discount / 100)).toLocaleString("en-IN", { useGrouping: true })}</strong> <s>₹{priceDiscount.price.toLocaleString("en-IN", { useGrouping: true })}</s> <sup>{parseInt(priceDiscount.discount)}% off</sup> </p>
-              <div className={styles.variants_container} >
+              <p className={styles.price_discount} >M.R.P. <strong>₹{parseInt(Number(priceDiscount.price) - Number(priceDiscount.price) * (priceDiscount.discount / 100)).toLocaleString("en-IN", { useGrouping: true })}</strong> {(priceDiscount.discount !== null) && <> <s>₹{priceDiscount.price.toLocaleString("en-IN", { useGrouping: true })}</s> <sup>{parseInt(priceDiscount.discount)}% off</sup> </>} </p>
+              {productDetails.variants.length && <div className={styles.variants_container} >
                 <p>variants</p>
                 <div>
                   {
@@ -134,7 +231,7 @@ const Page = ({ params }) => {
                     })
                   }
                 </div>
-              </div>
+              </div>}
               <div className={styles.utils_container} >
                 <div className={styles.pincode_check} >
                   <p>Check delivery option</p>
@@ -178,68 +275,48 @@ const Page = ({ params }) => {
           <div className={styles.similar_items} >
             <div>
               <span>Similar Items You Might Like</span>
-              <span>see all</span>
+              <span> <Link href={`/category/${productDetails.category}`}> see all</Link></span>
             </div>
             <ul>
 
               {
 
-                [...Array(7)].map((undefined, index) => {
+                similarProducts.map((data, index) => {
                   return (
-                    <li key={index} > <Link href={"/product-link"} > <Image width={500} height={500} src={"/category.jpg"} alt='product-image' /> <div><p>Nothing Phone 2 8+ GEN 1 120Hz display</p> <p>From 12$</p> </div> </Link> </li>
+                    <li key={index} > <Link href={{ pathname: `/product/${data.productId}`, query: { ...extractMinimumNetValue(data.variants)?.obj || "" } }} > <Image width={500} height={500} src={data.productFirtsImgURL} alt={data.productFirtsImgURL} /> <div><p>{data.productName}</p> <p>From   &#8377;{extractMinimumNetValue(data.variants)?.minNetValue || parseInt((data.price - (data.price * (data.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</p> </div> </Link> </li>
                   )
                 })
               }
             </ul>
           </div>
           <div className={styles.customer_review_ratings} >
-            <p>Ratings and reviews</p>
-            <div className={styles.each_review} >
-              <div className={styles.profile} >
-                <div> <RiAccountCircleFill /> </div>
-                <p>Consumer Name</p>
-              </div>
-              <div className={styles.rating_details} >
-                <p>★★★★☆ <span>4</span> </p>
-                <p>timeline</p>
-                <p>greatest phone all over the wolrd i have seen till now</p>
-              </div>
+            <div style={{ fontWeight: 700, display: "flex", justifyContent: "space-between" }} >
+              <p>Ratings and reviews</p>
+              {context.isUserLoggedIn && <button className={styles.add_to_cart} onClick={checkEligibility} style={{ fontSize: "12px", padding: "8px 10px" }} >Add Review</button>}
             </div>
-            <div className={styles.each_review} >
-              <div className={styles.profile} >
-                <div> <RiAccountCircleFill /> </div>
-                <p>Consumer Name</p>
-              </div>
-              <div className={styles.rating_details} >
-                <p>★★★★☆ <span>4</span> </p>
-                <p>timeline</p>
-                <p>greatest phone all over the wolrd i have seen till now kakdfhkdf dfkfhakfj akdfkshdf akfjhakdfj</p>
-              </div>
-            </div>
-            <div className={styles.each_review} >
-              <div className={styles.profile} >
-                <div> <RiAccountCircleFill /> </div>
-                <p>Consumer Name</p>
-              </div>
-              <div className={styles.rating_details} >
-                <p>★★★★☆ <span>4</span> </p>
-                <p>timeline</p>
-                <p>greatest phone all over the wolrd i have seen till now aksdfkf akjdfh afdj akjsdfhaskd fakjdfhakd</p>
-              </div>
-            </div>
-            <div className={styles.each_review} >
-              <div className={styles.profile} >
-                <div> <RiAccountCircleFill /> </div>
-                <p>Consumer Name</p>
-              </div>
-              <div className={styles.rating_details} >
-                <p>★★★★☆ <span>4</span> </p>
-                <p>timeline</p>
-                <p>greatest phone all over the wolrd i have seen till now kdsfkajdf dfkhkajdfhakdjf adfjhakdfj</p>
-              </div>
-            </div>
+            {orderedProduct && <div style={{ fontWeight: 700, display: "flex", flexDirection: "column", gap: "7px" }} >
+              <div style={{ fontSize: "35px", textAlign: "center", color: "grey", letterSpacing: "0.5rem" }} > {[...Array(5)].map((undefined, index) => <span key={index} style={{ color: reviewRating.Rating >= index && "initial", cursor: "default" }} onClick={(e) => { e.target.name = "Rating", e.target.value = index, handleChange(e) }} >★</span>)} </div>
+              <textarea rows={10} style={{ fontSize: "18px", padding: "7px", borderRadius: "3px", resize: "none" }} type='text' name='Review' value={reviewRating.Review} onChange={handleChange} />
+              <button className={styles.add_to_cart} onClick={submitReview} style={{ fontSize: "12px", padding: "8px 10px" }} >Submit</button>
+            </div>}
+            {ReviewRatingArray.length ? ReviewRatingArray.map((data, index) => {
+              return (
+                <div key={index} className={styles.each_review} >
+                  <div className={styles.profile} >
+                    <div> <RiAccountCircleFill /> </div>
+                    <p>{data.userName}</p>
+                  </div>
+                  <div className={styles.rating_details} >
+                    <p><span>{new Date(data.timeStamp).toLocaleDateString()}</span> <span>{new Date(data.timeStamp).toLocaleTimeString()}</span></p>
+                    <p style={{ fontSize: "1.2rem" }} > ★★★★☆ <span>{data.Rating}</span> </p>
+                    <p>{data.Review}</p>
+                  </div>
+                </div>
+              )
+            }) : undefined
+            }
           </div>
-        </div>
+        </div >
         : Loading()
       }
     </>

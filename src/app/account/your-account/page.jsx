@@ -3,12 +3,14 @@ import AccountSidebar from '@/Components/AccountSidebar';
 import styles from "@/Styles/Account.module.css"
 import UserAuthContext from '@/app/contextProvider';
 import Link from 'next/link';
+import _ from "lodash"
 import { useState, useContext } from 'react';
 
 const Page = () => {
     const context = useContext(UserAuthContext)
     const [userData, setUserData] = useState(context.userData.Personal)
     const [recentOrders, setRecentOrders] = useState([])
+    console.log(userData)
     return (<>
 
         <h3>Personal Information</h3>
@@ -17,7 +19,7 @@ const Page = () => {
                 <p><strong>Name:</strong> {userData.fullName} </p>
                 <p><strong>Email:</strong> {userData.contact.email} </p>
                 <p><strong>Phone:</strong> {userData.contact.phoneNo} </p>
-                <p><strong>Address:</strong> {`${userData.address.house_no}, ${userData.address.area}, ${userData.address.landmark}, ${userData.address.city}, ${userData.address.pincode}, ${userData.address.state}`}</p>
+                <p><strong>Address:</strong> {!_.isEmpty(userData.address) ? `${userData.address.house_no}, ${userData.address.area}, ${userData.address.landmark}, ${userData.address.city}, ${userData.address.pincode}, ${userData.address.state}` : ""}</p>
             </div>
         </div>
         <h3>Recent Order</h3>

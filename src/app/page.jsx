@@ -5,7 +5,6 @@ import Featured from '@/Components/Featured'
 import Deals from '@/Components/Deals'
 // import Footer from '@/Components/Footer'
 import NewArrivals from '@/Components/NewArrivals'
-import TopCategory from '@/Components/TopCategory'
 import { useEffect, useState } from 'react'
 import LoadingAnimation1 from '@/Components/LoadingAnimation1'
 
@@ -28,7 +27,7 @@ export default function Home() {
           featuredProductsResponse,
           allDealProductsResponse
         ] = await Promise.all([
-          fetch("/api/product-snap-details"),
+          fetch("/api/limit-product-snap-details"),
           fetch("/api/AdminFeatured/LimitedFetch"),
           fetch("/api/AdminDealseSetting/LimitFetch")
         ]);
@@ -77,7 +76,6 @@ export default function Home() {
           {dealProducts.length ? <Deals products={dealProducts} /> : undefined}
           {featuredProducts.length && <Featured products={featuredProducts} />}
           <NewArrivals products={allProductSnapDetails} />
-          <TopCategory />
         </main>
     }
     {/* <Footer/> */}

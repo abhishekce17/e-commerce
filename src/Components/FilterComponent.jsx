@@ -1,54 +1,58 @@
 import filterStyle from "@/Styles/filter.module.css"
 
 
-const FilterComponent = () => {
+const FilterComponent = ({ categoryInfo, setFilterByBrand, category, setFilterByTags }) => {
+  const filter = (brand, tags) => {
+    if (brand !== undefined) {
+      setFilterByBrand(prev => {
+        if (prev.some(x => x == brand)) {
+          return prev.filter(x => x !== brand);
+        }
+        return [...prev, brand]
+      });
+      console.log(categoryInfo);
+    }
+    if (tags !== undefined) {
+      setFilterByTags(prev => {
+        if (prev.some(x => x == tags)) {
+          return prev.filter(x => x !== tags);
+        }
+        return [...prev, tags];
+      });
+    }
+  }
+
   return (
     <div className={filterStyle.filter_container} >
-      <div className={filterStyle.sort_container}>
-      <p>Sort</p>
+      {/* <div className={filterStyle.sort_container}>
+        <p>Sort</p>
         <select>
-            <option>Sort By</option>
-            <option>Price - Low to High</option>
-            <option>Price - High to Low</option>
-            <option>Price - Top Rated</option>
+          <option>Sort By</option>
+          <option>Price - Low to High</option>
+          <option>Price - High to Low</option>
+          <option>Price - Top Rated</option>
         </select>
-      </div>
+      </div> */}
       <div className={filterStyle.category} >
         <p>Category</p>
-        <p>Mobile</p>
+        <p>{category}</p>
       </div>
-      <div className={filterStyle.brand} >
-        <p>Brand</p>
-        <div>
-          <input type="checkbox"/>
-          <span>Samsung</span>
-        </div>
-        <div>
-          <input type="checkbox"/>
-          <span>Xiomi</span>
-        </div>
-        <div>
-          <input type="checkbox"/>
-          <span>Vivo</span>
-        </div>
-        <div>
-          <input type="checkbox"/>
-          <span>Oppo</span>
-        </div>
-        <div>
-          <input type="checkbox"/>
-          <span>Apple</span>
-        </div>
-        <div>
-          <input type="checkbox"/>
-          <span>Realme</span>
-        </div>
-        <div>
-          <input type="checkbox"/>
-          <span>Oneplus</span>
-        </div>
-      </div>
-      <div className={filterStyle.range} >
+      {categoryInfo?.categoryBrands.length &&
+        <div className={filterStyle.brand} >
+          <p>Brands</p>
+          {
+            categoryInfo.categoryBrands?.map((brand, index) => {
+              return (
+                <div key={brand + index} >
+                  <input id={brand + index} onClick={() => { filter(brand, undefined) }} type="checkbox" />
+                  <label htmlFor={brand + index} > {brand}</label>
+                </div>
+
+              )
+            })
+          }
+        </div>}
+      {/* <div className={filterStyle.range} >
         <p>Price Range</p>
         <p>Under ₹1000</p>
         <p>₹1000 - ₹5000</p>
@@ -67,6 +71,19 @@ const FilterComponent = () => {
         <p data-value="3" >★★★☆☆ & above</p>
         <p data-value="2" >★★☆☆☆ & above</p>
         <p data-value="1" >★☆☆☆☆ & above</p>
+      </div> */}
+      <div className={filterStyle.tags} >
+        <p>Tags</p>
+        {
+          categoryInfo?.filterTags.map((tag, index) => {
+            return (
+              <div key={"tag" + index} className={filterStyle.eachTag} >
+                <input onChange={() => { filter(undefined, tag) }} id={"tag" + index} type="checkbox" key={`brand-${index}`} value={tag} />
+                <label htmlFor={"tag" + index} > {tag}</label>
+              </div>
+            )
+          })
+        }
       </div>
     </div>
 

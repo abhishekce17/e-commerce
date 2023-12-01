@@ -59,7 +59,7 @@ export async function POST(req) {
             // User creation and data setup
             await setDoc(doc(db, "User", response.user.uid), { createdAt: response.user.metadata.creationTime });
             await setDoc(accountRef, { email, agreedTermAndCondition, emailVerify: true });
-            await setDoc(personalInfoRef, { fullName: name, contact: { email, phoneNo: null }, address: {} });
+            await setDoc(personalInfoRef, { fullName: name, contact: { email, phoneNo: null }, address: {}, wishlist: [] });
 
             // Batch commit and token creation
             await batch.commit()

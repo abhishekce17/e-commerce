@@ -93,6 +93,8 @@ export async function POST(req) {
             price: body.price || "",
             variants: body.variants || "",
             stock: 0,
+            brandName: body.brandName || "",
+            allTags: body.allTags
         }
 
         const productSnapDetails = {

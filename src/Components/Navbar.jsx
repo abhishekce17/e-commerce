@@ -1,5 +1,5 @@
 "use client"
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "../Styles/Navbar.module.css";
 import { BiChevronDown } from "react-icons/bi"
@@ -11,6 +11,7 @@ import UserAuthContext from "@/app/contextProvider";
 const Navbar = () => {
   let router = useRouter()
   const context = useContext(UserAuthContext)
+  const [categories, setCategories] = useState([])
   const [queryValue, setQueryValue] = useState("");
   const handleQueryRequest = (e) => {
     e.preventDefault()
@@ -19,6 +20,18 @@ const Navbar = () => {
   const handleChange = (e) => {
     setQueryValue(e.target.value)
   }
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await fetch("/api/fetchCategories");
+      const result = await response.json();
+      // console.log(result.ctgry)
+      if (result.status === 200) {
+        setCategories(result.ctgry)
+      }
+    }
+    fetchCategories()
+  }, [])
   return (
     <nav className={styles.navbar}>
       <ul>
@@ -28,24 +41,11 @@ const Navbar = () => {
         <li className={styles.dropdown}>
           <span>Categories <BiChevronDown className={styles.down_arrow} /> </span>
           <ul className={styles.dropdownMenu}>
-            <li>
-              <Link href={"/category/electronics"}>Electronics</Link>
-            </li>
-            <li>
-              <Link href={"/category/clothing"}>Mobiles</Link>
-            </li>
-            <li>
-              <Link href={"/category/clothing"}>Aplliences</Link>
-            </li>
-            <li>
-              <Link href={"/category/clothing"}>Sports</Link>
-            </li>
-            <li>
-              <Link href={"/category/clothing"}>Clothes</Link>
-            </li>
-            <li>
-              <Link href={"/category/home-decor"}>Home Decor</Link>
-            </li>
+            {
+              categories.map((ctg, index) => <li>
+                <Link href={`/category/${ctg}`}>{ctg.charAt(0).toUpperCase() + ctg.slice(1)}</Link>
+              </li>)
+            }
             {/* Add more category options here */}
           </ul>
         </li>

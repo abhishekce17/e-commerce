@@ -19,6 +19,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
     const fileInputRef = useRef(null);
     const [variantPrice, setVariantPrice] = useState(FetchedProductDetails?.variantPrice || {})
     const [formData, setFormData] = useState([])
+    const [tagList, setTagList] = useState(FetchedProductDetails?.allTags || []);
     const [defaultVariants, setDefaultVariants] = useState(categories.filter(element => element.category === category).defaultVariants)
 
     const handleProductNameChange = (event) => {
@@ -154,7 +155,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
         console.log(categories)
         const selectedCategory = event.target.value;
         setCategory(selectedCategory);
-        setVariants(categories.filter(element => element.category === selectedCategory)[0].defaultVariants || []);
+        setVariants(categories.filter(element => element.category === selectedCategory)[0]?.defaultVariants || []);
     };
 
     const handleSpecificationChange = (event, index) => {
@@ -259,6 +260,17 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
         setVariants(updatedVariants);
     };
 
+    const handleTags = (e) => {
+        console.log(FetchedProductDetails);
+        const { value } = e.target;
+        setTagList(prev => {
+            if (prev.some(x => x == value)) {
+                return prev.filter(x => x !== value);
+            }
+            return [...prev, value];
+        });
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formDataAPI = new FormData()
@@ -285,6 +297,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
             variants: updatedVariants,
             discount: Number(discount),
             imgURLs: FetchedProductDetails?.imgURLs || [],
+            allTags: tagList,
             averageRating: FetchedProductDetails?.averageRating || 0
         }))
         formDataAPI.append("categoryId", categories.filter(element => element.category === category)[0].categoryId)
@@ -318,24 +331,6 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
         event.preventDefault();
     };
 
-    // const defaultVariants = {
-    //     Mobile: [
-    //         { title: "storage", type: [{ variant: "6GB + 128GB" }, { variant: "8GB + 256 GB" }] },
-    //         { title: "color", type: [{ variant: "red" }, { variant: "blue" }, { variant: "black" }] },
-    //     ],
-    //     electronic: [
-    //         { title: "wattage", type: ["100W", "200W", "300W"] },
-    //         { title: "color", type: ["silver", "black"] },
-    //     ],
-    //     clothes: [
-    //         { title: "size", type: ["S", "M", "L", "XL"] },
-    //         { title: "color", type: ["white", "blue", "black"] },
-    //     ],
-    //     kitchen: [
-    //         { title: "material", type: ["plastic", "metal"] },
-    //         { title: "color", type: ["red", "green"] },
-    //     ],
-    // };
 
     return (
         <div className={styles.add_product_page}>
@@ -455,7 +450,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                             <label className={styles.more_details}>
                                 More Details
                                 <div>
-                                    <textarea disabled={editMode} value={moreDetails} onChange={handleMoreDetailsChange} rows={20} cols={51} />
+                                    <textarea disabled={editMode} value={moreDetails} onChange={handleMoreDetailsChange} rows={20} />
                                 </div>
                             </label>
                         </div>
@@ -540,6 +535,17 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                             </>
                         }
                     </div>
+                    {category !== '' && <div className={styles.allTags} >
+                        <p>Tags</p>
+                        <div>
+                            {categories.filter(cat => cat.category === category)[0].filterTags.map((tag, index) => (
+                                <div key={"tag" + index} className={styles.eachTag} >
+                                    <input disabled={editMode} checked={FetchedProductDetails?.allTags.some(x => x === tag)} onChange={handleTags} id={"tag" + index} type="checkbox" key={`brand-${index}`} value={tag} />
+                                    <label htmlFor={"tag" + index} >{tag}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>}
                     {typeof editMode === "boolean" && typeof handleUpdateProduct === "function" &&
                         <>
                             <button className={styles.add_product_button} type="submit" > {editMode ? "Edit Product" : "Save Product"}</button>

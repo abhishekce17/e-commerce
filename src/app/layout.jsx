@@ -20,6 +20,7 @@ export default function RootLayout({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [refresh, setRefresh] = useState(false)
+  const [categories, setCategories] = useState([])
 
 
   let pathname = usePathname()
@@ -61,7 +62,6 @@ export default function RootLayout({ children }) {
     const validateUserSession = async () => {
       const sessionResponse = await fetch("/api/Authentication/ValidateSession")
       const sessionResult = await sessionResponse.json()
-      console.log("Session result : ", sessionResult.status)
       if (sessionResult.status === 200) {
         setIsUserLoggedIn(true);
         fetchUserData()
@@ -75,7 +75,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <UserAuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn, userData, fetchUserData, setUserData, addToCart, refresh, setRefresh }}  >
+      <UserAuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn, userData, fetchUserData, setUserData, addToCart, refresh, setRefresh, categories, setCategories }}  >
         <body className={inter.className}>
           {
             isLoading ? Loading() :

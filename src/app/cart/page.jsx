@@ -17,7 +17,6 @@ const Page = () => {
 
   const fetchCart = useCallback(async () => {
     try {
-      console.log("fetching")
       const fetchResponse = await fetch("/api/UserInformation/UserCartInfo/fetchCart");
       const responseResult = await fetchResponse.json();
       if (responseResult.status === 200) {
@@ -30,7 +29,7 @@ const Page = () => {
         cartProduct.map((item) => {
           const subInfo = item.subInfo;
           setSubTotal((prev) => {
-            return { totalAmount: prev.totalAmount + parseInt(subInfo.price - subInfo.price * subInfo.discount / 100) * item.selectedVariant.quantity, totalItems: prev.totalItems + item.selectedVariant.quantity }
+            return { totalAmount: prev.totalAmount + parseInt((item.subInfo?.price || item.price) - (item.subInfo?.price || item.price) * (item.subInfo?.discount || item.discount) / 100) * item.selectedVariant.quantity, totalItems: prev.totalItems + item.selectedVariant.quantity }
           })
         })
         setLoading(false)
@@ -100,9 +99,9 @@ const Page = () => {
               <h4>{item.productName}</h4>
             </Link>
             {Object.keys(item.selectedVariant.variant).sort().map(key => <p key={key} > {key} : {item.selectedVariant.variant[key]}</p>)}
-            <p>Price: ₹{item.subInfo.price.toLocaleString("en-IN", { useGrouping: true })}</p>
-            <p>Discount: {item.subInfo.discount}</p>
-            <p>Effective Price: ₹{parseInt(item.subInfo.price - item.subInfo.price * item.subInfo.discount / 100).toLocaleString("en-IN", { useGrouping: true })} </p>
+            <p>Price: ₹{item.subInfo?.price.toLocaleString("en-IN", { useGrouping: true }) || item.price.toLocaleString("en-IN", { useGrouping: true })}</p>
+            <p>Discount: {item.subInfo?.discount || item.discount}</p>
+            <p>Effective Price: ₹{parseInt((item.subInfo?.price || item.price) - (item.subInfo?.price || item.price) * (item.subInfo?.discount || item.discount) / 100).toLocaleString("en-IN", { useGrouping: true })} </p>
             <p>Quantity: {item.selectedVariant.quantity}</p>
             <div className={styles.quantity}>
               <button type="button" className={styles.increase_quantity} onClick={() => item.selectedVariant.quantity > 1 && UpdateQuantity(item.cartProductId, "DecreaseQuantity")}>
@@ -130,9 +129,9 @@ const Page = () => {
               <h4>{item.productName}</h4>
             </Link>
             {Object.keys(item.selectedVariant.variant).sort().map(key => <p key={key} > {key} : {item.selectedVariant.variant[key]}</p>)}
-            <p>Price: ₹{item.subInfo.price.toLocaleString("en-IN", { useGrouping: true })}</p>
-            <p>Discount: {item.subInfo.discount}</p>
-            <p>Effective Price: ₹{parseInt(item.subInfo.price - item.subInfo.price * item.subInfo.discount / 100).toLocaleString("en-IN", { useGrouping: true })} </p>
+            <p>Price: ₹{item.subInfo?.price.toLocaleString("en-IN", { useGrouping: true }) || item.price.toLocaleString("en-IN", { useGrouping: true })}</p>
+            <p>Discount: {item.subInfo?.discount || item.discount}</p>
+            <p>Effective Price: ₹₹{parseInt((item.subInfo?.price || item.price) - (item.subInfo?.price || item.price) * (item.subInfo?.discount || item.discount) / 100).toLocaleString("en-IN", { useGrouping: true })} </p>
             <p>Quantity: {item.selectedVariant.quantity}</p>
             <button onClick={() => handleRemoveItem(item.cartProductId)}>Remove</button>
             <button onClick={() => UpdateStatus(item.cartProductId, "MoveToCart")}>Move to Cart</button>

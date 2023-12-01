@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
+import _ from "lodash"
 
 export const dynamic = 'force-dynamic'
 const getPrice = (variants, selectedVariant) => {
@@ -22,7 +23,7 @@ const getPrice = (variants, selectedVariant) => {
         }
         return false;
     });
-    return otp[0].type.filter(x => x.variant === variant[otp[0].title])[0]
+    return otp[0]?.type.filter(x => x.variant === variant[otp[0].title])[0]
 };
 
 
@@ -66,7 +67,10 @@ export async function GET(req) {
 
                 const productData = await getDocs(querySnapshot);
                 return productData.docs.map((data) => {
-                    const Obj = getPrice(data.data().variants, doc.data())
+                    let Obj;
+                    if (!_.isEmpty(doc.data().variant)) {
+                        Obj = getPrice(data.data().variants, doc.data())
+                    }
                     return { ...data.data(), subInfo: Obj, selectedVariant: doc.data(), cartProductId: doc.id }
                 });
             })

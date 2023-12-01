@@ -54,7 +54,7 @@ async function updateDocumentsInBatch(collectionPath, queryField, queryValue, up
     const batch = writeBatch(db);
     querySnapshot.forEach((doc) => {
         const docRef = doc.ref;
-        if (merge && doc.data().variants.length) {
+        if (merge && doc.data().variants.length && (typeof doc.data().price !== 'number')) {
             const variants = mergeVariants(doc.data().variants, updateDetails.variants)
             batch.update(docRef, { ...updateDetails, variants: variants, discount: deleteField() });
         }

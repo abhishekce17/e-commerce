@@ -10,7 +10,6 @@ const page = () => {
     const [bannerDeals, setBannerDeals] = useState([]);
     const [selectedDeals, setSelectedDeals] = useState([]);
 
-
     function extractMinimumNetValue(variants) {
         if (!Array.isArray(variants) || variants.length === 0) {
             return null; // Handle invalid input
@@ -30,12 +29,13 @@ const page = () => {
                     }
                     obj = { [variant.title]: variant.type[0].variant, ...obj }
                 });
+
             }
         });
         if (minNetValue === Number.MAX_VALUE) {
-            return null; // No valid netValues found
+            return { minNetValue: null, obj }; // No valid netValues found
         }
-        return { minNetValue, obj };
+        return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
     }
 
 
@@ -72,21 +72,37 @@ const page = () => {
                             })}
                     </div>
                     <div className={dealsStyles.product_collection} >
-                        {selectedDeals.map((info, index) => info.variants.map((prty, i) => prty.type.map((atb, j) => {
-                            return (
-                                <div key={index} className={dealsStyles.each_product_card} >
-                                    <Link href={{ pathname: `product/${info.productId}`, query: { [prty.title]: atb.variant } }} >
-                                        <Image width={500} height={500} src={info.productFirtsImgURL} alt={info.productFirtsImgUR} />
-                                        <div>
-                                            <p>{info.productName}</p>
-                                        </div>
-                                        <div>
-                                            <p>₹{parseInt(atb.price - atb.price * atb.discount / 100).toLocaleString("en-IN", { useGrouping: true })}<s>₹{atb.price.toLocaleString("en-IN", { useGrouping: true })}</s> </p>
-                                        </div>
-                                    </Link>
-                                </div>
-                            )
-                        })))
+                        {selectedDeals.map((info, index) => {
+
+                            return info.variants.length ? info.variants.map((prty, i) => prty.type.map((atb, j) => {
+                                return (
+                                    <div key={index} className={dealsStyles.each_product_card} >
+                                        <Link href={{ pathname: `product/${info.productId}`, query: { [prty.title]: atb.variant } }} >
+                                            <Image width={500} height={500} src={info.productFirtsImgURL} alt={info.productFirtsImgUR} />
+                                            <div>
+                                                <p>{info.productName}</p>
+                                            </div>
+                                            <div>
+                                                <p>₹{parseInt(atb.price - atb.price * atb.discount / 100).toLocaleString("en-IN", { useGrouping: true })}<s>₹{atb.price.toLocaleString("en-IN", { useGrouping: true })}</s> </p>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                )
+                            }))
+                                : (
+                                    <div key={index} className={dealsStyles.each_product_card} >
+                                        <Link href={{ pathname: `product/${info.productId}` }} >
+                                            <Image width={500} height={500} src={info.productFirtsImgURL} alt={info.productFirtsImgUR} />
+                                            <div>
+                                                <p>{info.productName}</p>
+                                            </div>
+                                            <div>
+                                                <p>₹{parseInt(info.price - info.price * info.discount / 100).toLocaleString("en-IN", { useGrouping: true })}<s>₹{info.price.toLocaleString("en-IN", { useGrouping: true })}</s> </p>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                )
+                        })
 
                         }
 

@@ -5,12 +5,12 @@ import { BiChevronRight } from "react-icons/bi"
 
 const Featured = ({ products }) => {
     function extractMinimumNetValue(variants) {
+        let obj = {}
         if (!Array.isArray(variants) || variants.length === 0) {
             return null; // Handle invalid input
         }
 
         let minNetValue = Number.MAX_VALUE;
-        let obj = {}
         variants.forEach(variant => {
             if (Array.isArray(variant.type)) {
                 variant.type.forEach(type => {
@@ -26,7 +26,7 @@ const Featured = ({ products }) => {
             }
         });
         if (minNetValue === Number.MAX_VALUE) {
-            return null; // No valid netValues found
+            return { minNetValue: null, obj };; // No valid netValues found
         }
         return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
     }
@@ -40,14 +40,9 @@ const Featured = ({ products }) => {
             <ul>
                 {products.map((prop) => {
                     return (
-                        <li key={prop.FeaturedId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants).obj } }} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants).minNetValue}</p> </div> </Link> </li>
+                        <li key={prop.FeaturedId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants)?.obj || "" } }} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants)?.minNetValue || parseInt((prop.price - (prop.price * (prop.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</p> </div> </Link> </li>
                     )
                 })}
-
-                {/* <li> <Link href={"/product-link"} > <Image width={500} height={500} src={"/category.jpg"} alt='product-image' /> <div><p>Product Name</p> <p>From 12$</p> </div> </Link> </li> */}
-                {/* <li> <Link href={"/product-link"} > <Image width={500} height={500} src={"/category.jpg"} alt='product-image' /> <div><p>Product Name</p> <p>From 12$</p> </div> </Link> </li> */}
-                {/* <li> <Link href={"/product-link"} > <Image width={500} height={500} src={"/category.jpg"} alt='product-image' /> <div><p>Product Name</p> <p>From 12$</p> </div> </Link> </li> */}
-                {/* <li> <Link href={"/product-link"} > <Image width={500} height={500} src={"/category.jpg"} alt='product-image' /> <div><p>Product Name</p> <p>From 12$</p> </div> </Link> </li> */}
             </ul>
         </div>
     )

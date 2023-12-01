@@ -106,8 +106,8 @@ const Page = ({ params }) => {
                     imgURLs: result.data.imgURLs,
                     variantPrice: result.data.netPrice === undefined && extractValues('price', result.data.variants),
                     averageRating: result.data.averageRating,
+                    allTags: result.data.allTags
                 });
-                console.log(result.data.brandName);
             } else if (result.status === 404) {
                 setProductDetails(404);
             }

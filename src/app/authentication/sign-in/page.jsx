@@ -1,11 +1,22 @@
 "use client"
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import styles from "@/Styles/Authentication.module.css";
 import { useRouter } from "next/navigation";
 import UserAuthContext from "@/app/contextProvider";
+import {
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  getAuth,
+  signInWithRedirect,
+  getRedirectResult,
+} from "firebase/auth";
+import { initializeApp } from "firebase/app";
+// import * as firebase from 'firebase'
 
 const SignInForm = () => {
   const context = useContext(UserAuthContext)
@@ -13,6 +24,7 @@ const SignInForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isCredentailInvalid, setIsCredentailInvalid] = useState(false)
+  const [user, setUser] = useState(null)
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -40,6 +52,49 @@ const SignInForm = () => {
       alert("Server Error");
     }
   };
+
+  const signInWithGoogle = async () => {
+    try {
+      const fetchResult = await fetch("/api/firebaseConfig");
+      const firebaseConfigResponse = await fetchResult.json();
+
+      if (firebaseConfigResponse.status !== 200) {
+        console.error("Failed to fetch Firebase configuration.");
+        return;
+      }
+
+      const { firebaseConfig } = firebaseConfigResponse;
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+
+      onAuthStateChanged(auth, async (result) => {
+        const accountCreationResponse = await fetch("/api/Authentication/userAuth/GoogleAuth", {
+          method: "POST",
+          body: JSON.stringify({ userCredentials: result, creationTime: result.metadata.creationTime }),
+        });
+        const fetchResult = await accountCreationResponse.json();
+        if (fetchResult.status === 200) {
+          context.setIsUserLoggedIn(true);
+          context.fetchUserData();
+          router.replace("/");
+        } else if (fetchResult.status === 500) {
+          console.error("Server Error");
+        } else if (fetchResult.status === 409) {
+          alert("Email already exist please try to login")
+        } else {
+          alert(fetchResult.error)
+        }
+      })
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
 
   return (
     <div className={styles.formCenter}>
@@ -90,8 +145,8 @@ const SignInForm = () => {
         </div>}
 
         <div className={styles.socialMediaButtons}>
-          <div className={styles.googleButton}>
-            Log in with <FcGoogle className={styles.googleIcon} onClick={() => alert("Hello")} />
+          <div style={{ cursor: "default" }} onClick={signInWithGoogle} className={styles.googleButton}>
+            Log in with <FcGoogle className={styles.googleIcon} />
           </div>
         </div>
       </form>

@@ -63,7 +63,7 @@ export async function DELETE(req, { params }) {
                 if (productDocSnapshot.exists()) {
                     const productData = productDocSnapshot.data();
                     let dataToUpdate = {
-                        discount: initialDiscount || null,
+                        discount: initialDiscount || productDocSnapshot.data().discount,
                         initialDiscount: deleteField(),
                         dealProduct: deleteField(),
                         productId: deleteField(),

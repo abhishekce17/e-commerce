@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/firebase-config/config";
-import { getDoc, doc, collection, getDocs } from "firebase/firestore";
+import { getDoc, doc, collection, getDocs, writeBatch } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
 
@@ -16,7 +16,9 @@ export async function GET(req) {
                 const userExistance = await getDoc(doc(db, "User", userData.uid))
                 if (userExistance.exists()) {
                     let fetchedUserData = {}
-                    let cart = []
+                    let cart = [];
+                    let OrderDetails = [];
+                    const batch = writeBatch(db)
                     const userInfoSnap = await getDocs(collection(db, "User", userData.uid, "Information"))
                     const fetchPromise = new Promise((resolve, reject) => {
                         userInfoSnap.forEach(doc => { fetchedUserData = { ...fetchedUserData, [doc.id]: doc.data() } })
@@ -27,10 +29,18 @@ export async function GET(req) {
                         cartInfoSnap.forEach(doc => cart.push(doc.data()))
                         if (cartInfoSnap.size === cart.length) resolve();
                     })
+                    const orderInfoSnap = await getDocs(collection(db, "User", userData.uid, "Information", "OrderDetails", "OrderedProducts"))
+                    const orderPromise = new Promise((resolve, reject) => {
+                        orderInfoSnap.forEach(doc => OrderDetails.push(doc.data()))
+                        if (orderInfoSnap.size === OrderDetails.length) resolve();
+                    })
 
                     await fetchPromise;
                     await CartPromise;
-                    return NextResponse.json({ status: 200, userData: { ...fetchedUserData, Cart: cart } })
+                    await orderPromise
+
+                    batch.commit()
+                    return NextResponse.json({ status: 200, userData: { ...fetchedUserData, Cart: cart, OrderDetails } })
                 }
             }
         }
