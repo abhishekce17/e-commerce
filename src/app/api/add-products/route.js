@@ -1,9 +1,10 @@
 "use server"
-import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
-import { collection, addDoc, doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import {NextResponse} from "next/server";
+import {db} from "@/firebase-config/config";
+import {collection, addDoc, doc, setDoc, getDoc, updateDoc} from "firebase/firestore";
 const cloudinary = require('cloudinary');
 import cloudinary_config from "@/cloudinary-config/config";
+import {addToIndex} from "@/algolia";
 
 
 export async function POST(req) {
@@ -56,11 +57,12 @@ export async function POST(req) {
             averageRating: 0 //fetch from API of Reviews and Rating ,
         }
         const productSnapDetailsRef = collection(db, "ProductSnapDetails")
-        await addDoc(productSnapDetailsRef, productSnapDetails)
+        const data = await addDoc(productSnapDetailsRef, productSnapDetails)
+        addToIndex(productSnapDetails, data.id);
 
         const filteredVariant = snapShot.variants.map(item => {
             const filteredType = item.type.filter(subItem => subItem.price !== undefined);
-            return filteredType.length > 0 ? { ...item, type: filteredType } : null;
+            return filteredType.length > 0 ? {...item, type: filteredType} : null;
         }).filter(item => item !== null);
 
 
@@ -75,14 +77,14 @@ export async function POST(req) {
 
         const CategoryID = formData.get("categoryId")
         const categoryDocSnapshot = await getDoc(doc(db, "Administration", "Admin", "Category", CategoryID));
-        const CategorySnapShot = { ...categoryDocSnapshot.data(), productCount: categoryDocSnapshot.data().productCount + 1 }
+        const CategorySnapShot = {...categoryDocSnapshot.data(), productCount: categoryDocSnapshot.data().productCount + 1}
         const CategorySnapShotRef = doc(db, "Administration", "Admin", "Category", CategoryID);
         await updateDoc(CategorySnapShotRef, CategorySnapShot);
 
-        return NextResponse.json({ status: 200 })
+        return NextResponse.json({status: 200})
     } catch (e) {
         console.log('Error:', e);
-        return NextResponse.json({ status: 500, error: e });
+        return NextResponse.json({status: 500, error: e});
     }
 }
 

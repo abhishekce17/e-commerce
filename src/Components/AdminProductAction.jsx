@@ -1,11 +1,11 @@
 "use client"
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef} from 'react';
 import styles from "@/Styles/ProductsManagment.module.css"
-import { RxCross1 } from 'react-icons/rx';
-import { CiImageOn } from 'react-icons/ci';
+import {RxCross1} from 'react-icons/rx';
+import {CiImageOn} from 'react-icons/ci';
 import Image from 'next/image';
 
-const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateProduct, handleAddProduct, handleDeleteProduct, revenueDetails, categories }) => {
+const AdminProdcutActionPage = ({FetchedProductDetails, editMode, handleUpdateProduct, handleAddProduct, handleDeleteProduct, revenueDetails, categories}) => {
     const [productName, setProductName] = useState(FetchedProductDetails?.productName || '');
     const [price, setPrice] = useState(FetchedProductDetails?.price || '');
     const [discount, setDiscount] = useState(FetchedProductDetails?.discount || "");
@@ -31,7 +31,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
             <div className={styles.revenueContainer} >
                 <div className={styles.subgroup1_2}  >
                     {!Object.keys(variantPrice).length || !Object.values(variantPrice).length ?
-                        <div style={{ gridTemplateColumns: "repeat(3, 1fr)" }} >
+                        <div style={{gridTemplateColumns: "repeat(3, 1fr)"}} >
                             <label className={styles.product_discount}>
                                 <p>Stock</p>
                                 <input disabled type="text" value={revenueDetails.stock} onChange={handleDiscountChange} inputMode="numeric" pattern="[0-9]*" />
@@ -51,7 +51,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                             {/* //working here to populate revenue */}
                             {revenueDetails.variants.map((value, valueIndex) => {
                                 return value.type.map((key, eachValueIndex) => {
-                                    return <div key={eachValueIndex} style={{ gridTemplateColumns: "repeat(4, 1fr)" }} >
+                                    return <div key={eachValueIndex} style={{gridTemplateColumns: "repeat(4, 1fr)"}} >
                                         <label>
                                             <p>Variant</p>
                                             <input type='text' value={`${key.variant}`} disabled />
@@ -80,7 +80,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
 
     const removeDiscountNetValue = (type, variantRemoved) => {
         // let updatedNetValue = { ...netValue };
-        let updatedDiscount = { ...discount };
+        let updatedDiscount = {...discount};
 
         delete updatedDiscount[type]; // Delete discount for the given type
         // delete updatedNetValue[type]; // Delete net value for the given type
@@ -108,12 +108,12 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
     };
 
     const handleVariantDiscountChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         // const numericValue = event.target.value.replace(/[^0-9]/g, ''); // Filter out non-numeric characters
 
         if (typeof discount === 'object') {
             setDiscount((prev) => {
-                return { ...prev, [name]: value };
+                return {...prev, [name]: value};
             });
 
             // const calculatedNetValue = Object.values(variantPrice).map((price) => {
@@ -187,8 +187,8 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
 
     const handleVariantPrice = (e, variantTitle) => {
         setPrice("")
-        const { name, value } = e.target;
-        let updatedVariantPrice = { ...variantPrice };
+        const {name, value} = e.target;
+        let updatedVariantPrice = {...variantPrice};
         if (value === "") {
             delete updatedVariantPrice[variantTitle][name];
             removeDiscountNetValue(name, false)
@@ -215,13 +215,13 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
 
 
     const handleAddVariant = () => {
-        setVariants((prevVariants) => [...prevVariants, { title: '', type: [] }]);
+        setVariants((prevVariants) => [...prevVariants, {title: '', type: []}]);
     };
 
     const handleRemoveVariant = (variantIndex, variantTitle) => {
         const updatedVariants = [...variants];
         updatedVariants.splice(variantIndex, 1);
-        let updateVariantPrice = { ...variantPrice }
+        let updateVariantPrice = {...variantPrice}
         if (updateVariantPrice[variantTitle] !== undefined) {
             // console.log("calling from outside of the objct function")
             Object.keys(updateVariantPrice[variantTitle]).map((key) => {
@@ -237,7 +237,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
     const handleTypeChange = (event, variantIndex, typeIndex) => {
         const updatedVariants = [...variants];
         console.log(updatedVariants)
-        updatedVariants[variantIndex].type[typeIndex] = { variant: event.target.value };
+        updatedVariants[variantIndex].type[typeIndex] = {variant: event.target.value};
         setVariants(updatedVariants);
     };
 
@@ -250,7 +250,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
     const handleRemoveType = (variantIndex, variantTitle, type, typeIndex) => {
         const updatedVariants = [...variants];
         updatedVariants[variantIndex].type.splice(typeIndex, 1);
-        let updateVariantPrice = { ...variantPrice };
+        let updateVariantPrice = {...variantPrice};
         if (updateVariantPrice[variantTitle] !== undefined) {
             removeDiscountNetValue(type, false)
             delete updateVariantPrice[variantTitle][type]
@@ -261,8 +261,8 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
     };
 
     const handleTags = (e) => {
-        console.log(FetchedProductDetails);
-        const { value } = e.target;
+        const {value} = e.target;
+        console.log(value);
         setTagList(prev => {
             if (prev.some(x => x == value)) {
                 return prev.filter(x => x !== value);
@@ -280,9 +280,9 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
         let updatedVariants = variants.map((variant, index) => {
             if (variantPrice[variant.title] != undefined) {
                 let newVariant = Object.values(variant.type).map((eachValues, valueIndex) => {
-                    return { ...eachValues, discount: Number(discount[eachValues.variant]), price: Number(variantPrice[variant.title]?.[eachValues.variant]) }
+                    return {...eachValues, discount: Number(discount[eachValues.variant]), price: Number(variantPrice[variant.title]?.[eachValues.variant])}
                 })
-                return { ...variant, type: newVariant }
+                return {...variant, type: newVariant}
             }
             return variant
         })
@@ -339,7 +339,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                     <label className={styles.product_name}>
                         Product Name
                         <div>
-                            <input disabled={editMode} type="text" value={productName} onChange={handleProductNameChange} placeholder='Product name (Not more than 50 characters)' maxLength={50} />
+                            <input required={true} disabled={editMode} type="text" value={productName} onChange={handleProductNameChange} placeholder='Product name (Not more than 50 characters)' maxLength={50} />
                         </div>
                     </label>
                     <div className={styles.display_grid}>
@@ -380,7 +380,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                                 />
                                 {!editMode &&
                                     <button
-                                        style={{ marginRight: "10px" }}
+                                        style={{marginRight: "10px"}}
                                         type="button"
                                         onClick={() => handleRemoveVariant(variantIndex, variant.title)}
                                     >
@@ -388,7 +388,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                                     </button>}
                                 <div className={styles.light_grey} >Types</div>
                                 {variant.type.map((type, typeIndex) => (
-                                    <div key={`type-${variantIndex}-${typeIndex}`} className={styles.variant_type} style={{ marginBottom: "10px" }} >
+                                    <div key={`type-${variantIndex}-${typeIndex}`} className={styles.variant_type} style={{marginBottom: "10px"}} >
                                         <input
                                             disabled={editMode}
                                             type="text"
@@ -430,19 +430,19 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                             <div key={`specification-${index}`} className={styles.specification_item}>
                                 <input
                                     disabled={editMode}
-                                    style={{ marginRight: "10px" }}
+                                    style={{marginRight: "10px"}}
                                     type="text"
                                     value={specification}
                                     onChange={(event) => handleSpecificationChange(event, index)}
                                 />
-                                {!editMode && <button style={{ margin: '0' }} type="button" onClick={() => handleRemoveSpecification(index)}>
+                                {!editMode && <button style={{margin: '0'}} type="button" onClick={() => handleRemoveSpecification(index)}>
                                     <RxCross1 />
                                 </button>}
                             </div>
                         ))}
                         {
                             !editMode &&
-                            <button style={{ margin: "0", width: "max-content" }} type="button" onClick={handleAddSpecification}>
+                            <button style={{margin: "0", width: "max-content"}} type="button" onClick={handleAddSpecification}>
                                 Add Specification
                             </button>
                         }
@@ -478,14 +478,14 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                                     onDragOver={handleDragOver}
                                     className={styles.image_drop_area}
                                 >
-                                    <CiImageOn style={{ fontSize: "2.5rem" }} />
+                                    <CiImageOn style={{fontSize: "2.5rem"}} />
                                     Drag and Drop or click to add images
                                     <input
                                         name='images'
                                         type="file"
                                         multiple
                                         ref={fileInputRef}
-                                        style={{ display: 'none' }}
+                                        style={{display: 'none'}}
                                         onChange={handleImageChange}
                                     />
                                 </div>
@@ -549,7 +549,7 @@ const AdminProdcutActionPage = ({ FetchedProductDetails, editMode, handleUpdateP
                     {typeof editMode === "boolean" && typeof handleUpdateProduct === "function" &&
                         <>
                             <button className={styles.add_product_button} type="submit" > {editMode ? "Edit Product" : "Save Product"}</button>
-                            <button className={styles.add_product_button} style={{ background: "#ff4545" }} onClick={handleDeleteProduct} type="button" > Delete Product </button>
+                            <button className={styles.add_product_button} style={{background: "#ff4545"}} onClick={handleDeleteProduct} type="button" > Delete Product </button>
                             {
                                 renderRevenue(variantPrice)
                             }

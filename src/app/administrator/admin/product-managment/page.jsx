@@ -1,9 +1,9 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import styles from "@/Styles/ProductsManagment.module.css"
-import { RiSearch2Line } from 'react-icons/ri'
+import {RiSearch2Line} from 'react-icons/ri'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import {useRouter} from 'next/navigation'
 import Link from 'next/link'
 import Loading from '../loading'
 
@@ -22,7 +22,7 @@ const Page = () => {
 
   function renderProductinfo(data, type, index) {
     return (
-      <div key={index} className={styles.product_info} style={{ margin: "20px 0" }} >
+      <div key={index} className={styles.product_info} style={{margin: "20px 0"}} >
         <input type='checkbox' />
         <div>
           <Image src={data.productFirtsImgURL} width={100} height={100} alt='name' />
@@ -61,7 +61,7 @@ const Page = () => {
     <div className={styles.product_managemnet} >
       <div className={styles.view_products} >
         <div className={styles.top_bar} >
-          <div> <RiSearch2Line style={{ position: "relative", top: "4px" }} /> <input type='text' placeholder='Search Product' /> </div>
+          <div> <RiSearch2Line style={{position: "relative", top: "4px"}} /> <input type='text' placeholder='Search Product' /> </div>
           <button onClick={handleClick} >+ Add Product</button>
         </div>
         <div className={styles.headings} >
