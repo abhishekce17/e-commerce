@@ -5,7 +5,7 @@ import Featured from '@/Components/Featured'
 import Deals from '@/Components/Deals'
 // import Footer from '@/Components/Footer'
 import NewArrivals from '@/Components/NewArrivals'
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import LoadingAnimation1 from '@/Components/LoadingAnimation1'
 
 export default function Home() {

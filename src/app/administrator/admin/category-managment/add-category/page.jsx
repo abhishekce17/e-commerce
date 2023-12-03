@@ -1,8 +1,8 @@
 "use client"
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import styles from "@/Styles/CategoryManagment.module.css"
-import { ImCircleUp } from 'react-icons/im'
-import { useRouter } from 'next/navigation';
+import {ImCircleUp} from 'react-icons/im'
+import {useRouter} from 'next/navigation';
 
 
 const AddCategory = () => {
@@ -67,12 +67,12 @@ const AddCategory = () => {
       const existingVariant = selectedCategoryObj.defaultVariants.find(variant => variant.title === newVariantTitle);
       if (existingVariant) {
         // If the variant exists, add the new type to it
-        existingVariant.type.push({ variant: newVariantType });
+        existingVariant.type.push({variant: newVariantType});
       } else {
         // If the variant does not exist, create a new variant
         const newVariantObj = {
           title: newVariantTitle,
-          type: [{ variant: newVariantType }]
+          type: [{variant: newVariantType}]
         };
         selectedCategoryObj.defaultVariants.push(newVariantObj);
       }
@@ -84,12 +84,14 @@ const AddCategory = () => {
 
 
   const handleAddTag = () => {
-    if (selectedCategory !== null && newTag !== '') {
+    if (selectedCategory !== null && newTag.length) {
       const updatedCategories = [...categories];
       const selectedCategoryObj = updatedCategories[selectedCategory];
-      selectedCategoryObj.filterTags.push(newTag);
+      console.log(newTag);
+      selectedCategoryObj.filterTags = selectedCategoryObj.filterTags.concat(newTag);
+      console.log(updatedCategories)
       setCategories(updatedCategories);
-      setNewTag('');
+      setNewTag([]);
     }
   };
 
@@ -326,7 +328,7 @@ const AddCategory = () => {
               </div>
               {/* <ul>{renderTags()}</ul> */}
               <div>
-                <input type="text" placeholder="Tag" value={newTag} onChange={handleTagChange} />
+                <input type="text" placeholder="Tag" value={newTag.toString()} onChange={handleTagChange} />
                 <button onClick={handleAddTag}>Add Tag</button>
               </div>
             </div>
@@ -337,7 +339,7 @@ const AddCategory = () => {
         )
         }
         {renderPreview()}
-        <div style={{ gridColumn: "span 2" }} >
+        <div style={{gridColumn: "span 2"}} >
           <center>
             <button className={styles.submitButton} onClick={handleSubmit}>Submit</button>
           </center>

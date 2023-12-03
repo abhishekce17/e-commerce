@@ -1,5 +1,5 @@
 "use client"
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import styles from "@/Styles/ProductsManagment.module.css"
 import {RxCross1} from 'react-icons/rx';
 import {CiImageOn} from 'react-icons/ci';
@@ -262,9 +262,9 @@ const AdminProdcutActionPage = ({FetchedProductDetails, editMode, handleUpdatePr
 
     const handleTags = (e) => {
         const {value} = e.target;
-        console.log(value);
+        console.log(tagList)
         setTagList(prev => {
-            if (prev.some(x => x == value)) {
+            if (prev.some(x => x === value)) {
                 return prev.filter(x => x !== value);
             }
             return [...prev, value];
@@ -331,6 +331,9 @@ const AdminProdcutActionPage = ({FetchedProductDetails, editMode, handleUpdatePr
         event.preventDefault();
     };
 
+    useEffect(() => {
+
+    }, []);
 
     return (
         <div className={styles.add_product_page}>
@@ -540,7 +543,7 @@ const AdminProdcutActionPage = ({FetchedProductDetails, editMode, handleUpdatePr
                         <div>
                             {categories.filter(cat => cat.category === category)[0].filterTags.map((tag, index) => (
                                 <div key={"tag" + index} className={styles.eachTag} >
-                                    <input disabled={editMode} checked={FetchedProductDetails?.allTags.some(x => x === tag)} onChange={handleTags} id={"tag" + index} type="checkbox" key={`brand-${index}`} value={tag} />
+                                    <input disabled={editMode} checked={tagList.some(x => x === tag)} onChange={handleTags} id={"tag" + index} type="checkbox" key={`brand-${index}`} value={tag} />
                                     <label htmlFor={"tag" + index} >{tag}</label>
                                 </div>
                             ))}

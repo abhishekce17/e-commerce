@@ -1,11 +1,11 @@
 "use client"
-import React, { useContext, useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
 import styles from "../Styles/Navbar.module.css";
-import { BiChevronDown } from "react-icons/bi"
-import { CgShoppingCart, CgSearch } from "react-icons/cg"
-import { RiAccountCircleLine } from "react-icons/ri"
-import { useRouter } from "next/navigation";
+import {BiChevronDown} from "react-icons/bi"
+import {CgShoppingCart, CgSearch} from "react-icons/cg"
+import {RiAccountCircleLine} from "react-icons/ri"
+import {useRouter} from "next/navigation";
 import UserAuthContext from "@/app/contextProvider";
 
 const Navbar = () => {

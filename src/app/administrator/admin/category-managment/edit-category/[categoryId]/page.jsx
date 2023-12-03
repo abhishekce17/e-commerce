@@ -1,18 +1,18 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from "@/Styles/CategoryManagment.module.css"
-import { ImCircleUp } from 'react-icons/im'
-import { useRouter } from 'next/navigation';
+import {ImCircleUp} from 'react-icons/im'
+import {useRouter} from 'next/navigation';
 import Loading from '../../../loading';
 
 
-const AddCategory = ({ params }) => {
+const AddCategory = ({params}) => {
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [newBrand, setNewBrand] = useState('');
   const [newVariantTitle, setNewVariantTitle] = useState('');
   const [newVariantType, setNewVariantType] = useState('');
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isEditModeOn, setIsEditModeOn] = useState(false)
 
@@ -43,7 +43,7 @@ const AddCategory = ({ params }) => {
   };
 
   const handleTagChange = (e) => {
-    setNewTag(e.target.value);
+    setNewTag(e.target.value.split(","));
   };
 
   const handleEditMode = () => {
@@ -71,11 +71,11 @@ const AddCategory = ({ params }) => {
 
       const existingVariant = selectedCategoryObj.defaultVariants.find(variant => variant.title === newVariantTitle);
       if (existingVariant) {
-        existingVariant.type.push({ variant: newVariantType });
+        existingVariant.type.push({variant: newVariantType});
       } else {
         const newVariantObj = {
           title: newVariantTitle,
-          type: [{ variant: newVariantType }]
+          type: [{variant: newVariantType}]
         };
         selectedCategoryObj.defaultVariants.push(newVariantObj);
       }
@@ -87,12 +87,14 @@ const AddCategory = ({ params }) => {
 
 
   const handleAddTag = () => {
-    if (selectedCategory !== null && newTag !== '') {
+    if (selectedCategory !== null && newTag.length) {
       const updatedCategories = [...categories];
       const selectedCategoryObj = updatedCategories[selectedCategory];
-      selectedCategoryObj.filterTags.push(newTag);
+      console.log(newTag);
+      selectedCategoryObj.filterTags = selectedCategoryObj.filterTags.concat(newTag);
+      console.log(updatedCategories)
       setCategories(updatedCategories);
-      setNewTag('');
+      setNewTag([]);
     }
   };
 
@@ -267,7 +269,7 @@ const AddCategory = ({ params }) => {
                   <label>Tag for </label>{categories[selectedCategory].category}
                 </div>
                 <div>
-                  <input disabled={!isEditModeOn} type="text" placeholder="Tag" value={newTag} onChange={handleTagChange} />
+                  <input disabled={!isEditModeOn} type="text" placeholder="Tag" value={newTag.toString()} onChange={handleTagChange} />
                   {
                     isEditModeOn &&
                     <button onClick={handleAddTag}>Add Tag</button>

@@ -111,9 +111,9 @@ export async function POST(req) {
         querySnapshot.forEach((doc) => {
             const docRef = doc.ref;
             updateDoc(docRef, productSnapDetails);
+            updateToIndex(productSnapDetails, doc.id);
         });
 
-        updateToIndex(productSnapDetails, productId);
 
         const RevenueSnapDetails = {
             ...snapShot,
