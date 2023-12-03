@@ -57,7 +57,7 @@ export const addToIndex = (data, objectID) => {
     return index.saveObject({...data, objectID});
 };
 export const updateToIndex = (newData, objectID) => {
-    return index.partialUpdateObject({...newData, objectID});
+    return index.partialUpdateObject({...newData, objectID}, {createIfNotExists: true});
 };
 export const deleteFromIndex = (objectID) => {
     return index.deleteObject(objectID);
