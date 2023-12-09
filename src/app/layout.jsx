@@ -8,6 +8,7 @@ import UserAuthContext from './contextProvider'
 import {useEffect, useState} from 'react'
 import Loading from './administrator/admin/loading'
 import toast, {Toaster} from 'react-hot-toast';
+import {notify} from '@/JS/notify'
 
 
 const inter = Inter({subsets: ['latin']})
@@ -23,6 +24,7 @@ export default function RootLayout({children}) {
   const [refresh, setRefresh] = useState(false);
   const [categories, setCategories] = useState([]);
   const [buyingProduct, setBuyingProduct] = useState([]);
+  const [paymentInfo, setPaymentInfo] = useState({});
 
 
   let pathname = usePathname();
@@ -48,8 +50,8 @@ export default function RootLayout({children}) {
       })
       const responseResult = await fetchResponse.json();
       if (responseResult.status === 200) {
-        alert("Product is added to the Cart")
         setUserData({...userData, Cart: [...userData.Cart, {productId, variant}]})
+        notify("Product is added to the Cart", "success");
       } else if (responseResult.status === 401) {
         toast.error('Please sign in to add product in your cart',
           {
@@ -97,7 +99,9 @@ export default function RootLayout({children}) {
           categories,
           setCategories,
           buyingProduct,
-          setBuyingProduct
+          setBuyingProduct,
+          paymentInfo,
+          setPaymentInfo
         }}  >
         <body className={inter.className}>
           {

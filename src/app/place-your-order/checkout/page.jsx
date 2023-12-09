@@ -1,12 +1,16 @@
 "use client"
-import { useState } from 'react';
+import {useContext, useState} from 'react';
 import styles from '@/Styles/Checkout.module.css';
 import Image from 'next/image';
+import UserAuthContext from '@/app/contextProvider';
 
 const CheckoutPage = () => {
+  const context = useContext(UserAuthContext);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [upiId, setUpiId] = useState('');
   const [isUpiIdVerified, setIsUpiIdVerified] = useState(false);
+
+  console.log(context.paymentInfo);
 
   const handlePaymentMethodChange = (method) => {
     setSelectedPaymentMethod(method);
@@ -39,7 +43,7 @@ const CheckoutPage = () => {
               checked={selectedPaymentMethod === 'googlePay'}
               onChange={() => handlePaymentMethodChange('googlePay')}
             />
-            <span> <Image src={"/googlePay.png"} width={30} height={30} alt='Google Pay'/> </span>
+            <span> <Image src={"/googlePay.png"} width={30} height={30} alt='Google Pay' /> </span>
             Google Pay
           </label>
           <label>
@@ -50,7 +54,7 @@ const CheckoutPage = () => {
               checked={selectedPaymentMethod === 'phonePe'}
               onChange={() => handlePaymentMethodChange('phonePe')}
             />
-            <span> <Image src={"/phonePe.png"} width={30} height={30} alt='PhonePe'/> </span>
+            <span> <Image src={"/phonePe.png"} width={30} height={30} alt='PhonePe' /> </span>
             PhonePe
           </label>
           <label>
@@ -61,7 +65,7 @@ const CheckoutPage = () => {
               checked={selectedPaymentMethod === 'paytm'}
               onChange={() => handlePaymentMethodChange('paytm')}
             />
-            <span> <Image src={"/paytm.png"} width={30} height={30} alt='PayTM'/> </span>
+            <span> <Image src={"/paytm.png"} width={30} height={30} alt='PayTM' /> </span>
             Paytm
           </label>
           <label>
@@ -72,7 +76,7 @@ const CheckoutPage = () => {
               checked={selectedPaymentMethod === 'upiId'}
               onChange={() => handlePaymentMethodChange('upiId')}
             />
-            <span> <Image src={"/upi.png"} width={30} height={30} alt='UPI ID'/> </span>
+            <span> <Image src={"/upi.png"} width={30} height={30} alt='UPI ID' /> </span>
             UPI ID
             {selectedPaymentMethod === 'upiId' && (
               <>
@@ -104,7 +108,7 @@ const CheckoutPage = () => {
               checked={selectedPaymentMethod === 'cashOnDelivery'}
               onChange={() => handlePaymentMethodChange('cashOnDelivery')}
             />
-            <span> <Image src={"/cod.png"} width={30} height={30} alt='Cash on Delivery'/> </span>
+            <span> <Image src={"/cod.png"} width={30} height={30} alt='Cash on Delivery' /> </span>
             Cash on Delivery
           </label>
         </div>

@@ -186,7 +186,14 @@ const Page = ({params}) => {
 
   const handleBuy = () => {
     // console.log(selectedVariant);
-    context.setBuyingProduct([{selectedVariant, productDetails}]);
+    const subInfo = Object.values(selectedVariant).flatMap((v) => {
+      return productDetails.variants.flatMap((x) => {
+        const foundType = x.type.find((y) => y.price && y.variant === v);
+        return foundType ? [{...foundType}] : [];
+      });
+    });
+    const {brandName, category, discount, price, productId, productName} = productDetails;
+    context.setBuyingProduct([{selectedVariant: {quantity: 1, variant: selectedVariant}, productFirtsImgURL: productDetails.imgURLs[0], subInfo: subInfo[0], brandName, category, discount, price, productId, productName}]);
     router.push("/place-your-order/order-summary")
   }
 

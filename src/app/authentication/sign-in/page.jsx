@@ -84,7 +84,7 @@ const SignInForm = () => {
         if (fetchResult.status === 200) {
           context.setIsUserLoggedIn(true);
           context.fetchUserData();
-          router.replace(callbackUrl ? callbackUrl : "/");
+          router.replace("/");
         } else if (fetchResult.status === 500) {
           console.error("Server Error");
         } else if (fetchResult.status === 409) {
