@@ -4,8 +4,9 @@ import Loading from "@/app/administrator/admin/loading";
 import UserAuthContext from "@/app/contextProvider";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md"
+import {useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {MdDelete} from "react-icons/md"
+import {notify} from "@/JS/notify";
 
 const Page = () => {
     // Dummy order data
@@ -26,20 +27,25 @@ const Page = () => {
                         const netValue = parseInt((type.price - (type.price * (type.discount / 100))));
                         if (netValue < minNetValue) {
                             minNetValue = netValue;
-                            obj = { [variant.title]: type.variant }
+                            obj = {[variant.title]: type.variant}
                         }
                     }
-                    obj = { [variant.title]: variant.type[0].variant, ...obj }
+                    obj = {[variant.title]: variant.type[0].variant, ...obj}
                 });
 
             }
         });
         if (minNetValue === Number.MAX_VALUE) {
-            return { minNetValue: null, obj }; // No valid netValues found
+            return {minNetValue: null, obj}; // No valid netValues found
         }
-        return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
+        return {minNetValue: minNetValue.toLocaleString("en-IN", {useGrouping: true}), obj};
     }
-    const fetchWishlist = async () => {
+
+
+
+
+    const fetchWishlist = useMemo(async () => {
+        console.log("onetime")
         setIsLoading(true)
         encodeURIComponent(JSON.stringify(context.userData.Personal.wishlist))
         if (context.userData.Personal.wishlist.length) {
@@ -50,30 +56,29 @@ const Page = () => {
                 setIsLoading(false);
             } else {
                 setIsLoading(false)
-                alert(`Error occured while fetching products`)
+                notify(`Error occured while fetching products`, "error")
             }
         } else {
             setIsLoading(false)
         }
-    }
+    }, []);
     const removeFromWishlist = async (product_id) => {
         const response = await fetch(`/api/UserInformation/UpdateWishlist/removeFromWishlist/${product_id}`)
         const result = await response.json();
         if (result.status === 200) {
-            alert("Product is removed from wishlist")
-            let tempList = context.userData.Personal.wishlist.filter(x => x !== product_id)
+            let tempList = context.userData.Personal.wishlist.filter(x => x.productId !== product_id);
             context.setUserData(prev => {
-                return { ...prev, Personal: { ...prev.Personal, wishlist: tempList } }
+                return {...prev, Personal: {...prev.Personal, wishlist: tempList}}
             })
-            fetchWishlist()
+            setWishlistProducts(tempList);
+            notify("Product is removed from wishlist", "success");
         } else {
-            alert('Something went wrong')
+            notify('Something went wrong', "error")
         }
     }
 
     useEffect(() => {
-        fetchWishlist();
-    }, [])
+    }, [fetchWishlist])
 
     return (
         <>
@@ -86,10 +91,10 @@ const Page = () => {
                         <div>
                             <p>
                                 <Link href={`/product/${product.productId}`} >{product.productName}</Link>
-                                <span>From   &#8377;{extractMinimumNetValue(product.variants)?.minNetValue || parseInt((product.price - (product.price * (product.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</span>
+                                <span>From   &#8377;{extractMinimumNetValue(product.variants)?.minNetValue || parseInt((product.price - (product.price * (product.discount / 100)))).toLocaleString("en-IN", {useGrouping: true})}</span>
                             </p>
                         </div>
-                        <MdDelete style={{ cursor: "pointer" }} onClick={() => { removeFromWishlist(product.productId) }} className={styles.remove} />
+                        <MdDelete style={{cursor: "pointer"}} onClick={() => {removeFromWishlist(product.productId)}} className={styles.remove} />
                     </div>
                 ))}
             </div>}

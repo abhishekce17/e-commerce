@@ -1,10 +1,13 @@
 "use client"
-import { useState } from 'react';
+import {useContext, useEffect, useState} from 'react';
 import styles from '@/Styles/OrderSummary.module.css';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
+import UserAuthContext from '@/app/contextProvider';
 
 const Page = () => {
+  const context = useContext(UserAuthContext);
+  const {Personal, buyingProduct} = context;
   let delivery_charges = 79;
   let router = useRouter()
   const [billingAddress, setBillingAddress] = useState({
@@ -53,8 +56,8 @@ const Page = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    const updatedAddress = { ...billingAddress.address, [name]: value };
+    const {name, value} = e.target;
+    const updatedAddress = {...billingAddress.address, [name]: value};
     setBillingAddress((prevState) => ({
       ...prevState,
       address: updatedAddress,
@@ -76,9 +79,12 @@ const Page = () => {
   };
 
   const estimatedDeliveryDate = 'June 30, 2023';
-
+  useEffect(() => {
+    console.log(buyingProduct, Personal);
+  }, []);
 
   return (
+
     <div className={styles.order_summary}>
       <h2>Summary</h2>
       <form onSubmit={handleFormSubmit} className={styles.form}>
@@ -201,6 +207,7 @@ const Page = () => {
         </div>
       </form>
     </div>
+
   );
 };
 

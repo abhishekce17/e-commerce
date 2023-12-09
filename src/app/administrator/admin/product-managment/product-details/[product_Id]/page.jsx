@@ -1,11 +1,12 @@
 "use client"
-import { useEffect, useState } from 'react';
-import { notFound } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {notFound} from 'next/navigation';
 import Loading from '../../../loading';
 import AdminProdcutActionPage from '@/Components/AdminProductAction';
 import uploadImages from '../../uploadImages';
+import {notify} from '@/JS/notify';
 
-const Page = ({ params }) => {
+const Page = ({params}) => {
 
     function extractValues(value, variant) {
         const extractedValues = {};
@@ -17,7 +18,7 @@ const Page = ({ params }) => {
                     if (value !== 'price') {
                         extractedValues[variantName] = titleValue;
                     } else {
-                        extractedValues[item.title] = { ...extractedValues[item.title], [variantName]: titleValue };
+                        extractedValues[item.title] = {...extractedValues[item.title], [variantName]: titleValue};
                     }
                 }
             }
@@ -30,7 +31,7 @@ const Page = ({ params }) => {
     const [productDetails, setProductDetails] = useState(null);
     const [categories, setCategories] = useState(null);
 
-    const { product_Id } = params;
+    const {product_Id} = params;
 
     async function updateProduct(formDataAPI) {
         if (!editMode) {
@@ -58,6 +59,7 @@ const Page = ({ params }) => {
             });
             const result = await res.json();
             if (result.status === 200) {
+                notify("Product updated", "success");
                 // router.replace(`/administrator/admin/product-managment/product-details/${product_Id}`);
             }
         }
@@ -68,7 +70,7 @@ const Page = ({ params }) => {
             setEditMode(!editMode);
             updateProduct(formDataAPI);
         } else {
-            window.alert("Please Remove the Product from deals page before updating")
+            notify("Please Remove the Product from deals page before updating", "error");
         }
     };
 

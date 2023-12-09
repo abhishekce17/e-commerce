@@ -1,8 +1,9 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from '@/Styles/HelpAndFAQ.module.css';
 import Link from 'next/link';
 import Loading from '../loading';
+import {notify} from '@/JS/notify';
 
 const AboutUs = () => {
   // const [companyInfo, setCompanyInfo] = useState({
@@ -86,7 +87,7 @@ const AboutUs = () => {
     } else {
       const detailResponse = await fetch("/api/AdminCompanyDetails/AddDetails", {
         method: "POST",
-        body: JSON.stringify({ companyInfo: companyInfo })
+        body: JSON.stringify({companyInfo: companyInfo})
       })
       const result = await detailResponse.json()
       if (result.status === 201) {
@@ -121,7 +122,7 @@ const AboutUs = () => {
         setIsEditing(false);
         setIsLoading(false)
       } else {
-        alert("Error : " + fetchedData.details)
+        notify("Error : " + fetchedData.details, "error");
       }
     }
     fetchInformation()
@@ -254,7 +255,7 @@ const AboutUs = () => {
                 <input
                   type="email"
                   value={companyInfo.contact.email}
-                  onChange={(e) => handleInputChange(e, 'contact', { ...companyInfo.contact, email: e.target.value })}
+                  onChange={(e) => handleInputChange(e, 'contact', {...companyInfo.contact, email: e.target.value})}
                   placeholder="Enter contact email"
                 />
               </label>
@@ -263,7 +264,7 @@ const AboutUs = () => {
                 <input
                   type="tel"
                   value={companyInfo.contact.phone}
-                  onChange={(e) => handleInputChange(e, 'contact', { ...companyInfo.contact, phone: e.target.value })}
+                  onChange={(e) => handleInputChange(e, 'contact', {...companyInfo.contact, phone: e.target.value})}
                   placeholder="Enter contact phone"
                 />
               </label>
@@ -272,7 +273,7 @@ const AboutUs = () => {
                 <input
                   type="text"
                   value={companyInfo.contact.facebook}
-                  onChange={(e) => handleInputChange(e, 'contact', { ...companyInfo.contact, facebook: e.target.value })}
+                  onChange={(e) => handleInputChange(e, 'contact', {...companyInfo.contact, facebook: e.target.value})}
                   placeholder="Enter Facebook profile link"
                 />
               </label>
@@ -281,7 +282,7 @@ const AboutUs = () => {
                 <input
                   type="text"
                   value={companyInfo.contact.instagram}
-                  onChange={(e) => handleInputChange(e, 'contact', { ...companyInfo.contact, instagram: e.target.value })}
+                  onChange={(e) => handleInputChange(e, 'contact', {...companyInfo.contact, instagram: e.target.value})}
                   placeholder="Enter Instagram profile link"
                 />
               </label>
@@ -290,7 +291,7 @@ const AboutUs = () => {
                 <button onClick={handlePreview}>Save</button>
               </center>
               {!isInfoValid && (
-                <p style={{ color: 'red' }}>Required fields are empty.</p>
+                <p style={{color: 'red'}}>Required fields are empty.</p>
               )}
             </div>
           ) : (
@@ -338,7 +339,7 @@ const AboutUs = () => {
                     <button onClick={handlePreview}>Submit</button>
                   </center>
                   {!isInfoValid && (
-                    <p style={{ color: 'red' }}>Required fields are empty.</p>
+                    <p style={{color: 'red'}}>Required fields are empty.</p>
                   )}
                 </div>
               )}

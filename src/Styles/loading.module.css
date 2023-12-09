@@ -1,4 +1,13 @@
+.container {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
 .loader {
+  display: flex;
+  flex-grow: 1;
   margin: auto;
   border: 10px solid #e7e7e7;
   border-radius: 50%;

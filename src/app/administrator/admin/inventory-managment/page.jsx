@@ -1,13 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import allPincodes from "@/app/pincode.json";
 import styles from "@/Styles/InventoryManagment.module.css";
-import { RiSearch2Line } from "react-icons/ri";
+import {RiSearch2Line} from "react-icons/ri";
 import axios from "axios";
-import { AiFillMinusSquare, AiFillPlusSquare } from "react-icons/ai";
+import {AiFillMinusSquare, AiFillPlusSquare} from "react-icons/ai";
 import Link from "next/link";
 import Image from "next/image";
 import Loading from "../loading";
+import {notify} from "@/JS/notify";
 
 
 const Page = () => {
@@ -25,7 +26,7 @@ const Page = () => {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const { data } = await axios.get(
+        const {data} = await axios.get(
           "https://countriesnow.space/api/v0.1/countries/state/cities/q?country=India&state=Maharashtra"
         );
         setCities(data.data);
@@ -88,21 +89,21 @@ const Page = () => {
     if (upperBarValue === "product-stocks") {
       const response = await fetch("/api/inventory/AdminUpdateStocks", {
         method: "POST",
-        body: JSON.stringify({ data: Array.from(updatedProductsId) })
+        body: JSON.stringify({data: Array.from(updatedProductsId)})
       })
       const result = await response.json()
       if (result.status === 200) {
-        alert('Updated Successfully')
+        notify('Updated Successfully', "success");
       }
     }
     else if (upperBarValue === "deliverable-pincode") {
       const response = await fetch("/api/inventory/AdminDeliveryPincode", {
         method: "POST",
-        body: JSON.stringify({ data: selectedPincode })
+        body: JSON.stringify({data: selectedPincode})
       })
       const result = await response.json()
       if (result.status === 200) {
-        alert('Added Successfully')
+        notify('Added Successfully', "success");
       }
     }
   };
@@ -165,7 +166,7 @@ const Page = () => {
         </div>
         <div className={styles.top_bar}>
           <div>
-            <RiSearch2Line style={{ position: "relative", top: "4px" }} />
+            <RiSearch2Line style={{position: "relative", top: "4px"}} />
             <input type="text" placeholder="Search..." />
           </div>
           <div>
@@ -226,9 +227,9 @@ const Page = () => {
               <div className={styles.all_products}>
                 {filteredProductInfo.map((value, index) => (
                   <div className={styles.product_info} key={index}>
-                    <div style={{ position: "relative" }}>
+                    <div style={{position: "relative"}}>
                       <div className={styles.product_id}>{value.productId}</div>
-                      <Image style={{ padding: "20px" }} src={value.productFirtsImgURL} width={300} height={300} alt={value.productName} />
+                      <Image style={{padding: "20px"}} src={value.productFirtsImgURL} width={300} height={300} alt={value.productName} />
                       <Link href={"/administrator/admin/product-managment/product-details/" + value.productId}>
                         <p>{value.productName}</p>
                       </Link>
@@ -238,7 +239,7 @@ const Page = () => {
                         value.variants.map((eachVariant, key) => (
                           eachVariant.type.map((eachType, innerKey) => (
                             <div key={[key, innerKey]} >
-                              <div style={{ textAlign: "center", backgroundColor: "var(--light-bg-color)", color: "white", userSelect: "none" }} > {eachType.variant} </div>
+                              <div style={{textAlign: "center", backgroundColor: "var(--light-bg-color)", color: "white", userSelect: "none"}} > {eachType.variant} </div>
                               <AiFillMinusSquare className={styles.increament} onClick={() => updateProductStocks(index, "decreament", key, innerKey)} />
                               <input
                                 type="number"
@@ -253,7 +254,7 @@ const Page = () => {
                         :
 
                         <div >
-                          <div style={{ textAlign: "center", backgroundColor: "var(--light-bg-color)", color: "white", userSelect: "none" }} > Stock </div>
+                          <div style={{textAlign: "center", backgroundColor: "var(--light-bg-color)", color: "white", userSelect: "none"}} > Stock </div>
                           <AiFillMinusSquare className={styles.increament} onClick={() => updateProductStocks(index, "decreament")} />
                           <input
                             type="number"

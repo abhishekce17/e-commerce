@@ -1,39 +1,60 @@
 "use client"
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react'
 import styles from "@/Styles/productDetail.module.css"
 import Image from 'next/image'
 import Link from 'next/link'
-import { AiFillHeart, AiOutlineHeart, AiOutlineShareAlt, AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
-import { RiAccountCircleFill } from "react-icons/ri"
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {AiFillHeart, AiOutlineHeart, AiOutlineShareAlt, AiOutlinePlus, AiOutlineMinus} from "react-icons/ai"
+import {RiAccountCircleFill} from "react-icons/ri"
+import {usePathname, useRouter, useSearchParams} from 'next/navigation'
 import Loading from '@/app/administrator/admin/loading'
 import UserAuthContext from '@/app/contextProvider'
-import _ from "lodash"
+import _, {set} from "lodash"
+import {notify} from '@/JS/notify'
 
 
-const Page = ({ params }) => {
-  const { product_id } = params;
+const Page = ({params}) => {
+  const {product_id} = params;
   const searchParams = useSearchParams();
-  const pathname = usePathname()
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
   const context = useContext(UserAuthContext)
   let setVar = {}
-  searchParams.forEach((v, k) => setVar = { ...setVar, [k]: v })
-  const [selectedVariant, setSelectedVariant] = useState(setVar)
+  searchParams.forEach((v, k) => setVar = {...setVar, [k]: v});
+  const [selectedVariant, setSelectedVariant] = useState({});
   const [productDetails, setProductDetails] = useState(null)
-  const [priceDiscount, setPriceDiscount] = useState({ price: null, discount: null })
+  const [priceDiscount, setPriceDiscount] = useState({price: null, discount: null})
   const [selectedImage, setSelectedImgUrl] = useState(null)
   const [insideCart, setInsideCart] = useState(context.userData !== null ? context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))) : undefined)
   const [wishlist, setWishlist] = useState(context.userData?.Personal.wishlist.some(x => x.productId === product_id));
   const [orderedProduct, setOrderedProduct] = useState(false);
-  const [reviewRating, setReviewRating] = useState({ Rating: -1, Review: "" })
+  const [reviewRating, setReviewRating] = useState({Rating: -1, Review: ""})
   const [ReviewRatingArray, setReviewRatingArray] = useState([]);
   const [similarProducts, setSimilarProducts] = useState([]);
+  const [disableBtn, setDisableBtn] = useState(false);
+
+  const searchParamsValidation = (ogVariant) => {
+    let verifiedVar = {};
+    ogVariant.map((x) => {
+      if (searchParams.size) {
+        const keys = new Set(searchParams.keys());
+        const values = new Set(x.type.map(x => x.variant));
+        if (keys.has(x.title)) {
+          verifiedVar[x.title] = values.has(searchParams.get(x.title)) ? searchParams.get(x.title) : x.type[0].variant;
+        } else {
+          verifiedVar[x.title] = x.type[0].variant;
+        }
+      } else {
+        verifiedVar[x.title] = x.type[0].variant;
+      }
+    })
+    setSelectedVariant(verifiedVar);
+    return verifiedVar;
+  }
 
   function handlePrice(details, selectedVariant) {
     let obj;
     if (details.price !== undefined && details.price !== "" && details.price !== null && details.price !== 0) {
-      setPriceDiscount({ price: details.price, discount: details.discount })
+      setPriceDiscount({price: details.price, discount: details.discount})
     } else {
       for (const key in selectedVariant) {
         const priceObj = details.variants.filter(x => x.type.some((val) => "price" in val))[0].type.filter(x => x.variant === selectedVariant[key])[0]
@@ -41,9 +62,10 @@ const Page = ({ params }) => {
           obj = priceObj
         }
       }
-      setPriceDiscount({ price: obj?.price, discount: obj?.discount })
+      setPriceDiscount({price: obj?.price, discount: obj?.discount})
     }
   }
+
 
   function extractMinimumNetValue(variants) {
     if (!Array.isArray(variants) || variants.length === 0) {
@@ -59,25 +81,26 @@ const Page = ({ params }) => {
             const netValue = parseInt((type.price - (type.price * (type.discount / 100))));
             if (netValue < minNetValue) {
               minNetValue = netValue;
-              obj = { [variant.title]: type.variant }
+              obj = {[variant.title]: type.variant}
             }
           }
-          obj = { [variant.title]: variant.type[0].variant, ...obj }
+          obj = {[variant.title]: variant.type[0].variant, ...obj}
         });
 
       }
     });
     if (minNetValue === Number.MAX_VALUE) {
-      return { minNetValue: null, obj }; // No valid netValues found
+      return {minNetValue: null, obj}; // No valid netValues found
     }
-    return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
+    return {minNetValue: minNetValue.toLocaleString("en-IN", {useGrouping: true}), obj};
   }
 
   const addToWishlist = async () => {
     const response = await fetch(`/api/UserInformation/UpdateWishlist/addToWishlist/${product_id}`)
     const result = await response.json();
     if (result.status === 200) {
-      alert("Product is added to wishlist")
+      context.userData.Personal.wishlist.push({productId: product_id});
+      notify("Product is added to wishlist", "success");
       setWishlist(true)
     } else {
       alert('Something went wrong')
@@ -87,7 +110,11 @@ const Page = ({ params }) => {
     const response = await fetch(`/api/UserInformation/UpdateWishlist/removeFromWishlist/${product_id}`)
     const result = await response.json();
     if (result.status === 200) {
-      alert("Product is removed from wishlist")
+      const tempList = context.userData.Personal.wishlist.filter(x => x.productId !== product_id);
+      context.setUserData(prev => {
+        return {...prev, Personal: {...prev.Personal, wishlist: tempList}}
+      })
+      notify("Product removed from wishlist", "success");
       setWishlist(false)
     } else {
       alert('Something went wrong')
@@ -95,14 +122,13 @@ const Page = ({ params }) => {
   }
 
   function handleSelection(property, title, variant) {
-    // searchParams.forEach(x => console.log(x))
     if (property === "variant") {
-      setSelectedVariant({ ...selectedVariant, [title]: variant })
+      setSelectedVariant({...selectedVariant, [title]: variant})
     } else if (property === "image") {
       setSelectedImgUrl(title) // title will act as url in the case of image selection
     }
-    if (context.userData !== null) { setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, { ...selectedVariant, [title]: variant })))) }
-    handlePrice(productDetails, { ...setVar, [title]: variant })
+    if (context.userData !== null) {setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, {...selectedVariant, [title]: variant}))))}
+    handlePrice(productDetails, {...setVar, [title]: variant})
   }
 
 
@@ -110,14 +136,14 @@ const Page = ({ params }) => {
     if (context.userData.OrderDetails.some(x => x.productId === product_id)) {
       setOrderedProduct(true);
     } else {
-      alert("You haven't experienced this product, please first buy this product");
+      notify("You haven't experienced this product, please first buy this product", "error");
     }
   }
 
   const submitReview = async () => {
     const response = await fetch(`/api/ReviewRating/addReview/${product_id}`, {
       method: "POST",
-      body: JSON.stringify({ Rating: reviewRating.Rating, Review: reviewRating.Review, userName: context.userData.Personal.fullName })
+      body: JSON.stringify({Rating: reviewRating.Rating, Review: reviewRating.Review, userName: context.userData.Personal.fullName})
     });
     const result = await response.json();
     if (result.status === 200) {
@@ -126,23 +152,24 @@ const Page = ({ params }) => {
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setReviewRating(prev => { return { ...prev, [name]: value } })
+    const {name, value} = e.target;
+    setReviewRating(prev => {return {...prev, [name]: value}})
   }
 
-  const fetchDetails = useCallback(async () => {
+  const fetchDetails = useMemo(async () => {
     const res = await fetch(`/api/product-details/${product_id}`, {
       method: 'GET',
     });
     const result = await res.json();
     if (result.status === 200) {
+      // await searchParamsValidation(result.data.variants);
       setSelectedImgUrl(result.data.imgURLs[0]);
-      handlePrice(result.data, setVar);
+      handlePrice(result.data, searchParamsValidation(result.data.variants));
       setProductDetails(result.data);
       setReviewRatingArray(result.data.ReviewRatingArray);
       fetchSimilarProducts(result.data.category)
-    } else if (result.status === 500) {
-      alert("Product Not Found");
+    } else if (result.status === 500 || result.status === 404) {
+      notify("Product Not Found", "error");
       router.back()
     }
   }, [pathname])
@@ -157,12 +184,17 @@ const Page = ({ params }) => {
     }
   }
 
+  const handleBuy = () => {
+    // console.log(selectedVariant);
+    context.setBuyingProduct([{selectedVariant, productDetails}]);
+    router.push("/place-your-order/order-summary")
+  }
+
   useEffect(() => {
     try {
       if (context.userData !== null) {
         setInsideCart(context.userData.Cart.some(x => (x.productId === product_id) && (_.isEqual(x.variant, selectedVariant))))
       }
-      fetchDetails()
     } catch (e) {
       alert("server not respondig please try again later");
     }
@@ -180,7 +212,7 @@ const Page = ({ params }) => {
                 {
                   productDetails.imgURLs.map((url, index) => {
                     return (
-                      <Image key={index} width={500} height={500} onClick={() => { handleSelection("image", url) }} data-selected={selectedImage === url} src={url} alt='product-image' />
+                      <Image key={index} width={500} height={500} onClick={() => {handleSelection("image", url)}} data-selected={selectedImage === url} src={url} alt='product-image' />
                     )
                   })
                 }
@@ -192,12 +224,12 @@ const Page = ({ params }) => {
 
                   {
                     wishlist ?
-                      <AiFillHeart style={{ cursor: "pointer" }} onClick={removeFromWishlist} />
+                      <AiFillHeart style={{cursor: "pointer"}} onClick={removeFromWishlist} />
                       :
-                      <AiOutlineHeart style={{ cursor: "pointer" }} onClick={addToWishlist} />
+                      <AiOutlineHeart style={{cursor: "pointer"}} onClick={addToWishlist} />
                   }
                 </>}
-                <AiOutlineShareAlt style={{ cursor: "pointer" }} onClick={() => { navigator.share({ title: productDetails.productName, url: pathname }) }} />
+                <AiOutlineShareAlt style={{cursor: "pointer"}} onClick={() => {navigator.share({title: productDetails.productName, url: pathname})}} />
               </div>
               <h1> {productDetails.productName} </h1>
               <p className={styles.ratings_review} >★★★★☆
@@ -205,7 +237,7 @@ const Page = ({ params }) => {
                 <span>625 ratings</span>|
                 <span>125 reviews</span>
               </p>
-              <p className={styles.price_discount} >M.R.P. <strong>₹{parseInt(Number(priceDiscount.price) - Number(priceDiscount.price) * (priceDiscount.discount / 100)).toLocaleString("en-IN", { useGrouping: true })}</strong> {(priceDiscount.discount !== null) && <> <s>₹{priceDiscount.price.toLocaleString("en-IN", { useGrouping: true })}</s> <sup>{parseInt(priceDiscount.discount)}% off</sup> </>} </p>
+              <p className={styles.price_discount} >M.R.P. <strong>₹{parseInt(Number(priceDiscount.price) - Number(priceDiscount.price) * (priceDiscount.discount / 100))?.toLocaleString("en-IN", {useGrouping: true})}</strong> {(priceDiscount.discount !== null) && <> <s>₹{priceDiscount.price?.toLocaleString("en-IN", {useGrouping: true})}</s> <sup>{parseInt(priceDiscount.discount)}% off</sup> </>} </p>
               {productDetails.variants.length && <div className={styles.variants_container} >
                 <p>variants</p>
                 <div>
@@ -220,7 +252,7 @@ const Page = ({ params }) => {
                             {
                               each.type.map((keys, index) => {
                                 return (
-                                  <Link key={index} href={{ pathname: pathname, query: { ...selectedVariant, [each.title]: keys.variant } }} data-selected={selectedVariant[each.title] === keys.variant && "true"} onClick={() => { handleSelection("variant", each.title, keys.variant) }} replace>{keys.variant}</Link>
+                                  <Link key={index} href={{pathname: pathname, query: {...selectedVariant, [each.title]: keys.variant}}} data-selected={selectedVariant[each.title] === keys.variant && "true"} onClick={() => {handleSelection("variant", each.title, keys.variant)}} replace>{keys.variant}</Link>
                                 )
                               })
                             }
@@ -243,9 +275,9 @@ const Page = ({ params }) => {
               </div>
             </div>
             <div className={styles.action_buttons}>
-              <button className={styles.buy_now} >Buy Now</button>
+              <button className={styles.buy_now} onClick={handleBuy} >Buy Now</button>
               {!insideCart ?
-                <button onClick={() => { context.addToCart(product_id, selectedVariant) }} className={styles.add_to_cart} >Add to cart</button>
+                <button onClick={() => {setDisableBtn(true); context.addToCart(product_id, selectedVariant)}} disabled={disableBtn} className={styles.add_to_cart} >Add to cart</button>
                 :
                 <Link href={"/cart"} className={styles.add_to_cart} >Go to cart</Link>
               }            </div>
@@ -283,21 +315,21 @@ const Page = ({ params }) => {
 
                 similarProducts.map((data, index) => {
                   return (
-                    <li key={index} > <Link href={{ pathname: `/product/${data.productId}`, query: { ...extractMinimumNetValue(data.variants)?.obj || "" } }} > <Image width={500} height={500} src={data.productFirtsImgURL} alt={data.productFirtsImgURL} /> <div><p>{data.productName}</p> <p>From   &#8377;{extractMinimumNetValue(data.variants)?.minNetValue || parseInt((data.price - (data.price * (data.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</p> </div> </Link> </li>
+                    <li key={index} > <Link href={{pathname: `/product/${data.productId}`, query: {...extractMinimumNetValue(data.variants)?.obj || ""}}} > <Image width={500} height={500} src={data.productFirtsImgURL} alt={data.productFirtsImgURL} /> <div><p>{data.productName}</p> <p>From   &#8377;{extractMinimumNetValue(data.variants)?.minNetValue || parseInt((data.price - (data.price * (data.discount / 100)))).toLocaleString("en-IN", {useGrouping: true})}</p> </div> </Link> </li>
                   )
                 })
               }
             </ul>
           </div>
           <div className={styles.customer_review_ratings} >
-            <div style={{ fontWeight: 700, display: "flex", justifyContent: "space-between" }} >
+            <div style={{fontWeight: 700, display: "flex", justifyContent: "space-between"}} >
               <p>Ratings and reviews</p>
-              {context.isUserLoggedIn && <button className={styles.add_to_cart} onClick={checkEligibility} style={{ fontSize: "12px", padding: "8px 10px" }} >Add Review</button>}
+              {context.isUserLoggedIn && <button className={styles.add_to_cart} onClick={checkEligibility} style={{fontSize: "12px", padding: "8px 10px"}} >Add Review</button>}
             </div>
-            {orderedProduct && <div style={{ fontWeight: 700, display: "flex", flexDirection: "column", gap: "7px" }} >
-              <div style={{ fontSize: "35px", textAlign: "center", color: "grey", letterSpacing: "0.5rem" }} > {[...Array(5)].map((undefined, index) => <span key={index} style={{ color: reviewRating.Rating >= index && "initial", cursor: "default" }} onClick={(e) => { e.target.name = "Rating", e.target.value = index, handleChange(e) }} >★</span>)} </div>
-              <textarea rows={10} style={{ fontSize: "18px", padding: "7px", borderRadius: "3px", resize: "none" }} type='text' name='Review' value={reviewRating.Review} onChange={handleChange} />
-              <button className={styles.add_to_cart} onClick={submitReview} style={{ fontSize: "12px", padding: "8px 10px" }} >Submit</button>
+            {orderedProduct && <div style={{fontWeight: 700, display: "flex", flexDirection: "column", gap: "7px"}} >
+              <div style={{fontSize: "35px", textAlign: "center", color: "grey", letterSpacing: "0.5rem"}} > {[...Array(5)].map((undefined, index) => <span key={index} style={{color: reviewRating.Rating >= index && "initial", cursor: "default"}} onClick={(e) => {e.target.name = "Rating", e.target.value = index, handleChange(e)}} >★</span>)} </div>
+              <textarea rows={10} style={{fontSize: "18px", padding: "7px", borderRadius: "3px", resize: "none"}} type='text' name='Review' value={reviewRating.Review} onChange={handleChange} />
+              <button className={styles.add_to_cart} onClick={submitReview} style={{fontSize: "12px", padding: "8px 10px"}} >Submit</button>
             </div>}
             {ReviewRatingArray.length ? ReviewRatingArray.map((data, index) => {
               return (
@@ -308,7 +340,7 @@ const Page = ({ params }) => {
                   </div>
                   <div className={styles.rating_details} >
                     <p><span>{new Date(data.timeStamp).toLocaleDateString()}</span> <span>{new Date(data.timeStamp).toLocaleTimeString()}</span></p>
-                    <p style={{ fontSize: "1.2rem" }} > ★★★★☆ <span>{data.Rating}</span> </p>
+                    <p style={{fontSize: "1.2rem"}} > ★★★★☆ <span>{data.Rating}</span> </p>
                     <p>{data.Review}</p>
                   </div>
                 </div>

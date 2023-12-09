@@ -4,6 +4,7 @@ import styles from "@/Styles/CategoryManagment.module.css"
 import {ImCircleUp} from 'react-icons/im'
 import {useRouter} from 'next/navigation';
 import Loading from '../../../loading';
+import {notify} from '@/JS/notify';
 
 
 const AddCategory = ({params}) => {
@@ -146,7 +147,7 @@ const AddCategory = ({params}) => {
     });
     const result = await response.json()
     if (result.status === 200) {
-      console.log("Category id updated")
+      notify("Changes saved", "success");
     }
   }
 

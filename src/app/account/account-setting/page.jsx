@@ -1,7 +1,8 @@
 "use client"
 import styles from "@/Styles/AccountSetting.module.css"
 import UserAuthContext from "@/app/contextProvider";
-import { useContext, useState } from "react";
+import {useContext, useState} from "react";
+import toast, {Toaster} from 'react-hot-toast';
 
 const Page = () => {
     const context = useContext(UserAuthContext)
@@ -11,8 +12,19 @@ const Page = () => {
 
     // console.log(context.userData)
 
+    const notify = (msg, status) => {
+        toast[status](msg,
+            {
+                duration: 2500,
+                iconTheme: {
+                    primary: '#013d29',
+                    secondary: '#fff',
+                }
+            });
+    }
+
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         if (name.startsWith('address.') || name.startsWith('contact.')) {
             const objectField = name.split('.')[1];
             const objectKey = name.split(".")[0]
@@ -24,7 +36,7 @@ const Page = () => {
                 },
             });
         } else {
-            setFormData({ ...formData, [name]: value });
+            setFormData({...formData, [name]: value});
         }
     };
     const handleEditClick = () => {
@@ -45,12 +57,12 @@ const Page = () => {
         })
         const updateInfoResult = await updateInfoResponse.json();
         if (updateInfoResult.status === 200) {
-            context.setUserData((prev) => { return { ...prev, formData } })
+            context.setUserData((prev) => {return {...prev, formData}})
             // setFormData(updateInfoResult.updatedUserData)
-            alert("Updated Successfully")
+            notify("Updated Succesfully", "success");
         }
         else {
-            alert("Something went wrong please try again leter");
+            notify("Something went wrong please try again leter", "error")
         }
         setIsEditing(false);
     };
@@ -59,6 +71,7 @@ const Page = () => {
         <>
             <h3>Account Settings</h3>
             <div className={styles.account_settings_page}>
+                <Toaster />
                 <div className={styles.form}>
                     <div>
                         <label htmlFor="email">Email:
@@ -148,7 +161,7 @@ const Page = () => {
                         />
                     </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }} >
+                <div style={{display: "flex", justifyContent: "space-between"}} >
 
                     {isEditing ? (
                         <button className={styles.action} onClick={handleSaveClick}>Save</button>

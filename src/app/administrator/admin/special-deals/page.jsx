@@ -1,13 +1,14 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import { RiCloseLine, RiSearchLine } from 'react-icons/ri';
-import { IoIosImages } from 'react-icons/io';
+import React, {useEffect, useState} from 'react';
+import {RiCloseLine, RiSearchLine} from 'react-icons/ri';
+import {IoIosImages} from 'react-icons/io';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '@/Styles/SpecialDealsManagment.module.css';
 import Loading from '../loading';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import uploadImages from '../product-managment/uploadImages';
+import {notify} from '@/JS/notify';
 
 
 const SpecialDeals = () => {
@@ -15,12 +16,12 @@ const SpecialDeals = () => {
   const [isLoading, SetIsLoading] = useState(true)
   const [searchSaleProduct, setSearchSaleProduct] = useState("");
   const [bannerImages, setBannerImages] = useState([
-    { pcImage: null, mobileImage: null, product: {} }
+    {pcImage: null, mobileImage: null, product: {}}
   ]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [productList, setProductList] = useState([]);
   const [bannerProductList, setBannerProductList] = useState([]);
-  const [bannerProdcuctQuery, setBannerProdcuctQuery] = useState({ 0: "" })
+  const [bannerProdcuctQuery, setBannerProdcuctQuery] = useState({0: ""})
   const [selectAll, setSelectAll] = useState(false);
   const [removableSelectedProducts, setRemovableSelectedProducts] = useState([])
   const [tempData, setTempData] = useState([]);
@@ -43,8 +44,8 @@ const SpecialDeals = () => {
   }
 
   const handleAddBannerImage = () => {
-    setBannerProdcuctQuery({ ...bannerProdcuctQuery, [bannerImages.length]: "" })
-    setBannerImages([...bannerImages, { pcImage: null, pcText: '', product: {} }]);
+    setBannerProdcuctQuery({...bannerProdcuctQuery, [bannerImages.length]: ""})
+    setBannerImages([...bannerImages, {pcImage: null, pcText: '', product: {}}]);
   };
 
   const handleBannerProduct = (productId, index) => {
@@ -59,7 +60,7 @@ const SpecialDeals = () => {
       }
       return updatedBannerImages;
     });
-    setBannerProdcuctQuery({ ...bannerProdcuctQuery, [index]: "" })
+    setBannerProdcuctQuery({...bannerProdcuctQuery, [index]: ""})
   };
 
 
@@ -71,7 +72,7 @@ const SpecialDeals = () => {
       })
       const result = await response.json()
       if (result?.status == 200) {
-        window.alert("Deal Removed Successfully")
+        notify("Deal Removed Successfully", "success");
         router.replace("/administrator/admin/special-deals")
       }
     }
@@ -136,7 +137,7 @@ const SpecialDeals = () => {
   };
 
   const handleProductDiscountChange = (event, productId, index, title, variant, variantIndex, typeIndex) => {
-    const { name, value } = event.target;
+    const {name, value} = event.target;
     const percentage = parseInt(value);
 
     const updateProductWithDiscount = (product, discount, typeIndex) => {
@@ -190,9 +191,9 @@ const SpecialDeals = () => {
 
 
   const handleSearchProduct = (e, index) => {
-    const { name, value } = e.target
+    const {name, value} = e.target
     if (name === "bannerProduct") {
-      setBannerProdcuctQuery({ ...bannerProdcuctQuery, [index]: value })
+      setBannerProdcuctQuery({...bannerProdcuctQuery, [index]: value})
     }
     if (name === "saleProducts") {
       setSearchSaleProduct(value)
@@ -205,8 +206,8 @@ const SpecialDeals = () => {
     const formDataAPI = new FormData()
     let imgArray = []
     bannerImages.map((product) => {
-      (product.mobileImage !== undefined && product.mobileImage !== null) && (imgArray = [{ key: "mobileView", file: product.mobileImage }]);
-      (product.pcImage !== undefined && product.pcImage !== null) && (imgArray = [...imgArray, { key: "pcView", file: product.pcImage }]);
+      (product.mobileImage !== undefined && product.mobileImage !== null) && (imgArray = [{key: "mobileView", file: product.mobileImage}]);
+      (product.pcImage !== undefined && product.pcImage !== null) && (imgArray = [...imgArray, {key: "pcView", file: product.pcImage}]);
     })
 
     let imgUrlArray = {}
@@ -216,14 +217,14 @@ const SpecialDeals = () => {
         const result = uploadImages(obj.file);
         result.then((value) => {
           if (value.status === 500) reject();
-          imgUrlArray = { ...imgUrlArray, [obj.key]: value.imgUrl };
+          imgUrlArray = {...imgUrlArray, [obj.key]: value.imgUrl};
           if (Object.keys(imgUrlArray).length === imgArray.length) resolve()
         })
       })
     })
     await imgUploadPromise;
     formDataAPI.append("imgUrls", JSON.stringify(imgUrlArray));
-    formDataAPI.append("body", JSON.stringify({ bannerProduct: bannerImages, selectedProducts: selectedProducts }))
+    formDataAPI.append("body", JSON.stringify({bannerProduct: bannerImages, selectedProducts: selectedProducts}))
 
     if (selectedProducts.some(x => x.dealId === undefined) || bannerImages.some(y => y.product.productId !== undefined)) {
       const response = await fetch("/api/AdminDealseSetting/AddDealse", {
@@ -233,11 +234,11 @@ const SpecialDeals = () => {
 
       const result = await response.json()
       if (result.status === 200) {
-        window.alert('Changes Saved')
+        notify("Changes Saved", "success");
         // router.replace("/administrator/admin/special-deals")
       }
       else if (result.status === 500) {
-        window.alert(`Error ${Object.values(result.error)}`)
+        notify(`Error ${Object.values(result.error)}`, "error");
       }
     }
     if (removableSelectedProducts.length) {
@@ -247,7 +248,7 @@ const SpecialDeals = () => {
       })
       const dealRemoveResult = await dealRemoveResponse.json()
       if (dealRemoveResult.status === 200) {
-        window.alert("Successfully removed products from the special deals")
+        notify("Successfully removed products from the special deals", "success");
       }
     }
 
@@ -297,7 +298,7 @@ const SpecialDeals = () => {
           }))
         ]);
         setBannerImages([
-          ...result.data.bannerDeals.map(({ pcViewURL, mobileViewURL, dealId, ...product }) => ({
+          ...result.data.bannerDeals.map(({pcViewURL, mobileViewURL, dealId, ...product}) => ({
             pcImageUrl: pcViewURL,
             mobileImageUrl: mobileViewURL,
             dealId: dealId,
@@ -346,13 +347,13 @@ const SpecialDeals = () => {
                           onDrop={(event) => handleDrop(event, index, 'pc')}
                           onDragOver={handleDragOver}
                         >
-                          <IoIosImages style={{ fontSize: '2.5rem' }} />
+                          <IoIosImages style={{fontSize: '2.5rem'}} />
                           Drag and Drop or click to add <strong> Laptop view images </strong>
                           <input
                             type="file"
                             id={`pcImage-${index}`}
                             accept="image/*"
-                            style={{ display: 'none' }}
+                            style={{display: 'none'}}
                             onChange={(event) => handleBannerImageUpload(event, index, 'pc')}
                           />
                         </div>
@@ -378,13 +379,13 @@ const SpecialDeals = () => {
                           onDrop={(event) => handleDrop(event, index, 'mobile')}
                           onDragOver={handleDragOver}
                         >
-                          <IoIosImages style={{ fontSize: '2.5rem' }} />
+                          <IoIosImages style={{fontSize: '2.5rem'}} />
                           Drag and Drop or click to add <strong> Mobile view images </strong>
                           <input
                             type="file"
                             id={`mobileImage-${index}`}
                             accept="image/*"
-                            style={{ display: 'none' }}
+                            style={{display: 'none'}}
                             onChange={(event) => handleBannerImageUpload(event, index, 'mobile')}
                           />
                         </div>
@@ -395,7 +396,7 @@ const SpecialDeals = () => {
                     <div className={`${styles.view_products} ${styles.select_banner_product}`}>
                       <h3>Banner Product</h3>
                       <div className={styles.headings}>
-                        <div style={{ gridColumn: "1 / span 2" }} >Product</div>
+                        <div style={{gridColumn: "1 / span 2"}} >Product</div>
                         <div>Category</div>
                         <div>Stock</div>
                         <div>Price</div>
@@ -491,8 +492,8 @@ const SpecialDeals = () => {
                   }
                   {banner.product.productId === undefined &&
                     <div className={styles.banner_product} >
-                      <RiSearchLine style={{ position: 'relative', top: '4px' }} />
-                      <input type='text' name='bannerProduct' value={bannerProdcuctQuery[index]} onChange={(e) => { handleSearchProduct(e, index) }} placeholder='Search banner product, by name, product id or page link' />
+                      <RiSearchLine style={{position: 'relative', top: '4px'}} />
+                      <input type='text' name='bannerProduct' value={bannerProdcuctQuery[index]} onChange={(e) => {handleSearchProduct(e, index)}} placeholder='Search banner product, by name, product id or page link' />
                     </div>
                   }
                   <button type="button" onClick={() => handleRemoveBannerImage(index, banner.dealId)}>
@@ -502,7 +503,7 @@ const SpecialDeals = () => {
                   {bannerProdcuctQuery[index]?.length > 0 && banner.product.productId === undefined &&
                     <div className={`${styles.view_products} ${styles.not_selected} ${styles.select_banner_product}`}>
                       <div className={styles.headings}>
-                        <div style={{ gridColumn: "1 / span 2" }} >Product</div>
+                        <div style={{gridColumn: "1 / span 2"}} >Product</div>
                         <div>Category</div>
                         <div>Stock</div>
                         <div>Price</div>
@@ -559,7 +560,7 @@ const SpecialDeals = () => {
 
                 </div>
               ))}
-              <button type="button" style={{ gridColumn: "1", marginTop: "20px" }} onClick={handleAddBannerImage}>
+              <button type="button" style={{gridColumn: "1", marginTop: "20px"}} onClick={handleAddBannerImage}>
                 Add Banner Image
               </button>
 
@@ -571,7 +572,7 @@ const SpecialDeals = () => {
               <h3>Selected Products</h3>
               <div className={`${styles.view_products} `}>
                 <div className={styles.headings}>
-                  <div style={{ gridColumn: "1 / span 2" }} >Product</div>
+                  <div style={{gridColumn: "1 / span 2"}} >Product</div>
                   <div>Category</div>
                   <div>Stock</div>
                   <div>Price</div>
@@ -674,8 +675,8 @@ const SpecialDeals = () => {
             <h3>Select Products:</h3>
             <div className={`${styles.view_products} ${styles.not_selected}`}>
               <div className={styles.top_bar}>
-                <div style={{ marginBottom: "20px" }} >
-                  <RiSearchLine style={{ position: 'relative', top: '4px' }} />
+                <div style={{marginBottom: "20px"}} >
+                  <RiSearchLine style={{position: 'relative', top: '4px'}} />
                   <input type="text" value={searchSaleProduct} name="saleProducts" onChange={handleSearchProduct} placeholder="Search Product" />
                 </div>
               </div>
@@ -738,7 +739,7 @@ const SpecialDeals = () => {
             </div>
           </div>
           <center>
-            <button type="submit" style={{ width: "max-content", fontWeight: "600" }}>Save Changes</button>
+            <button type="submit" style={{width: "max-content", fontWeight: "600"}}>Save Changes</button>
           </center>
         </form>
       }

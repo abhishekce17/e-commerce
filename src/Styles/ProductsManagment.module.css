@@ -96,7 +96,7 @@
 .headings,
 .product_info {
   display: grid;
-  grid-template-columns: 40px minmax(400px, 1fr) 120px repeat(5, 1fr);
+  grid-template-columns: 40px minmax(420px, 1fr) 150px repeat(5, 1fr);
   gap: 15px;
 }
 .featured_product_managemnet .headings,

@@ -1,11 +1,12 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import styles from "@/Styles/ProductsManagment.module.css"
-import { RiSearch2Line } from 'react-icons/ri'
+import {RiSearch2Line} from 'react-icons/ri'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+import {useRouter} from 'next/navigation'
 import Link from 'next/link'
 import Loading from '../loading'
+import {notify} from '@/JS/notify'
 
 const Page = () => {
   let router = useRouter()
@@ -17,7 +18,7 @@ const Page = () => {
   const [tempData, setTempData] = useState([]);
 
   const handleSearchProduct = (e) => {
-    const { name, value } = e.target
+    const {name, value} = e.target
     if (name === "saleProducts") {
       setSearchSaleProduct(value)
     }
@@ -62,7 +63,7 @@ const Page = () => {
       const AddingResponse = await fetch(`/api/AdminFeatured/AddFeaturedProduct/${encodedArray}`)
       const AddingResult = await AddingResponse.json()
       if (AddingResult.status === 200) {
-        alert("Products are Set as Featured Product")
+        notify("Feature Products added", "success");
       }
     }
     if (removableSelectedProducts.length) {
@@ -72,7 +73,7 @@ const Page = () => {
       })
       const dealRemoveResult = await dealRemoveResponse.json()
       if (dealRemoveResult.status === 200) {
-        alert('Deal is removed')
+        notify('Feature products removed');
       }
     }
   };
@@ -115,10 +116,10 @@ const Page = () => {
           <div className={styles.featured_product_managemnet} >
             {selectedProducts.length > 0 &&
               <>
-                <h3 style={{ marginBottom: "15px" }} >Featured Products</h3>
+                <h3 style={{marginBottom: "15px"}} >Featured Products</h3>
                 <div className={`${styles.view_products} `}>
                   <div className={styles.headings}>
-                    <div style={{ gridColumn: "1 / span 2" }} >Product</div>
+                    <div style={{gridColumn: "1 / span 2"}} >Product</div>
                     <div>Category</div>
                     <div>Stock</div>
                     <div>Price</div>
@@ -140,8 +141,8 @@ const Page = () => {
                       {
                         product.variants.length ?
                           <>
-                            <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => ele2.price !== undefined && `${ele2.variant} - ${ele2.stock}\n`))}</div>
-                            <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => ele2.price !== undefined && `${ele2.variant} - ${ele2.price - (ele2.price / 100) * ele2.discount}\n`))}</div>
+                            <div style={{whiteSpace: "pre-wrap"}} >{product.variants.map(ele1 => ele1.type.map(ele2 => ele2.price !== undefined && `${ele2.variant} - ${ele2.stock}\n`))}</div>
+                            <div style={{whiteSpace: "pre-wrap"}} >{product.variants.map(ele1 => ele1.type.map(ele2 => ele2.price !== undefined && `${ele2.variant} - ${ele2.price - (ele2.price / 100) * ele2.discount}\n`))}</div>
                           </> :
                           <>
                             <div>{product.stock}</div>
@@ -157,17 +158,17 @@ const Page = () => {
               </>
             }
 
-            <div style={{ marginTop: "20px" }} >
+            <div style={{marginTop: "20px"}} >
               <div className={`${styles.view_products}`}>
-                <div className={styles.top_bar} style={{ padding: "0" }}>
-                  <div style={{ display: "block", width: "100%" }} >
-                    <RiSearch2Line style={{ position: 'relative', top: '4px' }} />
-                    <input style={{ width: "calc( 100% - 100px )" }} type="text" value={searchSaleProduct} name="saleProducts" onChange={handleSearchProduct} placeholder="Search Product" />
+                <div className={styles.top_bar} style={{padding: "0"}}>
+                  <div style={{display: "block", width: "100%"}} >
+                    <RiSearch2Line style={{position: 'relative', top: '4px'}} />
+                    <input style={{width: "calc( 100% - 100px )"}} type="text" value={searchSaleProduct} name="saleProducts" onChange={handleSearchProduct} placeholder="Search Product" />
                   </div>
                 </div>
                 {searchSaleProduct.length > 0 &&
                   <>
-                    <div className={styles.headings} style={{ marginTop: "20px" }}>
+                    <div className={styles.headings} style={{marginTop: "20px"}}>
                       <input type="checkbox" checked={selectAll} onChange={handleSelectAllToggle} />
                       <div>Product</div>
                       <div>Category</div>
@@ -191,8 +192,8 @@ const Page = () => {
                         {
                           product.variants.length ?
                             <>
-                              <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => `${ele2.variant} - ${ele2.stock}\n`))}</div>
-                              <div style={{ whiteSpace: "pre-wrap" }} >{product.variants.map(ele1 => ele1.type.map(ele2 => `${ele2.variant} - ${ele2.price - (ele2.price / 100) * ele2.discount}\n`))}</div>
+                              <div style={{whiteSpace: "pre-wrap"}} >{product.variants.map(ele1 => ele1.type.map(ele2 => `${ele2.variant} - ${ele2.stock}\n`))}</div>
+                              <div style={{whiteSpace: "pre-wrap"}} >{product.variants.map(ele1 => ele1.type.map(ele2 => `${ele2.variant} - ${ele2.price - (ele2.price / 100) * ele2.discount}\n`))}</div>
                             </> :
                             <>
                               <div>{product.stock}</div>
@@ -206,7 +207,7 @@ const Page = () => {
                 }
               </div>
               <center>
-                <button type="submit" onClick={handleSubmit} style={{ marginTop: "25px", width: "max-content", fontWeight: "600" }}>Save Changes</button>
+                <button type="submit" onClick={handleSubmit} style={{marginTop: "25px", width: "max-content", fontWeight: "600"}}>Save Changes</button>
               </center>
             </div>
           </div >

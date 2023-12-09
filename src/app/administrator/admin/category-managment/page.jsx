@@ -1,12 +1,13 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import styles from "@/Styles/CategoryManagment.module.css"
-import { RiSearch2Line } from 'react-icons/ri'
-import { BiEditAlt } from "react-icons/bi"
-import { MdDeleteOutline } from 'react-icons/md'
-import { ImCircleDown } from 'react-icons/im'
-import { useRouter } from 'next/navigation'
+import {RiSearch2Line} from 'react-icons/ri'
+import {BiEditAlt} from "react-icons/bi"
+import {MdDeleteOutline} from 'react-icons/md'
+import {ImCircleDown} from 'react-icons/im'
+import {useRouter} from 'next/navigation'
 import Loading from '../loading'
+import {notify} from '@/JS/notify'
 
 const Page = () => {
   let router = useRouter()
@@ -29,7 +30,13 @@ const Page = () => {
   const handleClick = (route) => {
     router.push("/administrator/admin/category-managment/" + route)
   }
-
+  const handleRemoveCategory = async (categoryId) => {
+    const response = await fetch("/api/AdminCategories/DeleteCategory/" + categoryId)
+    const result = await response.json()
+    if (result.data.status === 200) {
+      notify("Category removed");
+    }
+  }
 
 
   useEffect(() => {
@@ -45,8 +52,8 @@ const Page = () => {
     <div className={styles.category_managemnet} >
       <div className={styles.view_category} >
         <div className={styles.top_bar} >
-          <div> <RiSearch2Line style={{ position: "relative", top: "4px" }} /> <input type='text' placeholder='Search...' /> </div>
-          <button onClick={() => { handleClick("add-category") }} >+ New Category</button>
+          <div> <RiSearch2Line style={{position: "relative", top: "4px"}} /> <input type='text' placeholder='Search...' /> </div>
+          <button onClick={() => {handleClick("add-category")}} >+ New Category</button>
         </div>
         <div className={styles.headings} >
           <div>Category</div>
@@ -61,18 +68,18 @@ const Page = () => {
             <div key={index} className={`${styles.category_info}  ${isSelected === index ? styles.selected : undefined}`} >
               <div>
                 <div>
-                  <ImCircleDown onClick={() => { handleSelection(index) }} className={styles.list_style} />
+                  <ImCircleDown onClick={() => {handleSelection(index)}} className={styles.list_style} />
                   <p> {categoryData.category} </p>
                 </div>
                 <div> {categoryData.productCount} </div>
                 <div>{categoryData.categorySales}</div>
                 <div>{categoryData.totalSaleAmount}</div>
-                <div className={styles.action_icons} > <div onClick={() => { handleClick("edit-category/" + categoryData.categoryId) }} ><BiEditAlt /> Edit</div> <div> <MdDeleteOutline /></div> </div>
+                <div className={styles.action_icons} > <div onClick={() => {handleClick("edit-category/" + categoryData.categoryId)}} ><BiEditAlt /> Edit</div> <div onClick={() => {handleRemoveCategory(categoryData.categoryId)}} > <MdDeleteOutline /></div> </div>
               </div>
               {isSelected === index &&
                 <div className={styles.category_info_subgroup} >
                   <div className={styles.brand_names} >
-                    <label onClick={() => { handleSubSelection("brand") }} className={subSelection === "brand" ? styles.selected : undefined} >
+                    <label onClick={() => {handleSubSelection("brand")}} className={subSelection === "brand" ? styles.selected : undefined} >
                       <ImCircleDown className={styles.list_style} />
                       Brands
                     </label>
@@ -88,7 +95,7 @@ const Page = () => {
                     }
                   </div>
                   <div className={styles.tags_options} >
-                    <label onClick={() => { handleSubSelection("tags") }} className={subSelection === "tags" ? styles.selected : undefined} >
+                    <label onClick={() => {handleSubSelection("tags")}} className={subSelection === "tags" ? styles.selected : undefined} >
                       <ImCircleDown className={styles.list_style} />
                       Tags
                     </label>
@@ -104,7 +111,7 @@ const Page = () => {
                     }
                   </div>
                   <div className={styles.variant_options} >
-                    <label onClick={() => { handleSubSelection("variant") }} className={subSelection === "variant" ? styles.selected : undefined} >
+                    <label onClick={() => {handleSubSelection("variant")}} className={subSelection === "variant" ? styles.selected : undefined} >
                       <ImCircleDown className={styles.list_style} />
                       Variants options
                     </label>
@@ -112,7 +119,7 @@ const Page = () => {
                       subSelection === "variant" &&
                       categoryData.defaultVariants.map((eachVariant, key) => {
                         return <div key={key} className={styles.options} >
-                          <div onClick={() => { handleOptionSelection(eachVariant.title) }} >
+                          <div onClick={() => {handleOptionSelection(eachVariant.title)}} >
                             <ImCircleDown className={`${styles.list_style} ${optionsSelection === eachVariant.title ? styles.selected : undefined} `} />
                             <label >{eachVariant.title}</label>
                             {
