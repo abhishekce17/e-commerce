@@ -16,7 +16,7 @@
 .banner_container img {
   width: inherit;
   object-fit: cover;
-  height: 280px;
+  height: auto;
 }
 
 .banner_utils_container {
@@ -32,7 +32,7 @@
 
 .banner_utils_container h2 {
   font-size: 2.2vw;
-  color: var(--dark-bg-color);
+  color: #fff;
 }
 .banner_utils_container a {
   max-width: max-content;

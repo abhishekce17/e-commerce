@@ -10,7 +10,7 @@ const Page = () => {
   const {buyingProduct, userData: {Personal}} = context;
   let delivery_charges = 79;
   let router = useRouter()
-  const [billingAddress, setBillingAddress] = useState({...Personal, ...Personal.contact});
+  const [billingAddress, setBillingAddress] = useState({...Personal, name: Personal.fullName, ...Personal.contact});
   const [isEditing, setIsEditing] = useState(false);
   const [productSummary, setProductSummary] = useState(context.buyingProduct);
 

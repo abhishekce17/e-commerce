@@ -73,7 +73,7 @@ const SpecialDeals = () => {
       const result = await response.json()
       if (result?.status == 200) {
         notify("Deal Removed Successfully", "success");
-        router.replace("/administrator/admin/special-deals")
+        router.replace("/administrator/admin/dashboard")
       }
     }
     else {
