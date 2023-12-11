@@ -85,13 +85,13 @@ const SignUpForm = () => {
     }
   };
 
-  useEffect(() => {
-    if (timeInterval <= 0) return setTimeInterval(false)
-    const timeOut = setTimeout(() => {
-      setTimeInterval(timeInterval - 1)
-    }, 1000)
-    return () => clearTimeout(timeOut)
-  }, [timeInterval])
+  // useEffect(() => {
+  //   if (timeInterval <= 0) return setTimeInterval(false)
+  //   const timeOut = setTimeout(() => {
+  //     setTimeInterval(timeInterval - 1)
+  //   }, 1000)
+  //   return () => clearTimeout(timeOut)
+  // }, [timeInterval])
 
   return (
     <div className={styles.formCenter}>

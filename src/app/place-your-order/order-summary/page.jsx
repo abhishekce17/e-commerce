@@ -4,6 +4,7 @@ import styles from '@/Styles/OrderSummary.module.css';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import UserAuthContext from '@/app/contextProvider';
+import _ from "lodash";
 
 const Page = () => {
   const context = useContext(UserAuthContext);
@@ -15,23 +16,25 @@ const Page = () => {
   const [productSummary, setProductSummary] = useState(context.buyingProduct);
 
   const handleFormSubmit = (e) => {
+    // if (billingAddress.some)
     e.preventDefault();
-    context.setPaymentInfo({
-      ...billingAddress,
-      boughtProductInfo: buyingProduct.map(x => {
-        return {
-          productId: x.productId,
-          productName: x.productName,
-          selectedVariant: x.selectedVariant,
-          subInfo: x?.subInfo || null,
-          quantity: x?.quantity || null,
-          price: x?.price || null,
-          discount: x?.discount || null,
-        }
-      }),
-      totalPayableAmount: calculateOrderTotal()
-    })
-    router.push("/place-your-order/checkout")
+    console.log(billingAddress.address.city);
+    // context.setPaymentInfo({
+    //   ...billingAddress,
+    //   boughtProductInfo: buyingProduct.map(x => {
+    //     return {
+    //       productId: x.productId,
+    //       productName: x.productName,
+    //       selectedVariant: x.selectedVariant,
+    //       subInfo: x?.subInfo || null,
+    //       quantity: x?.quantity || null,
+    //       price: x?.price || null,
+    //       discount: x?.discount || null,
+    //     }
+    //   }),
+    //   totalPayableAmount: calculateOrderTotal()
+    // })
+    // router.push("/place-your-order/checkout")
   };
 
   const handleEditClick = () => {
@@ -115,6 +118,7 @@ const Page = () => {
                 <div className={styles.billing_address}>
                   <label htmlFor="address">Flat, House no., Building, Company, Apartment:</label>
                   <input
+
                     type="text"
                     id="house_no"
                     name="house_no"
@@ -124,6 +128,7 @@ const Page = () => {
                   />
                   <label htmlFor="address">Area, Locality:</label>
                   <input
+
                     type="text"
                     id="area"
                     name="area"
@@ -133,6 +138,7 @@ const Page = () => {
                   />
                   <label htmlFor="address">Landmark:</label>
                   <input
+
                     type="text"
                     id="landmark"
                     name="landmark"
@@ -142,6 +148,7 @@ const Page = () => {
                   />
                   <label htmlFor="address">City:</label>
                   <input
+
                     type="text"
                     id="city"
                     name="city"
@@ -151,6 +158,7 @@ const Page = () => {
                   />
                   <label htmlFor="address">State:</label>
                   <input
+
                     type="text"
                     id="state"
                     name="state"
@@ -160,6 +168,7 @@ const Page = () => {
                   />
                   <label htmlFor="address">Pincode:</label>
                   <input
+
                     type="text"
                     id="pincode"
                     name="pincode"
