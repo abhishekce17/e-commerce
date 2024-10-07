@@ -6,7 +6,7 @@ import { setUserData } from "@/features/user-details/userSlice";
 import { updateUserInfo } from "@/actions/updateUserInfo";
 import { notify } from "@/utils/notify";
 
-export default function page() {
+export default function Page() {
     const dispatch = useDispatch();
     const data = useSelector(state => state.userData);
     const [isEditing, setIsEditing] = useState(false);

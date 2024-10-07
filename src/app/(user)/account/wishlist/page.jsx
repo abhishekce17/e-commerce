@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md"
 import { useDispatch, useSelector } from "react-redux";
 
-export default function page() {
+export default function Page() {
     const [wishlistProducts, setWishlistProducts] = useState([]);
     const wishlistProductIds = useSelector(state => state.userData.userData.Personal.wishlist);
     const dispatch = useDispatch();
