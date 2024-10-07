@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { collection, addDoc, updateDoc, getDoc, query, where, doc, writeBatch, getDocs, deleteField } from "firebase/firestore";
 import cloudinary from 'cloudinary';
-import cloudinaryConfig from "@/cloudinary-config/config";
+import cloudinaryConfig from "@/config/cloudinary-config";
 
 // Initialize Cloudinary
 cloudinary.config(cloudinaryConfig);

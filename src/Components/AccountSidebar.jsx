@@ -1,13 +1,12 @@
 "use client"
-import style from "@/Styles/Account.module.css"
-import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect } from "react"
+import { OutlineButton } from "./OutlineButton"
 
 const AccountSidebar = () => {
-  let pathname = usePathname()
-  let choosenRoute = pathname.split("/")[2]
-  let features = ["Your Account", "Order History", "Wishlist", "Payment Methods", "Account Setting", "Help and Support", "Privacy and Policy"]
+
+  const pathname = usePathname()
+  const choosenRoute = pathname.split("/").reverse()[0];
+  const features = ["Account", "Order History", "Wishlist", "Payment Methods", "Privacy and Policy"]
 
 
   const signOut = async () => {
@@ -18,40 +17,19 @@ const AccountSidebar = () => {
     }
   }
 
-  useEffect(() => {
-    const options = document.querySelectorAll('li > a');
-    options.forEach(option => {
-      option.setAttribute('data-choosed', 'false');
-    });
-  }, [pathname])
-  // const [dataDefault, setDefaultdata] = useState("false")
-  function handleSelection(e) {
-    const selectedElement = e.target;
-    const optionsContainer = selectedElement.parentNode.parentNode;
-
-    const options = optionsContainer.querySelectorAll('li > a');
-    options.forEach(option => {
-      option.setAttribute('data-choosed', 'false');
-      option.setAttribute('data-default', 'false');
-    });
-
-    selectedElement.setAttribute('data-choosed', 'true');
-  }
-
   return (
-    <ul className={style.sidebar} >
-
+    <ul className="list-none flex flex-col gap-3 max-w-max min-w-max" >
       {
         features.map((feature, index) => {
           return (
             <li key={index} >
-              <Link href={"/account/" + feature.toLowerCase().replace(/ /g, "-")} data-choosed="false" data-default={feature.toLowerCase().replace(/ /g, "-") === choosenRoute && "true"} onClick={handleSelection} >{feature}</Link>
+              <OutlineButton label={feature} href={index === 0 ? "/account/" : "/account/" + feature.toLowerCase().replace(/ /g, "-")} className={`hover:bg-primary-light rounded-md w-full block ${feature.toLowerCase().replace(/ /g, "-") === choosenRoute ? "bg-primary text-white" : "bg-white"}`} />
             </li>
           )
         })
       }
-      <li>
-        <button onClick={signOut} style={{ width: "100%", padding: "7px 0", fontWeight: "500", fontSize: "14px", color: "var(--dark-bg-color)", borderRadius: "5px", border: "1px solid var(--dark-bg-color)" }} className={style.signOut} >Sign Out</button>
+      <li >
+        <OutlineButton onClick={signOut} label="Sign Out" className=" rounded-md bg-primary-light text-white w-full hover:bg-primary" />
       </li>
     </ul>
 

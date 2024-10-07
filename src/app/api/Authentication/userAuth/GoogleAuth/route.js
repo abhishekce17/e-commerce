@@ -1,7 +1,7 @@
 'use server'
 import { NextResponse } from "next/server";
 import { cookies } from 'next/headers'
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { sign } from 'jsonwebtoken';
 import { collection, doc, getDoc, setDoc, writeBatch } from "firebase/firestore";
 
@@ -11,7 +11,7 @@ const setCookie = (uid, email) => {
         uid: uid,
         email: email,
     };
-    const token = sign(user, process.env.AUTH_SECRETE_KEY);
+    const token = sign(user, process.env.AUTH_SECRET_KEY);
     const isSecure = process.env.NODE_ENV === 'production';
 
     //         // Set the token as an HttpOnly cookie

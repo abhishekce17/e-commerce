@@ -1,7 +1,7 @@
 // 'use server'
 import { NextResponse } from "next/server";
 import { cookies } from 'next/headers'
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { verify } from 'jsonwebtoken';
 import { addDoc, arrayUnion, collection, doc, getDoc, serverTimestamp, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 
@@ -10,7 +10,7 @@ export async function POST(req, { params }) {
     try {
         const authToken = cookies().get("authToken");
         if (authToken === undefined) return NextResponse.json({ status: 401 })
-        const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
+        const userData = verify(authToken.value, process.env.AUTH_SECRET_KEY);
         if (userData) {
             const userExistance = await getDoc(doc(db, "User", userData.uid))
             if (userExistance.exists()) {

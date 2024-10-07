@@ -1,10 +1,10 @@
 // 'use server'
-import {getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, deleteUser} from "firebase/auth";
-import {NextResponse} from "next/server";
-import {db} from "@/firebase-config/config";
-import {sign} from 'jsonwebtoken';
-import {cookies} from "next/headers";
-import {collection, doc, setDoc, writeBatch} from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { NextResponse } from "next/server";
+import { db } from "@/config/firebase-config";
+import { sign } from 'jsonwebtoken';
+import { cookies } from "next/headers";
+import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
 
 // const VERIFICATION_INTERVAL = 3000;
 // const VERIFICATION_TIMEOUT = 60000;
@@ -12,7 +12,7 @@ import {collection, doc, setDoc, writeBatch} from "firebase/firestore";
 export async function POST(req) {
     try {
         const auth = getAuth();
-        const {email, password, name, agreedTermAndCondition} = await req.json();
+        const { email, password, name, agreedTermAndCondition } = await req.json();
 
         const batch = writeBatch(db);
         let response;
@@ -57,14 +57,14 @@ export async function POST(req) {
 
         // if (isEmailVerified) {
         // User creation and data setup
-        await setDoc(doc(db, "User", response.user.uid), {createdAt: response.user.metadata.creationTime});
-        await setDoc(accountRef, {email, agreedTermAndCondition, emailVerify: true});
-        await setDoc(personalInfoRef, {fullName: name, contact: {email, phoneNo: null}, address: {}, wishlist: []});
+        await setDoc(doc(db, "User", response.user.uid), { createdAt: response.user.metadata.creationTime });
+        await setDoc(accountRef, { email, agreedTermAndCondition, emailVerify: true });
+        await setDoc(personalInfoRef, { fullName: name, contact: { email, phoneNo: null }, address: {}, wishlist: [] });
 
         // Batch commit and token creation
         await batch.commit()
             .then(() => {
-                const token = sign(user, process.env.AUTH_SECRETE_KEY);
+                const token = sign(user, process.env.AUTH_SECRET_KEY);
                 const isSecure = process.env.NODE_ENV === 'production';
 
                 // Set the token as an HttpOnly cookie
@@ -80,10 +80,10 @@ export async function POST(req) {
             })
             .catch(e => {
                 console.log(e);
-                return NextResponse.json({status: 500, error: "User creation failed"});
+                return NextResponse.json({ status: 500, error: "User creation failed" });
             });
 
-        return NextResponse.json({status: 201});
+        return NextResponse.json({ status: 201 });
         // } else {
         //     console.log(response.user)
         //     await deleteUser(response.user);
@@ -91,6 +91,6 @@ export async function POST(req) {
         // }
     } catch (error) {
         console.error("Error creating user:", error);
-        return NextResponse.json({status: 500, error: "Something went wrong please try again leter"});
+        return NextResponse.json({ status: 500, error: "Something went wrong please try again leter" });
     }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import {
     getDoc,
     doc,
@@ -17,7 +17,7 @@ export async function GET(req, { params }) {
         }
         const { cartProductId } = params;
         console.log(cartProductId);
-        const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
+        const userData = verify(authToken.value, process.env.AUTH_SECRET_KEY);
         if (!userData) {
             return NextResponse.json({ status: 401 });
         }

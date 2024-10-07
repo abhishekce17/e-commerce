@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { getDoc, doc, collection, getDocs, writeBatch } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
@@ -11,7 +11,7 @@ export async function GET(req) {
         const authToken = cookies().get("authToken")
         // console.log(authToken)
         if (authToken !== undefined) {
-            const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
+            const userData = verify(authToken.value, process.env.AUTH_SECRET_KEY);
             if (userData) {
                 const userExistance = await getDoc(doc(db, "User", userData.uid))
                 if (userExistance.exists()) {

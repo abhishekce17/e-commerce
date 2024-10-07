@@ -1,11 +1,16 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = {
     reactStrictMode: true,
     images: {
-        domains: ['res.cloudinary.com']
-    },
-    experimental: {
-        serverActions: true,
+        loader: 'custom',
+        loaderFile: "./src/utils/imageLoader.js",
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+                port: '',
+                pathname: '/',
+            },
+        ],
     },
 }
-module.exports = nextConfig

@@ -1,5 +1,5 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { db } from "@/firebase-config/config";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { db } from "@/config/firebase-config";
 import { NextResponse } from "next/server";
 
 const auth = getAuth();

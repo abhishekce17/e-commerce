@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { collection, doc, getDoc, updateDoc, getDocs, query, where, writeBatch } from "firebase/firestore";
 
 // Function to update documents in a batch

@@ -1,7 +1,8 @@
 import filterStyle from "@/Styles/filter.module.css"
+import { PrimaryButton } from "./PrimaryButton";
 
 
-const FilterComponent = ({ categoryInfo, setFilterByBrand, category, setFilterByTags }) => {
+const FilterComponent = ({ categoryInfo, setFilterByBrand, category, setFilterByTags, applyFilter }) => {
   const filter = (brand, tags) => {
     if (brand !== undefined) {
       setFilterByBrand(prev => {
@@ -10,7 +11,6 @@ const FilterComponent = ({ categoryInfo, setFilterByBrand, category, setFilterBy
         }
         return [...prev, brand]
       });
-      console.log(categoryInfo);
     }
     if (tags !== undefined) {
       setFilterByTags(prev => {
@@ -23,23 +23,14 @@ const FilterComponent = ({ categoryInfo, setFilterByBrand, category, setFilterBy
   }
 
   return (
-    <div className={filterStyle.filter_container} >
-      {/* <div className={filterStyle.sort_container}>
-        <p>Sort</p>
-        <select>
-          <option>Sort By</option>
-          <option>Price - Low to High</option>
-          <option>Price - High to Low</option>
-          <option>Price - Top Rated</option>
-        </select>
-      </div> */}
-      <div className={filterStyle.category} >
-        <p>Category</p>
-        <p>{category}</p>
+    <div className=" overflow-y-auto w-60 self-start sticky top-20" >
+      <div>
+        <h3 className="font-medium" >Category</h3>
+        <h3>{category}</h3>
       </div>
       {categoryInfo?.categoryBrands.length &&
-        <div className={filterStyle.brand} >
-          <p>Brands</p>
+        <div>
+          <h3 className="font-medium" >Brands</h3>
           {
             categoryInfo.categoryBrands?.map((brand, index) => {
               return (
@@ -52,32 +43,12 @@ const FilterComponent = ({ categoryInfo, setFilterByBrand, category, setFilterBy
             })
           }
         </div>}
-      {/* <div className={filterStyle.range} >
-        <p>Price Range</p>
-        <p>Under ₹1000</p>
-        <p>₹1000 - ₹5000</p>
-        <p>₹5000 - ₹10000</p>
-        <p>₹10000 - ₹20000</p>
-        <p>Over ₹20000</p>
-        <div>
-          <input type="text" placeholder="₹ Min" pattern="[0-9]*" />
-          <input type="text" placeholder="₹ Max" pattern="[0-9]*" />
-          <button>Filter</button>
-        </div>
-      </div>
-      <div className={filterStyle.rating} >
-        <p>Cutomer Ratings</p>
-        <p data-value="4" >★★★★☆ & above</p>
-        <p data-value="3" >★★★☆☆ & above</p>
-        <p data-value="2" >★★☆☆☆ & above</p>
-        <p data-value="1" >★☆☆☆☆ & above</p>
-      </div> */}
-      <div className={filterStyle.tags} >
-        <p>Tags</p>
+      <div>
+        <h3 className="font-medium" >Tags</h3>
         {
           categoryInfo?.filterTags.map((tag, index) => {
             return (
-              <div key={"tag" + index} className={filterStyle.eachTag} >
+              <div key={"tag" + index} >
                 <input onChange={() => { filter(undefined, tag) }} id={"tag" + index} type="checkbox" key={`brand-${index}`} value={tag} />
                 <label htmlFor={"tag" + index} > {tag}</label>
               </div>
@@ -85,6 +56,7 @@ const FilterComponent = ({ categoryInfo, setFilterByBrand, category, setFilterBy
           })
         }
       </div>
+      <PrimaryButton onClick={applyFilter} label="Apply" className="text-sm" />
     </div>
 
   )

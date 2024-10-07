@@ -1,9 +1,9 @@
-import {NextResponse} from "next/server";
-import {db} from "@/firebase-config/config";
-import {collection, doc, getDocs, query, setDoc, updateDoc, where} from "firebase/firestore";
+import { NextResponse } from "next/server";
+import { db } from "@/config/firebase-config";
+import { collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 const cloudinary = require('cloudinary');
-import cloudinary_config from "@/cloudinary-config/config";
-import {updateToIndex} from "@/algolia";
+import cloudinary_config from "@/config/cloudinary-config";
+import { updateToIndex } from "@/algolia";
 
 export const dynamic = "force-dynamic"
 function updateVariantType(oldVariant, newVariant) {
@@ -18,19 +18,19 @@ function updateVariantType(oldVariant, newVariant) {
                 const matchingOldType = matchingOldValue.type.find(oldType => oldType.variant === newType.variant);
 
                 if (matchingOldType) {
-                    return updatedType.push({...matchingOldType, ...newType});
+                    return updatedType.push({ ...matchingOldType, ...newType });
                 } else if ('price' in newType) {
                     if (newType.price !== null) {
-                        return updatedType.push({...newType});
+                        return updatedType.push({ ...newType });
                     }
                 }
             });
 
-            updatedDataVariant.push({...matchingOldValue, type: updatedType});
+            updatedDataVariant.push({ ...matchingOldValue, type: updatedType });
         } else {
             const updatedType = newValue.type.filter(types => 'price' in types && types.price !== null);
 
-            updatedDataVariant.push({...newValue, type: updatedType});
+            updatedDataVariant.push({ ...newValue, type: updatedType });
         }
     }
 
@@ -44,7 +44,7 @@ async function updateRevenue(details, productId, docName) {
     querySnapshot.forEach((doc) => {
         const docRef = doc.ref;
         const variant = updateVariantType(doc.data().variants, details.variants).filter(e => e.type.length !== 0)
-        updateDoc(docRef, {...doc.data(), ...details, variants: variant});
+        updateDoc(docRef, { ...doc.data(), ...details, variants: variant });
     });
 }
 
@@ -122,9 +122,9 @@ export async function POST(req) {
         }
         updateRevenue(RevenueSnapDetails, productId, "Administration/Admin/Revenue")
 
-        return NextResponse.json({status: 200})
+        return NextResponse.json({ status: 200 })
     } catch (e) {
         console.log('Error:', e);
-        return NextResponse.json({status: 500, error: e});
+        return NextResponse.json({ status: 500, error: e });
     }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { getDoc, doc, updateDoc, arrayRemove } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(req, { params }) {
     try {
         const authToken = cookies().get("authToken")
-        const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
+        const userData = verify(authToken.value, process.env.AUTH_SECRET_KEY);
 
         if (!userData) {
             return NextResponse.json({ status: 401 });

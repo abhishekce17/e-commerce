@@ -1,7 +1,7 @@
 // 'use server'
 import { fetchSignInMethodsForEmail, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { doc, getDoc } from "firebase/firestore";
 export async function POST(req) {
     try {

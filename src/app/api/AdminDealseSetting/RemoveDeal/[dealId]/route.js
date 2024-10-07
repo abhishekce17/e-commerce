@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { collection, query, where, getDocs, updateDoc, doc, deleteDoc, getDoc, deleteField } from "firebase/firestore";
 import cloudinary from 'cloudinary';
-import cloudinary_config from "@/cloudinary-config/config";
+import cloudinary_config from "@/config/cloudinary-config";
 
 export async function DELETE(req, { params }) {
     try {

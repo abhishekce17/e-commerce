@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
@@ -9,7 +9,7 @@ export async function PATCH(req) {
     try {
         console.log("from updateinfo route");
         const authToken = cookies().get("authToken")
-        const userData = verify(authToken.value, process.env.AUTH_SECRETE_KEY);
+        const userData = verify(authToken.value, process.env.AUTH_SECRET_KEY);
 
         if (!userData) {
             return NextResponse.json({ status: 401 });

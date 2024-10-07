@@ -1,78 +1,63 @@
-"use client"
-import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
-import styles from "../Styles/Navbar.module.css";
-import {BiChevronDown} from "react-icons/bi"
-import {CgShoppingCart, CgSearch} from "react-icons/cg"
-import {RiAccountCircleLine} from "react-icons/ri"
-import {useRouter} from "next/navigation";
-import UserAuthContext from "@/app/contextProvider";
+import { BiChevronDown } from "react-icons/bi"
+import { CgShoppingCart } from "react-icons/cg"
+import { RiAccountCircleLine } from "react-icons/ri"
+import { PrimaryButton } from "./PrimaryButton";
+import { SearchBar } from "./SearchBar";
+import { fetchCategory } from "@/actions/fetchCategory";
+import { cookies } from "next/headers";
 
-const Navbar = () => {
-  let router = useRouter()
-  const context = useContext(UserAuthContext)
-  const [categories, setCategories] = useState([])
-  const [queryValue, setQueryValue] = useState("");
-  const handleQueryRequest = (e) => {
-    e.preventDefault()
-    router.push("/search/" + queryValue.replace(" ", "-"))
-  }
-  const handleChange = (e) => {
-    setQueryValue(e.target.value)
-  }
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const response = await fetch("/api/fetchCategories");
-      const result = await response.json();
-      // console.log(result.ctgry)
-      if (result.status === 200) {
-        setCategories(result.ctgry)
-      }
-    }
-    fetchCategories()
-  }, [])
+export default async function Navbar() {
+  const categories = await fetchCategory()
+  const cookie = cookies();
+  const validToken = cookie.get("authToken");
+
   return (
-    <nav className={styles.navbar}>
-      <ul>
+    <nav className="h-16 bg-white px-24 sticky top-0 z-50 shadow-sm">
+      <ul className="flex justify-between text-xl font-semibold text-custom-dark-gray items-center h-16">
         <li>
           <Link href={"/"}>Official LOGO</Link>
         </li>
-        <li className={styles.dropdown}>
-          <span>Categories <BiChevronDown className={styles.down_arrow} /> </span>
-          <ul className={styles.dropdownMenu}>
-            {
-              categories.map((ctg, index) => <li key={ctg + index} >
-                <Link href={`/category/${ctg}`}>{ctg.charAt(0).toUpperCase() + ctg.slice(1)}</Link>
-              </li>)
-            }
-            {/* Add more category options here */}
+        <li className="group hover:text-black">
+          <span className="flex items-center pl-4 cursor-pointer">
+            Categories <BiChevronDown className="-rotate-90 group-hover:rotate-0 transition duration-200" />
+          </span>
+          <ul className="absolute bg-white z-10 rounded text-lg font-medium leading-relaxed h-0 group-hover:border group-hover:py-3 group-hover:h-fit overflow-hidden transition-transform duration-700">
+            {categories.map((ctg, index) => (
+              <li key={ctg + index} className="px-4 hover:bg-primary-light hover:text-white">
+                <Link href={`/category/${ctg}`} className="block w-full">
+                  {ctg.charAt(0).toUpperCase() + ctg.slice(1)}
+                </Link>
+              </li>
+            ))}
           </ul>
         </li>
-        <li>
+        <li className="hover:text-black">
           <Link href={"/special-deals"}>Deals</Link>
         </li>
-        <li className={styles.search_bar} id="search-bar" >
-          <form onSubmit={handleQueryRequest} >
-            <input type="text" placeholder="Search Product" value={queryValue} onChange={handleChange} spellCheck="false" />
-            <CgSearch className={styles.seach_icon} />
-          </form>
+        <li className="grow max-w-sm hover:text-black" id="search-bar">
+          <SearchBar />
         </li>
-        {
-          context.isUserLoggedIn ?
-            <li>
-              <Link href={"/account/your-account"}><RiAccountCircleLine className={styles.account_icon} />Account</Link>
-            </li> :
-            <li>
-              <Link href={"/authentication/sign-in"}>Sign In</Link>
-            </li>
-        }
-        <li>
-          <Link href={"/cart"}><CgShoppingCart className={styles.cart_icon} />Cart</Link>
+        <li className="hover:text-black">
+          {validToken ?
+            <Link href={"/account"} className="flex items-center" >
+              <RiAccountCircleLine className="text-primary" size={28} />Account
+            </Link>
+            :
+            <PrimaryButton label="Sign in" href="/sign-in" />
+          }
+        </li>
+        <li className="hover:text-black">
+          {validToken ? <Link href={"/cart"} className="flex items-center">
+            <CgShoppingCart className="text-primary" size={28} /> Cart
+          </Link>
+            :
+            <a href={"/cart"} className="flex items-center">
+              <CgShoppingCart className="text-primary" size={28} /> Cart
+            </a>}
         </li>
       </ul>
     </nav>
   );
-};
-
-export default Navbar;
+}

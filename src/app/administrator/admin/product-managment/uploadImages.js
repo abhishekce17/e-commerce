@@ -11,8 +11,8 @@ export default async function uploadImages(file) {
             body: formData
         })
         const result = await response.json();
-        return { status: 200, imgUrl: result.secure_url };
+        return {status: 200, imgUrl: result.secure_url};
     } catch (error) {
-        return { status: 500, error }
+        return {status: 500, error}
     }
 }

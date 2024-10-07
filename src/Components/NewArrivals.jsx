@@ -1,50 +1,23 @@
-import Image from 'next/image'
-import styles from '../Styles/NewArrivals.module.css'
-import Link from 'next/link'
-import { BiChevronRight } from "react-icons/bi"
+import { ProductCard } from './ProductCard'
+import { ProductListLayout } from './ProductListLayout'
+import extractMinimumNetValue from '@/utils/ExtractMinimumNetValue'
 
 const NewArrivals = ({ products }) => {
-    function extractMinimumNetValue(variants) {
-        if (!Array.isArray(variants) || variants.length === 0) {
-            return null; // Handle invalid input
-        }
 
-        let minNetValue = Number.MAX_VALUE;
-        let obj = {}
-        variants.forEach(variant => {
-            if (Array.isArray(variant.type)) {
-                variant.type.forEach(type => {
-                    if (type.price && !isNaN(Number(type.price))) {
-                        const netValue = parseInt((type.price - (type.price * (type.discount / 100))));
-                        if (netValue < minNetValue) {
-                            minNetValue = netValue;
-                            obj = { [variant.title]: type.variant }
-                        }
-                    }
-                    obj = { [variant.title]: variant.type[0].variant, ...obj }
-                });
-
-            }
-        });
-        if (minNetValue === Number.MAX_VALUE) {
-            return { minNetValue: null, obj }; // No valid netValues found
-        }
-        return { minNetValue: minNetValue.toLocaleString("en-IN", { useGrouping: true }), obj };
-    }
     return (
-        <div className={styles.newArrivals_cards} >
-            <div className={styles.newArrivals_redirect} >
-                <h2 style={{ marginBottom: "20px", fontWeight: "500" }} >New Products landed on the store</h2>
-                <Link href={"/product-list/all-products"} >see all <BiChevronRight style={{ position: "relative", top: "3px" }} /> </Link>
-            </div>
-            <ul>
-                {products.map((prop) => {
+        <ProductListLayout heading="New Products landed on the store" href="/product-list/all-products" >
+            {
+                products.map((prop) => {
                     return (
-                        <li key={prop.productId} > <Link href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants)?.obj || "" } }} > <Image width={500} height={500} src={prop.productFirtsImgURL} alt={prop.productFirtsImgURL} /> <div><p>{prop.productName}</p> <p>From &#8377;{extractMinimumNetValue(prop.variants)?.minNetValue || parseInt((prop.price - (prop.price * (prop.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</p> </div> </Link> </li>
+                        <ProductCard
+                            key={prop.productId}
+                            productInfo={prop}
+                            href={{ pathname: `/product/${prop.productId}`, query: { ...extractMinimumNetValue(prop.variants)?.obj || "" } }}
+                        />
                     )
-                })}
-            </ul>
-        </div>
+                })
+            }
+        </ProductListLayout >
     )
 }
 

@@ -2,7 +2,7 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { NextResponse } from "next/server";
 import { cookies } from 'next/headers'
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { sign } from 'jsonwebtoken';
 
 export async function POST(req) {
@@ -16,7 +16,7 @@ export async function POST(req) {
             email: response.user.email,
         };
 
-        const token = sign(user, process.env.AUTH_SECRETE_KEY); // Replace 'your-secret-key' with your actual secret
+        const token = sign(user, process.env.AUTH_SECRET_KEY); // Replace 'your-secret-key' with your actual secret
 
         // Conditionally set 'secure' based on the environment
         const isSecure = process.env.NODE_ENV === 'production';

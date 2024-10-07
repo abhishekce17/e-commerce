@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/firebase-config/config";
+import { db } from "@/config/firebase-config";
 import { deleteDoc, doc } from "firebase/firestore";
 
 export async function GET(res, { params }) {

@@ -1,5 +1,7 @@
 1. when users are being registered then make API to get total count of users to show them as total customer for the dashboard
-2. set google cloud function to update all report data periodicly // no need its paid
-3. Make recent product and top product dynamic
 4. use context api to store all data of user after fetching for better response or may be it's not required //done
 5. Add Description and Specification field in algolia //future scope
+
+
+
+6. Remove all custom styling from product details Description part and style it in tailwind
