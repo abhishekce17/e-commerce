@@ -7,7 +7,7 @@ import {
 } from "firebase/firestore";
 import { cookies } from "next/headers";
 import { verify } from "jsonwebtoken";
-import { useRouter } from "next/navigation";
+
 
 export async function GET(req, { params }) {
     try {
