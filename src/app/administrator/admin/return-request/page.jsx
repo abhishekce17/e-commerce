@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 
 
-const page = () => {
+const Page = () => {
   return (
     <div className={styles.order_managment_page} >
       <div className={styles.order_managment_container} >

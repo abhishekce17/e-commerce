@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 
-const page = () => {
+const Page = () => {
   const orderHistory = useSelector(state => state.userData.userData.OrderDetails);
   // Dummy order data
 

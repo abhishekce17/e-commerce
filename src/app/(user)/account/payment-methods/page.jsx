@@ -2,7 +2,7 @@ import React from "react"
 import { FaGooglePay, FaPhone, FaMoneyCheckAlt } from "react-icons/fa";
 import { SiPaytm } from "react-icons/si"
 
-const page = () => {
+const Page = () => {
     return (<div>
         <h2>Accepted Payment Methods</h2>
         <div className="p-10 pt-4">

@@ -3,7 +3,7 @@ import CartComponent from '@/Components/CartComponent'
 import ClientComponentWrapper from '@/Components/ClientComponentWrapper';
 import React from 'react'
 
-const page = async () => {
+const Page = async () => {
   const response = await fetchCartProducts();
   if (response.status !== 200) {
     return <div className="flex justify-center items-center" >{response.message}</div>

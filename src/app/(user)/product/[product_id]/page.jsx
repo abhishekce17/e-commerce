@@ -7,7 +7,7 @@ import { handlePrice } from '@/utils/HandlePrice';
 import { headers } from 'next/headers';
 import React from 'react'
 
-export default async function page({ params }) {
+export default async function Page({ params }) {
   const { product_id } = params;
   const response = await fetchProductDetails({ productId: product_id });
   if (response.status !== 200) {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const page = () => {
+const Page = () => {
     return (<div>
         <h3>Privacy Policy</h3>
         <div className="p-3 leading-7" >
