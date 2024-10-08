@@ -3,7 +3,7 @@ import Footer from '@/Components/Footer'
 import { headers } from 'next/headers'
 import { fetchUserDetails } from '@/actions/fetchUserDetails';
 import ClientComponentWrapper from '@/Components/ClientComponentWrapper';
-import { notify } from '@/utils/notify';
+// import { notify } from '@/utils/notify';
 // import ClientWrapper from './ClientWrapper'
 
 export default async function SubPageLayout({ children }) {
