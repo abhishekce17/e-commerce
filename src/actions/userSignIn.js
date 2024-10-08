@@ -9,7 +9,7 @@ export const userSignIn = async ({ email, password }) => {
     try {
         const { success, error } = loginSchema.safeParse({ email, password });
         if (!success) {
-            throw new Error(JSON.stringify(error)); // Return proper validation error
+            return { status: 500, message: (JSON.stringify(error)) }; // Return proper validation error
         }
         const auth = getAuth();
         const response = await signInWithEmailAndPassword(auth, email, password);

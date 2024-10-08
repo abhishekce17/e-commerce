@@ -33,7 +33,7 @@ export const confirmOrder = async ({ buyingProductDetails, paymentMethod, price 
                 const productSnap = await transaction.get(productDocRef);
 
                 if (!productSnap.exists()) {
-                    throw new Error(`Product not found: ${product.productId}`);
+                    return { status: 500, message: "Product not found" };
                 }
 
                 const productData = productSnap.data();
