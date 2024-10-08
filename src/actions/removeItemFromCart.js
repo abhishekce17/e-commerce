@@ -32,7 +32,7 @@ export async function removeCartItem({ cartProductId }) {
             return { status: 404, message: "Cart item not found" };
         }
     } catch (error) {
-        console.error("Error:", error);
+        console.log("Error:", error);
         return { status: 500, message: "Internal Server Error" };
     }
 }

@@ -116,7 +116,7 @@ export const confirmOrder = async ({ buyingProductDetails, paymentMethod, price 
 
         return orderConfirmation;
     } catch (error) {
-        console.error("Error confirming order:", error);
+        console.log("Error confirming order:", error);
         return { status: 500, message: "Error processing order" };
     }
 };

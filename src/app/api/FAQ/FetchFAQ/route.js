@@ -22,7 +22,7 @@ export async function GET() {
         await fetchPromises
         return NextResponse.json({ data: fetchData, status: 200 });
     } catch (error) {
-        console.error("Error fetching FAQs:", error);
+        console.log("Error fetching FAQs:", error);
         return NextResponse.json({ status: 500, error: "Error fetching FAQs" });
     }
 }

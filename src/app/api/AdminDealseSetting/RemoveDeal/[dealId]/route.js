@@ -87,7 +87,7 @@ export async function DELETE(req, { params }) {
             return NextResponse.json({ status: 404, message: "Banner product not found." });
         }
     } catch (e) {
-        console.error('Error:', e);
+        console.log('Error:', e);
         return NextResponse.json({ status: 500, error: e });
     }
 }

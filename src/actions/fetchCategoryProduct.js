@@ -25,7 +25,7 @@ export const fetchCategoryProduct = async ({ category }) => {
 
         return { categoryProducts, categoryInfo, status: 200 }
     } catch (error) {
-        console.error(error);
+        console.log(error);
         return { categoryProducts: [], categoryInfo: [], status: 500, error: true }
     }
 }

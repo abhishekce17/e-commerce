@@ -78,7 +78,7 @@ export async function GET(req) {
 
         return NextResponse.json({ status: 200, Cart: cart.flat() });
     } catch (error) {
-        console.error("Error:", error);
+        console.log("Error:", error);
         return NextResponse.json({ error: error.message || "Internal Server Error" });
     }
 }

@@ -33,7 +33,7 @@ export async function PATCH(req) {
 
         return NextResponse.json({ status: 200 });
     } catch (e) {
-        console.error('Error:', e);
+        console.log('Error:', e);
         return NextResponse.json({ status: 500, error: e.message });
     }
 }

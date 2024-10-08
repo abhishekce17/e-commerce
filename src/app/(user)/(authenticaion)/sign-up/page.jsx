@@ -59,7 +59,7 @@ const SignUpForm = () => {
         notify(result.error || 'Sign up failed. Please try again.', "error");
       }
     } catch (error) {
-      console.error('Sign up error:', error)
+      console.log('Sign up error:', error)
       notify('An unexpected error occurred. Please try again.', "error");
     } finally {
       setIsLoading(false)

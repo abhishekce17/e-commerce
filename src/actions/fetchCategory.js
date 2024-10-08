@@ -7,7 +7,7 @@ export const fetchCategory = async () => {
         const categoryInfo = await fetchCollectionData({ collectionName: "Administration/Admin/Category" });
         return categoryInfo.map(x => x.category);
     } catch (e) {
-        console.error(e);
+        console.log(e);
         return [];
     }
 }

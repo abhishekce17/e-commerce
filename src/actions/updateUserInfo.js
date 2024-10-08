@@ -16,7 +16,7 @@ export async function updateUserInfo({ newData }) {
 
         return { status: 200, message: "Saved" };
     } catch (e) {
-        console.error('Error:', e);
+        console.log('Error:', e);
         return { status: 500, message: "Error while updating your information" };
     }
 }

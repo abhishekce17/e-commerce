@@ -34,7 +34,7 @@ export const userSignIn = async ({ email, password }) => {
 
         return { status: 200, token };
     } catch (error) {
-        console.error(error);
+        console.log(error);
         return { status: 500, message: "Email or Password is wrong" }
     }
 };

@@ -60,7 +60,7 @@ export async function signInWithGooglePopUp({ uid, providerData, displayName, em
         return { status: 200 };
 
     } catch (err) {
-        console.error("Error in signInWithGoogle:", err);
+        console.log("Error in signInWithGoogle:", err);
         return { status: 500, message: "Authentication failed. Please try again later." }
     }
 }

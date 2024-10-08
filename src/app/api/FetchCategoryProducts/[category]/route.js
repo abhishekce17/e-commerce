@@ -18,7 +18,7 @@ export async function GET(req, { params }) {
         console.log("From fetch category product route");
         return NextResponse.json({ data: fetchData, categoryInfo, status: 200 });
     } catch (error) {
-        console.error(error);
+        console.log(error);
         return NextResponse.json({ status: 500, error });
     }
 }

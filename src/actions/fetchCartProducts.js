@@ -54,7 +54,7 @@ export async function fetchCartProducts() {
         })
         return { status: 200, Cart: cartProduct.filter(product => !product?.saveForLater), totalAmount, totalItems, savedItems };
     } catch (error) {
-        console.error("Error:", error);
+        console.log("Error:", error);
         return { status: 500, message: "Internal Server Error" };
     }
 }

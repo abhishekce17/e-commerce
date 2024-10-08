@@ -14,7 +14,7 @@ export async function removeFromWishlist({ productId }) {
         await updateDoc(userInfoDocRef, { wishlist: arrayRemove(productId) });
         return { status: 200, message: "Product is removed" };
     } catch (e) {
-        console.error('Error:', e);
+        console.log('Error:', e);
         return { status: 500, message: "Error while processing your request" };
     }
 }

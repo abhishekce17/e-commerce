@@ -21,7 +21,7 @@ export async function POST(req) {
         //             { resource_type: 'auto', folder: 'E-Commerce' }, // Cloudinary options
         //             (error, result) => {
         //                 if (error) {
-        //                     console.error('Error uploading image:', error);
+        //                     console.log('Error uploading image:', error);
         //                     NextResponse.json({ statu: 500, error })
         //                     return reject(error)
         //                 } else {

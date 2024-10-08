@@ -10,7 +10,7 @@ const verifyToken = async (token) => {
         const { payload } = await jose.jwtVerify(token, secret);
         return payload.uid ? true : false;
     } catch (error) {
-        console.error('Token verification failed:', error);
+        console.log('Token verification failed:', error);
         return false;
     }
 };
@@ -64,7 +64,7 @@ export async function middleware(request) {
         response.headers.set("x-searchParams", searchParams); // Set pathname in the response headers
         return response;
     } catch (error) {
-        console.error('Middleware error:', error);
+        console.log('Middleware error:', error);
         return redirectTo("/sign-in", request, true);
     }
 }

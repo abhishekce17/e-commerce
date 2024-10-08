@@ -90,7 +90,7 @@ export async function POST(req) {
         //     return NextResponse.json({ status: 500, error: "Email not Verified" });
         // }
     } catch (error) {
-        console.error("Error creating user:", error);
+        console.log("Error creating user:", error);
         return NextResponse.json({ status: 500, error: "Something went wrong please try again leter" });
     }
 }

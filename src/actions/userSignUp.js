@@ -50,7 +50,7 @@ export async function userSignUp({ email, password, name, agreedTermAndCondition
 
         return { status: 201, message: "User created successfully" };
     } catch (error) {
-        console.error("Error creating user:", error);
+        console.log("Error creating user:", error);
 
         if (error.code === 'auth/email-already-in-use') {
             return { status: 409, error: "Email is already in use" };

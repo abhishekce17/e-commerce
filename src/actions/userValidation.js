@@ -24,7 +24,7 @@ export const userValidation = async () => {
         return { status: 200, uid: userData.uid };
     }
     catch (e) {
-        console.error(e);
+        console.log(e);
         return { status: 500, message: "Error while processing your request" };
     }
 }

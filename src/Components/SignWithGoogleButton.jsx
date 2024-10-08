@@ -49,7 +49,7 @@ export const SignWithGoogleButton = ({ isPending }) => {
                 }
             })
         } catch (error) {
-            console.error(error);
+            console.log(error);
             notify(error, "error");
         }
     };

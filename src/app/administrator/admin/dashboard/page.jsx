@@ -96,7 +96,7 @@ const Page = () => {
           alert("Error: " + result.error.message);
         }
       } catch (error) {
-        console.error("Error:", error);
+        console.log("Error:", error);
         alert("An error occurred while fetching data.");
       }
     };

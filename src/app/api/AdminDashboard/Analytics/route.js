@@ -56,7 +56,7 @@ export async function GET() {
 
         return NextResponse.json({ status: 200, fetchedData: { YearlyReport, MonthlyReport, categoryData } });
     } catch (e) {
-        console.error('Error:', e);
+        console.log('Error:', e);
         return NextResponse.json({ status: 500, error: e });
     }
 }

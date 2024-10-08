@@ -38,7 +38,7 @@ function mergeVariants(oldVariant, newVariant) {
 //             { resource_type: 'auto', folder: 'E-Commerce' },
 //             (error, result) => {
 //                 if (error) {
-//                     console.error('Error uploading image:', error);
+//                     console.log('Error uploading image:', error);
 //                     reject(error);
 //                 } else {
 //                     resolve(result.url || '');

@@ -33,7 +33,7 @@ export async function fetchUserDetails() {
             }
         };
     } catch (error) {
-        console.error('Error fetching user details:', error);
+        console.log('Error fetching user details:', error);
         return { status: 500, error: "Internal server error" };
     }
 }

@@ -19,7 +19,7 @@ export async function GET() {
                     fetchData.push({ ...doc.data(), FeaturedId: docData.id });
                 })
             } catch (error) {
-                console.error("Error fetching product data:", error);
+                console.log("Error fetching product data:", error);
             }
         });
 
@@ -27,7 +27,7 @@ export async function GET() {
 
         return NextResponse.json({ data: fetchData, status: 200 });
     } catch (error) {
-        console.error("Error fetching featured products:", error);
+        console.log("Error fetching featured products:", error);
         return NextResponse.json({ status: 500, error });
     }
 }

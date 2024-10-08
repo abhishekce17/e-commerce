@@ -15,7 +15,7 @@ export async function addToWishlist({ productId }) {
         await updateDoc(userInfoDocRef, { wishlist: arrayUnion(productId) });
         return { status: 200, message: "Added to wishlist" };
     } catch (e) {
-        console.error('Error:', e);
+        console.log('Error:', e);
         return { status: 500, message: "Error while adding to the wishlist" };
     }
 }

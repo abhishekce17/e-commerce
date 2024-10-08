@@ -49,7 +49,7 @@ export async function addReviewToProduct({ Rating, Review, userName, productId }
 
         return { status: 200, message: "Than you for your contribution" }
     } catch (error) {
-        console.error('Error adding review:', error)
+        console.log('Error adding review:', error)
         return { status: 500, message: 'Failed to add review. Please try again later.' }
     }
 }

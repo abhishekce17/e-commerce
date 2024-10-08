@@ -34,7 +34,7 @@ export const updateCartProduct = async ({ type, docId, quantity }) => {
 
         return { status: 200, message: "Your cart product is updated" }
     } catch (error) {
-        console.error(error.message);
+        console.log(error.message);
         return { status: 500, message: "Something went wrong please try again leter" };
     }
 }
