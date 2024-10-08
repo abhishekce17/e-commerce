@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+"use client"
+import React from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import {
     signInWithPopup,
@@ -10,8 +11,10 @@ import { initializeApp } from 'firebase/app';
 import { fetchFirebaseConfig } from '@/actions/fetchFirebaseConfig';
 import { signInWithGooglePopUp } from '@/actions/signInWithGooglePopUp';
 import { notify } from '@/utils/notify';
+import { useRouter } from 'next/navigation';
 
 export const SignWithGoogleButton = ({ isPending }) => {
+    const router = useRouter();
     const signInWithGoogle = async () => {
         try {
             const firebaseConfig = await fetchFirebaseConfig();
@@ -34,12 +37,10 @@ export const SignWithGoogleButton = ({ isPending }) => {
                             displayName: result.displayName
                         });
 
-                    if (!response.success) {
-                        notify(response.error, "error");
+                    if (response.status !== 200) {
+                        notify(response.message, "error");
                     } else {
-                        context.setIsUserLoggedIn(true);
-                        context.fetchUserData();
-                        router.replace("/");
+                        router.refresh();
                     }
 
                 } catch (error) {

@@ -32,8 +32,9 @@ export const userSignIn = async ({ email, password }) => {
             maxAge: 7 * 24 * 60 * 60 // 1 week
         });
 
-        return { token };
+        return { status: 200, token };
     } catch (error) {
-        throw new Error("Email or Password is wrong");
+        console.error(error);
+        return { status: 500, message: "Email or Password is wrong" }
     }
 };

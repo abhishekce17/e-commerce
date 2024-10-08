@@ -1,9 +1,8 @@
 "use client"
 
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import UserAuthContext from "@/app/contextProvider";
 import { notify } from "@/utils/notify";
 import { PrimaryButton } from "@/Components/PrimaryButton";
 import { userSignIn } from "@/actions/userSignIn";
@@ -13,7 +12,6 @@ import { SignWithGoogleButton } from "@/Components/SignWithGoogleButton";
 const SignInForm = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
-  const context = useContext(UserAuthContext)
   const router = useRouter()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,11 +32,10 @@ const SignInForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setPending(true);
-    try {
-      await userSignIn({ email, password })
-      router.refresh("/");
-    } catch (error) {
-      notify(error.message, "error");
+    const response = await userSignIn({ email, password })
+    router.refresh("/");
+    if (response.status !== 200) {
+      notify(response.message, "error");
     }
   };
 
@@ -85,7 +82,7 @@ const SignInForm = () => {
           <p className="text-custom-light-gray underline underline-offset-4 ">Create an account</p>
         </Link>
       </div>
-      <SignWithGoogleButton />
+      <SignWithGoogleButton isPending={isPending} />
     </form>
   );
 };

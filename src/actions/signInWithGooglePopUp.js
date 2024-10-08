@@ -57,10 +57,10 @@ export async function signInWithGooglePopUp({ uid, providerData, displayName, em
 
         await batch.commit();
         const token = setCookie(uid, email);
-        // return { token };
+        return { status: 200 };
 
     } catch (err) {
         console.error("Error in signInWithGoogle:", err);
-        throw new Error("Authentication failed. Please try again later.");
+        return { status: 500, message: "Authentication failed. Please try again later." }
     }
 }
