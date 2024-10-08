@@ -1,6 +1,5 @@
 import Navbar from '@/Components/Navbar'
 import Footer from '@/Components/Footer'
-import { Toaster } from 'react-hot-toast'
 import { headers } from 'next/headers'
 import { fetchUserDetails } from '@/actions/fetchUserDetails';
 import ClientComponentWrapper from '@/Components/ClientComponentWrapper';
@@ -25,7 +24,6 @@ export default async function SubPageLayout({ children }) {
             <Navbar />
             <div style={{ flexGrow: 1 }}>
                 <ClientComponentWrapper userData={userData} >
-                    <Toaster />
                     <main>{children}</main>
                 </ClientComponentWrapper>
             </div>
