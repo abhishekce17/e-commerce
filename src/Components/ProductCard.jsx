@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React from 'react'
 import { PrimaryButton } from './PrimaryButton'
 import Link from 'next/link'
 import extractMinimumNetValue from '@/utils/ExtractMinimumNetValue'
@@ -13,9 +13,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addToWishlistAction, removeFromWishlistAction } from '@/features/user-details/userSlice'
 import { addToCart } from '@/actions/addToCart'
 import { setBuyingProduct } from '@/features/user-details/buyingProductSlice'
+import { useRouter } from 'next/navigation'
 
 export const ProductCard = ({ productInfo, href, showButtons = true }) => {
     const dispatch = useDispatch()
+    const router = useRouter();
     const isWishlisted = useSelector(state => state.userData.userData.Personal.wishlist).includes(productInfo.productId);
 
     const productVariantPrice = extractMinimumNetValue(productInfo.variants)
@@ -50,7 +52,7 @@ export const ProductCard = ({ productInfo, href, showButtons = true }) => {
             });
         });
         const { brandName, category, discount, price, productId, productName } = productInfo;
-        dispatch(setBuyingProduct([{ quantity: 1, productFirtsImgURL: productInfo.imgURLs[0], brandName, category, discount, price, productId, productName, ...subInfo[0], variant: selectedVariant }]));
+        dispatch(setBuyingProduct([{ quantity: 1, productFirtsImgURL: productInfo.productFirtsImgURL, brandName, category, discount, price, productId, productName, ...subInfo[0], variant: selectedVariant }]));
         router.push("/place-your-order/order-summary");
     }
 
