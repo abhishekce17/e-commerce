@@ -9,9 +9,9 @@ import { notify } from '@/utils/notify';
 export default async function SubPageLayout({ children }) {
     const { status, error, userData } = await fetchUserDetails();
 
-    if (status === 500) {
-        notify(error, "error");
-    }
+    // if (status === 500) {
+    //     notify(error, "error");
+    // }
 
     const headersList = headers()
     const pathname = headersList.get("x-pathname");
