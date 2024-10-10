@@ -24,7 +24,7 @@ export default async function SubPageLayout({ children }) {
             <Navbar />
             <div style={{ flexGrow: 1 }}>
                 <ClientComponentWrapper userData={userData} >
-                    <main>{children}</main>
+                    <main className=" sm:px-24 sm:my-5" >{children}</main>
                 </ClientComponentWrapper>
             </div>
             <Footer />

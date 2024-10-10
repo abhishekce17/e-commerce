@@ -17,7 +17,7 @@ export const SearchBar = () => {
     }
 
     return (
-        <form onSubmit={handleQueryRequest} className="flex items-center rounded-lg overflow-hidden border border-gray-400 px-1" >
+        <form onSubmit={handleQueryRequest} className="flex items-center rounded-lg overflow-hidden border border-gray-400 px-1 w-full" >
             <CgSearch className="text-2xl text-primary" size={27} />
             <input type="text" placeholder="Search Product" value={queryValue} onChange={handleChange} spellCheck="false" className="text-lg p-1 border-none outline-none w-full" style={{ boxShadow: "none" }} />
         </form>

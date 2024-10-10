@@ -11,8 +11,8 @@ const Page = () => {
   return (
     <div className="grow" >
       {orderHistory.map((product, orderIndex) => (
-        <div key={`${product.productId} ${product.variant} ${orderIndex}`} className="flex gap-3 border-b border-primary-light last:border-none mb-3 last:m-0" >
-          <Link href={`/product/${product.productId}`} className="aspect-square w-52" >
+        <div key={`${product.productId} ${product.variant} ${orderIndex}`} className="flex flex-col sm:flex-row gap-3 border-b border-primary-light last:border-none mb-3 last:m-0" >
+          <Link href={`/product/${product.productId}`} className="aspect-square sm:w-52" >
             <Image height={520} width={520} src={product.productFirtsImgURL} alt={product.productName} />
           </Link>
           <div>

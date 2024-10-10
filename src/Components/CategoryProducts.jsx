@@ -8,7 +8,6 @@ function CategoryProducts({ products, categoryInfo }) {
     const [filterByBrand, setFilterByBrand] = useState([]);
     const [filterByTags, setFilterByTags] = useState([]);
     const [categoryProducts, setCategoryProducts] = useState(products);
-    console.log("re-rendered")
 
     const applyFilter = () => {
         if (filterByBrand.length) {
@@ -23,15 +22,15 @@ function CategoryProducts({ products, categoryInfo }) {
     }
 
     return (
-        <div className="flex gap-5 mb-4" data-listing="true" >
+        <div className="flex flex-col sm:flex-row sm:gap-5 mb-4 relative p-2" data-listing="true" >
             <FilterComponent
                 setFilterByTags={setFilterByTags}
-                category={categoryInfo[0].category}
+                category={categoryInfo[0]?.category}
                 categoryInfo={categoryInfo[0]}
                 setFilterByBrand={setFilterByBrand}
                 applyFilter={applyFilter}
             />
-            <div className="grid lg:grid-cols-3 xl:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-x-[4%] gap-y-7" >
+            <div className="grid lg:grid-cols-3 xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 grid-cols-2 gap-x-[4%] gap-y-7 py-2">
                 {
                     categoryProducts.map((prop) => {
                         return (

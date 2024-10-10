@@ -6,16 +6,16 @@ import { PrimaryButton } from "./PrimaryButton";
 import { SearchBar } from "./SearchBar";
 import { fetchCategory } from "@/actions/fetchCategory";
 import { cookies } from "next/headers";
-
+import SideBar from "./SideBar";
 
 export default async function Navbar() {
   const categories = await fetchCategory()
   const cookie = cookies();
   const validToken = cookie.get("authToken");
 
-  return (
-    <nav className="h-16 bg-white px-24 sticky top-0 z-50 shadow-sm">
-      <ul className="flex justify-between text-xl font-semibold text-custom-dark-gray items-center h-16">
+  return (<>
+    <nav className="h-16 bg-white px-4 lg:px-24 sticky top-0 z-50 shadow-sm">
+      <ul className="visible lg:flex justify-between text-xl font-semibold text-custom-dark-gray items-center h-16 hidden lg:visible">
         <li>
           <Link href={"/"}>Official LOGO</Link>
         </li>
@@ -25,9 +25,9 @@ export default async function Navbar() {
           </span>
           <ul className="absolute bg-white z-10 rounded text-lg font-medium leading-relaxed h-0 group-hover:border group-hover:py-3 group-hover:h-fit overflow-hidden transition-transform duration-700">
             {categories.map((ctg, index) => (
-              <li key={ctg + index} className="px-4 hover:bg-primary-light hover:text-white">
-                <Link href={`/category/${ctg}`} className="block w-full">
-                  {ctg.charAt(0).toUpperCase() + ctg.slice(1)}
+              <li key={ctg.docId} className="px-4 hover:bg-primary-light hover:text-white">
+                <Link href={`/category/${ctg.category}`} className="block w-full">
+                  {ctg.category.charAt(0).toUpperCase() + ctg.category.slice(1)}
                 </Link>
               </li>
             ))}
@@ -58,6 +58,9 @@ export default async function Navbar() {
             </a>}
         </li>
       </ul>
+      <SideBar categories={categories} validToken={validToken} />
     </nav>
+
+  </>
   );
 }

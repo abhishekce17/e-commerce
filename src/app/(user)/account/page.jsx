@@ -65,7 +65,7 @@ export default function Page() {
                         disabled
                     />
                 </div>
-                <div className="flex gap-2 mb-4" >
+                <div className="sm:flex gap-2 mb-4" >
                     <div className="flex flex-col w-full border-b border-primary-light" >
 
                         <label className="font-semibold text-base text-gray-700 " htmlFor="fullName">Name:</label>
