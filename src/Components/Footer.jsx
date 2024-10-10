@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 const Footer = () => {
   return (
-    <div className="bg-primary md:text-center text-lg text-white" >
+    <div className="bg-primary md:text-center text-xs   sm:text-base md:lg text-white" >
       <div className="grow md:justify-around border-b-2 p-5 flex flex-wrap gap-4" >
         <ul>
           <li> <Link href={"#"} > Cancellation & Returns</Link></li>

@@ -162,7 +162,7 @@ const ProductDetail = ({ productDetails, similarProducts, defaultSelectedVariant
 
                     <div className="grid lg:grid-cols-2 gap-2 rounded-lg mb-5" >
                         <div className="w-full">
-                            <Image width={500} height={500} src={selectedImage} alt='product-image' className="w-full h-auto aspect-square rounded-md" />
+                            <Image width={500} height={500} src={selectedImage} alt='product-image' className="w-full h-auto aspect-square sm:rounded-md" />
                             <div className="flex gap-2 overflow-y-scroll no-scrollbar mt-2" >
                                 {
                                     productDetails.imgURLs.map((url, index) => {

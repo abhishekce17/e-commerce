@@ -79,7 +79,7 @@ export const ProductCard = ({ productInfo, href, showButtons = true }) => {
                     {productInfo.productName}
                 </Link>
 
-                <div className="flex justify-between my-1 items-center" >
+                <div className="flex justify-between my-1 items-center flex-wrap" >
                     <span className='text-sm' >★ 4.3 (56 reviews)</span>
                     <span>&#8377;{productVariantPrice?.minNetValue || parseInt((productInfo.price - (productInfo.price * (productInfo.discount / 100)))).toLocaleString("en-IN", { useGrouping: true })}</span>
                 </div>
