@@ -12,13 +12,14 @@ const Carousel = ({ products }) => {
   const prev = () => current === 0 ? setCurrent(products.length - 1) : setCurrent(x => x - 1)
   return (
     <div className="relative w-full overflow-hidden" >
-      <div className="flex transition duration-400 aspect-3" style={{ transform: `translateX(-${current * 100}%)` }} >
+      <div className="flex transition duration-400 sm:aspect-3" style={{ transform: `translateX(-${current * 100}%)` }} >
 
         {
           products.map((prop, index) => {
             return (
               <Link key={prop.productId} href={`/product/${prop.productId}`} className="min-w-full" >
-                <Image width={1000} height={1000} src={prop.pcViewURL} alt={prop.mobileViewURL} className="w-full h-full" />
+                <Image width={1000} height={1000} src={prop.pcViewURL} alt={prop.pcViewURL} className=" max-sm:hidden w-full h-full" />
+                <Image width={1000} height={1000} src={prop.mobileViewURL} alt={prop.mobileViewURL} className=" sm:hidden w-full h-full" />
               </Link>
             )
           })}
