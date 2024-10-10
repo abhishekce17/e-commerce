@@ -48,7 +48,7 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         setUserData: (state, action) => {
-            state.userData = action.payload || initialState.userData;
+            state.userData = { ...initialState.userData, ...action.payload };
         },
         addToWishlistAction: (state, action) => {
             state.userData.Personal.wishlist.push(action.payload.productId)

@@ -42,7 +42,7 @@ export default function Page() {
         notify("saving...", "loading");
         const response = await updateUserInfo({ newData: formData });
         if (response.status === 200) {
-            dispatch(setUserData(formData));
+            dispatch(setUserData({ Personal: formData }));
         }
         notify(response.message, response.status === 200 ? "success" : "error");
         setIsEditing(false);
