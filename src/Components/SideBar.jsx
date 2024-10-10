@@ -57,7 +57,7 @@ const SideBar = ({ categories, validToken }) => {
                 <li className="flex gap-3 grow -space-y-0.5 items-center" id="search-bar">
                     <SearchBar />
                     <span ref={toggleButtonRef} >
-                        <FiMenu onClick={() => setIsSidebarOpen(true)} size={35} />
+                        <FiMenu onClick={() => setIsSidebarOpen(true)} size={33} />
                     </span>
                 </li>
             </ul>

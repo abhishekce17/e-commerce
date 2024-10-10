@@ -163,7 +163,7 @@ const ProductDetail = ({ productDetails, similarProducts, defaultSelectedVariant
                     <div className="grid lg:grid-cols-2 gap-2 rounded-lg mb-5" >
                         <div className="w-full">
                             <Image width={500} height={500} src={selectedImage} alt='product-image' className="w-full h-auto aspect-square sm:rounded-md" />
-                            <div className="flex gap-2 overflow-y-scroll no-scrollbar mt-2" >
+                            <div className="max-sm:px-1 flex gap-2 overflow-y-scroll no-scrollbar mt-2" >
                                 {
                                     productDetails.imgURLs.map((url, index) => {
                                         return (
@@ -227,16 +227,16 @@ const ProductDetail = ({ productDetails, similarProducts, defaultSelectedVariant
                                         })
                                     }
                                 </div> : undefined}
-                            <div className="flex gap-5 items-end mb-5" >
+                            {/* <div className="flex gap-5 items-end mb-5" >
                                 <div className="md:text-lg lg:text-xl" >
                                     <p>Check delivery option</p>
                                     <input className="mt-2 border-b-2 outline-none" type="text" maxLength={6} placeholder="pincode" />
                                 </div>
                                 <OutlineButton label="Check" className="border-2" />
-                            </div>
+                            </div> */}
                             <div className="flex gap-5">
-                                <div className="rounded-3xl overflow-hidden" >
-                                    <PrimaryButton className="md:text-lg lg:text-xl" label="Buy Now" onClick={handleBuy} />
+                                <div className="rounded-3xl h-max overflow-hidden" >
+                                    <PrimaryButton className="md:text-lg lg:text-xl border-2 border-primary" label="Buy Now" onClick={handleBuy} />
                                 </div>
                                 {insideCart ?
                                     <OutlineButton label="Go to Cart" href={"/cart"} className="md:text-lg lg:text-xl border-2" />
@@ -287,9 +287,9 @@ const ProductDetail = ({ productDetails, similarProducts, defaultSelectedVariant
                     </ProductListLayout>
 
                     <div className={styles.customer_review_ratings} >
-                        <div style={{ fontWeight: 700, display: "flex", justifyContent: "space-between" }} >
+                        <div className="flex justify-between mb-2 px-1 items-center" >
                             <p>Ratings and reviews</p>
-                            {userData.Account.agreedTermAndCondition ? <OutlineButton onClick={checkEligibility} style={{ fontSize: "12px", padding: "8px 10px" }} label="Add Review" className="text-sm" /> : undefined}
+                            {userData.Account.agreedTermAndCondition ? <OutlineButton onClick={checkEligibility} label="Add Review" className="text-xs" /> : undefined}
                         </div>
                         {orderedProduct && <div style={{ fontWeight: 700, display: "flex", flexDirection: "column", gap: "7px" }} >
                             <div style={{ fontSize: "35px", textAlign: "center", color: "grey", letterSpacing: "0.5rem" }} > {[...Array(5)].map((undefined, index) => <span key={index} style={{ color: reviewRating.Rating >= index && "initial", cursor: "default" }} onClick={(e) => { e.target.name = "Rating", e.target.value = index, handleChange(e) }} >★</span>)} </div>

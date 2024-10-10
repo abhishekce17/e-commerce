@@ -314,11 +314,6 @@
   transition: 0.2s ease-in-out;
 }
 
-.customer_review_ratings {
-  font-size: 1vw;
-  height: max-content;
-}
-
 .customer_review_ratings .each_review + .each_review {
   margin-top: 20px;
   border-top: 1px solid var(--dark-bg-color);
