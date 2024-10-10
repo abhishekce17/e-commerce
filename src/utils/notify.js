@@ -4,7 +4,7 @@ export const notify = (msg, status) => {
         {
             duration: 2500,
             iconTheme: {
-                primary: '#013d29',
+                primary: '#6947BF',
                 secondary: '#fff',
             }
         });
