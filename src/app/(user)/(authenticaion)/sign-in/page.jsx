@@ -33,11 +33,12 @@ const SignInForm = () => {
     event.preventDefault();
     setPending(true);
     const response = await userSignIn({ email, password })
-    router.refresh();
     if (response.status !== 200) {
       notify(response.message, "error");
+    } else {
+      window.location.href = "/";
     }
-    setPending(false);
+    // setPending(false);
   };
 
   return (

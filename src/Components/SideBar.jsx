@@ -121,7 +121,7 @@ const SideBar = ({ categories, validToken }) => {
                             :
                             <MenuItem
                                 icon={<GoSignIn className=" text-primary" />}
-                                component={<Link href="/sign-in" />}
+                                component={<a href="/sign-in" />}
                                 onClick={() => setIsSidebarOpen(false)}
                             >
                                 Sign

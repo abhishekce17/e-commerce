@@ -37,11 +37,11 @@ const CartComponent = () => {
                     :
                     undefined}
             </div>
-            {cartProducts.length ? <div className="w-max h-max flex flex-col bg-white gap-2 p-4 rounded sticky top-20" >
-                <p className="text-xl font-medium" >Items : {totalExpenditure.totalQuantity}</p>
-                <p className="text-xl font-medium " >Total : ₹{totalExpenditure.totalAmount.toLocaleString("en-IN", { useGrouping: true })}</p>
-                <PrimaryButton onClick={handleProceedToCheckout} label="Proceed to Checkout" />
-                <OutlineButton className="rounded-md w-full" href="/" label="Continue Shopping" />
+            {cartProducts.length ? <div className="  w-full sm:w-max h-max flex flex-col bg-white gap-2 p-4 rounded sticky top-20" >
+                <p className="max-sm:text-base text-xl font-medium" >Items : {totalExpenditure.totalQuantity}</p>
+                <p className="max-sm:text-base text-xl font-medium " >Total : ₹{totalExpenditure.totalAmount.toLocaleString("en-IN", { useGrouping: true })}</p>
+                <PrimaryButton onClick={handleProceedToCheckout} label="Proceed to Checkout" className=" w-full" />
+                <OutlineButton className="rounded-md w-full " href="/" label="Continue Shopping" />
             </div> : undefined}
         </div>
     </>
